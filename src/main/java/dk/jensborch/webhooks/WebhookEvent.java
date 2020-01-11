@@ -16,7 +16,7 @@ public class WebhookEvent {
     String topic;
     Map<String, Object> data;
 
-    public WebhookEvent(String topic, Map<String, Object> data) {
+    public WebhookEvent(final String topic, final Map<String, Object> data) {
         this.id = UUID.randomUUID();
         this.topic = topic;
         this.data = new HashMap<>(data);

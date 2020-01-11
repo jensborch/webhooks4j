@@ -2,10 +2,7 @@ package dk.jensborch.webhooks.consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.HashMap;
 
@@ -47,8 +44,8 @@ public class CallbackExposureTest {
     @Test
     public void testReceive() {
         WebhookEvent callbackEvent = new WebhookEvent("topic", new HashMap<>());
-        Response result = exposure.receive(callbackEvent);
-        assertNotNull(result);
+        Response response = exposure.receive(callbackEvent);
+        assertNotNull(response, "Exposure must return a response");
         verify(repo, times(2)).save(any());
     }
 

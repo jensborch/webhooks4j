@@ -44,3 +44,17 @@ test {
         events "passed", "skipped", "failed"
     }
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.destination file("$buildDir/reports/jacoco/test/html")
+    }
+}
+
+pmd {
+    ruleSets = []
+    ruleSetFiles = files("config/pmd/ruleset.xml")
+}
+

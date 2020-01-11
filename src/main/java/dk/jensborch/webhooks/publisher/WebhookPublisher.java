@@ -27,11 +27,11 @@ public class WebhookPublisher {
     @Inject
     private StatusRepository statusRepo;
 
-    public void publish(WebhookEvent e) {
+    public void publish(final WebhookEvent e) {
         repo.find(e.getTopic()).forEach(w -> call(w, e));
     }
 
-    private void call(Webhook webhook, WebhookEvent event) {
+    private void call(final Webhook webhook, final WebhookEvent event) {
         ProcessingStatus status = statusRepo.save(new ProcessingStatus(event));
         try {
             client.target(webhook.getPublisher())

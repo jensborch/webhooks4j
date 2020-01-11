@@ -17,7 +17,7 @@ public class WebhookRegistry {
     @Inject
     private Client client;
 
-    public void registre(Webhook webhook) {
+    public void registre(final Webhook webhook) {
         client.target(webhook.getPublisher())
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(webhook, MediaType.APPLICATION_JSON));

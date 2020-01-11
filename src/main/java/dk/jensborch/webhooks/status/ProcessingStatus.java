@@ -13,23 +13,23 @@ import lombok.Setter;
 @Data
 public class ProcessingStatus {
 
-    private final UUID id;
-    private final WebhookEvent event;
-    private final ZonedDateTime start;
     @Setter
     ZonedDateTime end;
     @Setter
     Status status;
 
-    public ProcessingStatus(WebhookEvent event) {
+    private final UUID id;
+    private final WebhookEvent event;
+    private final ZonedDateTime start;
+
+    public ProcessingStatus(final WebhookEvent event) {
         this.id = UUID.randomUUID();
         this.event = event;
         this.start = ZonedDateTime.now();
-        this.end = null;
         this.status = Status.STARTED;
     }
 
-    public ProcessingStatus end(boolean sucess) {
+    public ProcessingStatus end(final boolean sucess) {
         if (sucess) {
             status = Status.SUCCESS;
         } else {
@@ -43,7 +43,10 @@ public class ProcessingStatus {
         return status == Status.FAILD || status == status.STARTED;
     }
 
-    public static enum Status {
+    /**
+     *
+     */
+    public enum Status {
         STARTED, FAILD, SUCCESS;
     }
 }

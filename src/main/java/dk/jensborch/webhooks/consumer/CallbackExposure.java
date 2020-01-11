@@ -31,7 +31,7 @@ public class CallbackExposure {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response receive(WebhookEvent callbackEvent) {
+    public Response receive(final WebhookEvent callbackEvent) {
         ProcessingStatus status = repo.find(callbackEvent.getId()).orElse(repo.save(new ProcessingStatus(callbackEvent)));
         if (status.eligible()) {
             try {
@@ -46,11 +46,16 @@ public class CallbackExposure {
         return Response.ok(status).build();
     }
 
+    /**
+     *
+     */
     public static class EventTopicLiteral extends AnnotationLiteral<WebhookEventTopic> implements WebhookEventTopic {
+
+        private static final long serialVersionUID = -6202789271503219569L;
 
         private final String topic;
 
-        public EventTopicLiteral(String topic) {
+        public EventTopicLiteral(final String topic) {
             this.topic = topic;
         }
 
