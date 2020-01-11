@@ -57,7 +57,3 @@ pmd {
     ruleSets = []
     ruleSetFiles = files("config/pmd/ruleset.xml")
 }
-
-task travisWrapper(type: Wrapper) {
-    gradleVersion = 6.0
-}

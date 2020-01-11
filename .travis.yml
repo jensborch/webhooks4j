@@ -6,8 +6,6 @@ addons:
     organization: "jensborch-github"
 jdk:
   - openjdk8
-before_install:
-  gradle travisWrapper
 script:
   - ./gradlew build jacocoTestReport
   - ./gradlew sonarqube
