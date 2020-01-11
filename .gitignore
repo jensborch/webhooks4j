@@ -1,0 +1,10 @@
+build
+generated
+out
+node_modules
+.vscode
+.idea/*
+!.idea/dictionaries
+/.svn
+/.gradle
+/.nb-gradle
