@@ -5,7 +5,7 @@ addons:
   sonarcloud:
     organization: "jensborch-github"
 jdk:
-  - oraclejdk8
+  - openjdk8
 before_install:
   gradle -b wrapper.gradle wrapper
 script:
