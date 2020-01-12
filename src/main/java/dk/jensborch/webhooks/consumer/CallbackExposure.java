@@ -56,6 +56,7 @@ public class CallbackExposure {
         private final String topic;
 
         public EventTopicLiteral(final String topic) {
+            super();
             this.topic = topic;
         }
 
