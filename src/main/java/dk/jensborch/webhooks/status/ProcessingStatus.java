@@ -24,7 +24,7 @@ public class ProcessingStatus {
     private final ZonedDateTime start;
     private final URI uri;
 
-    public ProcessingStatus(final WebhookEvent event, URI uri) {
+    public ProcessingStatus(final WebhookEvent event, final URI uri) {
         this.id = UUID.randomUUID();
         this.event = event;
         this.start = ZonedDateTime.now();
