@@ -29,7 +29,7 @@ public class ProcessingStatus {
         this.status = Status.STARTED;
     }
 
-    public ProcessingStatus end(final boolean sucess) {
+    public ProcessingStatus done(final boolean sucess) {
         if (sucess) {
             status = Status.SUCCESS;
         } else {

@@ -4,10 +4,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
     <description>
-        CDN PMD ruleset
+        PMD ruleset
     </description>
+    
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="BeanMembersShouldSerialize"/>
+    </rule>
+    <rule ref="category/java/bestpractices.xml"/>
 
-    <rule ref="rulesets/java/basic.xml"/>
+    <!--<rule ref="rulesets/java/basic.xml"/>
     <rule ref="rulesets/java/braces.xml"/>
     <rule ref="rulesets/java/clone.xml"/>
     <rule ref="rulesets/java/codesize.xml"/>
@@ -61,5 +66,5 @@
     <rule ref="rulesets/java/sunsecure.xml"/>
     <rule ref="rulesets/java/typeresolution.xml"/>
     <rule ref="rulesets/java/unnecessary.xml"/>
-    <rule ref="rulesets/java/unusedcode.xml"/>
+    <rule ref="rulesets/java/unusedcode.xml"/>-->
 </ruleset>

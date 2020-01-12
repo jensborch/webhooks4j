@@ -39,9 +39,9 @@ public class CallbackExposure {
                         .select(WebhookEvent.class, new EventTopicLiteral(callbackEvent.getTopic()))
                         .fire(callbackEvent);
             } catch (ObserverException e) {
-                repo.save(status.end(false));
+                repo.save(status.done(false));
             }
-            repo.save(status.end(true));
+            repo.save(status.done(true));
         }
         return Response.ok(status).build();
     }

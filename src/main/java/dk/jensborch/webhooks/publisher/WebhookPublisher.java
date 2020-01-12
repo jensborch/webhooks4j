@@ -38,9 +38,9 @@ public class WebhookPublisher {
                     .request(MediaType.APPLICATION_JSON)
                     .post(Entity.entity(event, MediaType.APPLICATION_JSON));
         } catch (ProcessingException e) {
-            statusRepo.save(status.end(false));
+            statusRepo.save(status.done(false));
         }
-        statusRepo.save(status.end(true));
+        statusRepo.save(status.done(true));
     }
 
 }
