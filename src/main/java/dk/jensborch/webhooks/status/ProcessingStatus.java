@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks.status;
 
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -21,12 +22,14 @@ public class ProcessingStatus {
     private final UUID id;
     private final WebhookEvent event;
     private final ZonedDateTime start;
+    private final URI uri;
 
-    public ProcessingStatus(final WebhookEvent event) {
+    public ProcessingStatus(final WebhookEvent event, URI uri) {
         this.id = UUID.randomUUID();
         this.event = event;
         this.start = ZonedDateTime.now();
         this.status = Status.STARTED;
+        this.uri = uri;
     }
 
     public ProcessingStatus done(final boolean sucess) {

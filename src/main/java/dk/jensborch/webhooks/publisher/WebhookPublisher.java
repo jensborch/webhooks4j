@@ -32,15 +32,15 @@ public class WebhookPublisher {
     }
 
     private void call(final Webhook webhook, final WebhookEvent event) {
-        ProcessingStatus status = statusRepo.save(new ProcessingStatus(event));
+        ProcessingStatus status = statusRepo.save(new ProcessingStatus(event, webhook.getPublisher()));
         try {
             client.target(webhook.getPublisher())
                     .request(MediaType.APPLICATION_JSON)
                     .post(Entity.entity(event, MediaType.APPLICATION_JSON));
+            statusRepo.save(status.done(true));
         } catch (ProcessingException e) {
             statusRepo.save(status.done(false));
         }
-        statusRepo.save(status.done(true));
     }
 
 }
