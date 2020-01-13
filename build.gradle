@@ -24,7 +24,7 @@ dependencies {
     implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
     implementation group: 'javax.enterprise', name: 'cdi-api', version: '1.2'    
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.5.2'
-    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.23.0'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.2.4'
     testImplementation group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.30'
 }
 
