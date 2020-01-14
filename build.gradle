@@ -1,5 +1,4 @@
 plugins {
-    id 'java-library'
     id 'checkstyle'
     id 'idea'
     id 'jacoco'
@@ -9,51 +8,65 @@ plugins {
     id "org.sonarqube" version "2.8"
 }
 
-description = 'Webhooks4j'
-group = 'dk.jensborch'
-version = '1.0-SNAPSHOT'
-
-repositories {
-    jcenter()
-    mavenCentral()
+ext {
+    
 }
 
-dependencies {
-    compileOnly group:'org.projectlombok', name: 'lombok', version :'1.18.10'
-    annotationProcessor group:'org.projectlombok', name: 'lombok', version: '1.18.10'    
-    implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
-    implementation group: 'javax.enterprise', name: 'cdi-api', version: '1.2'    
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.5.2'
-    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.2.4'
-    testImplementation group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.30'
-}
+defaultTasks 'build'
 
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-}
+allprojects {
+    
+    description = 'Webhooks4j'
+    group = 'dk.jensborch'
+    version = '1.0-SNAPSHOT'
 
-compileTestJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-}
+    repositories {
+        jcenter()
+        mavenCentral()
+    }    
 
-test {
-    useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8    
     }
-}
 
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        csv.enabled false
-        html.destination file("$buildDir/reports/jacoco/test/html")
+    compileJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     }
+
+    compileTestJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+
 }
 
-pmd {
-    ruleSets = []
-    ruleSetFiles = files("config/pmd/ruleset.xml")
+subprojects {
+    apply plugin: 'java'
+    
+    dependencies {
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.5.2'
+        testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.2.4'
+    }
+    
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
+    }
+    
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.destination file("$buildDir/reports/jacoco/test/html")
+        }
+    }
+
+    pmd {
+        ruleSets = []
+        ruleSetFiles = files("config/pmd/ruleset.xml")
+    }
 }
