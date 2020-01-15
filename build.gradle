@@ -70,3 +70,18 @@ subprojects {
         ruleSetFiles = files("$rootDir/config/pmd/ruleset.xml")
     }
 }
+
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+
+    reports {
+        xml.enabled true
+        xml.destination file("$buildDir/reports/jacoco/test/jacocoTestReport.xml")
+        html.enabled false
+        csv.enabled false
+    }
+}
