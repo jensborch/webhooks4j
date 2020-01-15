@@ -15,6 +15,7 @@ import dk.jensborch.webhooks.Webhook;
 public class WebhookRegistry {
 
     @Inject
+    @Consumer
     private Client client;
 
     public void registre(final Webhook webhook) {

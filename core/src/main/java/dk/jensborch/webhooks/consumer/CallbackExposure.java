@@ -28,6 +28,7 @@ public class CallbackExposure {
     private Event<WebhookEvent> event;
 
     @Inject
+    @Consumer
     private StatusRepository repo;
 
     @POST

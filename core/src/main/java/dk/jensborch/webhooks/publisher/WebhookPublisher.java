@@ -19,12 +19,15 @@ import dk.jensborch.webhooks.status.StatusRepository;
 public class WebhookPublisher {
 
     @Inject
+    @Publisher
     private Client client;
 
     @Inject
+    @Publisher
     private WebhookRepository repo;
 
     @Inject
+    @Publisher
     private StatusRepository statusRepo;
 
     public void publish(final WebhookEvent e) {

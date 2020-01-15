@@ -20,6 +20,7 @@ import dk.jensborch.webhooks.Webhook;
 public class WebhooksExposure {
 
     @Inject
+    @Publisher
     private WebhookRepository repo;
 
     @POST
