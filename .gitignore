@@ -9,3 +9,7 @@ node_modules
 /.svn
 /.gradle
 /.nb-gradle
+.classpath
+.project
+.settings
+nbproject
