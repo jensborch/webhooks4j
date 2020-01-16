@@ -1,6 +1,9 @@
 plugins {
     id 'java-library'
 }
+
+description = 'Webhooks4j core'
+
 dependencies {
     compileOnly group:'org.projectlombok', name: 'lombok', version :'1.18.10'
     annotationProcessor group:'org.projectlombok', name: 'lombok', version: '1.18.10'    

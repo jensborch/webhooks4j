@@ -10,9 +10,10 @@ plugins {
 
 defaultTasks 'build'
 
+description = 'Webhooks4j'
+
 allprojects {
     
-    description = 'Webhooks4j'
     group = 'dk.jensborch'
     version = '1.0-SNAPSHOT'
 

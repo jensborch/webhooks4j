@@ -3,9 +3,12 @@ plugins {
     id 'io.quarkus'
 }
 
+description = 'Webhooks4j Quarkus'
+
 dependencies {
     implementation project(':core')
-    implementation 'io.quarkus:quarkus-resteasy-jsonb'
+    implementation 'io.quarkus:quarkus-resteasy-jackson'
+    implementation 'io.quarkus:quarkus-rest-client'
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-resteasy'
 
