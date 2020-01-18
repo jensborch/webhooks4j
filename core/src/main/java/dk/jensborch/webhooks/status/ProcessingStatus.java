@@ -43,7 +43,7 @@ public class ProcessingStatus {
     }
 
     public boolean eligible() {
-        return status == Status.FAILD || status == status.STARTED;
+        return status == Status.FAILD || status == Status.STARTED;
     }
 
     /**

@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks;
 
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +29,7 @@ public abstract class HashMapStatusRepository implements StatusRepository {
     @Override
     public Optional<ProcessingStatus> find(final UUID eventId) {
         return map.entrySet().stream()
-                .map(e -> e.getValue()).filter(p -> p.getEvent().getId().equals(eventId))
+                .map(Entry::getValue).filter(p -> p.getEvent().getId().equals(eventId))
                 .findAny();
     }
 
