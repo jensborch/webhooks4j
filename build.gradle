@@ -26,15 +26,12 @@ allprojects {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8    
     }
-
-    compileJava {
-        options.encoding = 'UTF-8'
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    }
-
-    compileTestJava {
-        options.encoding = 'UTF-8'
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.encoding = 'UTF-8'
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"        
+        }
     }
 
 }
