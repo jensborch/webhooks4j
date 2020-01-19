@@ -25,11 +25,11 @@ import dk.jensborch.webhooks.status.StatusRepository;
 public class CallbackExposure {
 
     @Inject
-    private Event<WebhookEvent> event;
+    Event<WebhookEvent> event;
 
     @Inject
     @Consumer
-    private StatusRepository repo;
+    StatusRepository repo;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)

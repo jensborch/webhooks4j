@@ -20,11 +20,11 @@ public class WebhookPublisher {
 
     @Inject
     @Publisher
-    private Client client;
+    Client client;
 
     @Inject
     @Publisher
-    private WebhookRepository repo;
+    WebhookRepository repo;
 
     @Inject
     @Publisher

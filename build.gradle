@@ -14,7 +14,7 @@ description = 'Webhooks4j'
 
 allprojects {
     
-    group = 'dk.jensborch'
+    group = 'dk.jensborch.webhooks4j'
     version = '1.0-SNAPSHOT'
 
     repositories {

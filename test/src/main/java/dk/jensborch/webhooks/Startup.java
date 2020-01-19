@@ -8,13 +8,12 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class Startup {
 
-    /*
-    private static final Logger LOG = LoggerFactory.getLogger(Startup.class);
+    /*private static final Logger LOG = LoggerFactory.getLogger(Startup.class);
 
     @Inject
-    private WebhookRegistry registry;
+    WebhookRegistry registry;
 
-    public void init(@Observes @Initialized(ApplicationScoped.class) final Object init) {
+    public void init(@Observes final StartupEvent ev) {
         try {
             registry.registre(new Webhook(new URI("http://localhost/webhooks"), "test_topics"));
         } catch (URISyntaxException ex) {

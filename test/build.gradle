@@ -6,7 +6,7 @@ plugins {
 description = 'Webhooks4j test'
 
 dependencies {
-    implementation project(':core')
+    compile project(':core')
     implementation 'io.quarkus:quarkus-resteasy-jackson'
     implementation 'io.quarkus:quarkus-rest-client'
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")

@@ -21,7 +21,7 @@ public class WebhookExposure {
 
     @Inject
     @Publisher
-    private WebhookRepository repo;
+    WebhookRepository repo;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

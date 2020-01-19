@@ -1,6 +1,6 @@
 package dk.jensborch.webhooks.consumer;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -11,12 +11,12 @@ import dk.jensborch.webhooks.Webhook;
 /**
  *
  */
-@Dependent
+@ApplicationScoped
 public class WebhookRegistry {
 
     @Inject
     @Consumer
-    private Client client;
+    Client client;
 
     public void registre(final Webhook webhook) {
         client.target(webhook.getPublisher())
