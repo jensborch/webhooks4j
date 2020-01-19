@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'org.kordamp.gradle.jandex' version '0.4.0'
 }
 
 description = 'Webhooks4j core'
@@ -10,4 +11,5 @@ dependencies {
     implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
     implementation group: 'javax.enterprise', name: 'cdi-api', version: '1.2'    
     testImplementation group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.30'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
 }

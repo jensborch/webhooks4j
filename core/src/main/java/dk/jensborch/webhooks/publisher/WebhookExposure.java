@@ -17,7 +17,7 @@ import dk.jensborch.webhooks.Webhook;
  *
  */
 @Path("/webhooks")
-public class WebhooksExposure {
+public class WebhookExposure {
 
     @Inject
     @Publisher

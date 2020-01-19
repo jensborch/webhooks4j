@@ -9,4 +9,4 @@ pluginManagement {
     }
 }
 rootProject.name = 'webhooks4j'
-include 'core', 'quarkus'
+include 'core', 'test'

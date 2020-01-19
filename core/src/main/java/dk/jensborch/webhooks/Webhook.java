@@ -1,9 +1,11 @@
 package dk.jensborch.webhooks;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import lombok.Value;
 
@@ -21,5 +23,9 @@ public class Webhook {
         this.id = UUID.randomUUID();
         this.publisher = publisher;
         this.topics = new HashSet<>(topics);
+    }
+
+    public Webhook(final URI publisher, final String... topics) {
+        this(publisher, Arrays.stream(topics).collect(Collectors.toSet()));
     }
 }

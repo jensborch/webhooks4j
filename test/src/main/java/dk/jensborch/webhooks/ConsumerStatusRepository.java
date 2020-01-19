@@ -9,5 +9,5 @@ import dk.jensborch.webhooks.consumer.Consumer;
  */
 @Consumer
 @ApplicationScoped
-public class ConsumerWebhookRepository extends HashMapWebhookRepository {
+public class ConsumerStatusRepository extends HashMapStatusRepository {
 }
