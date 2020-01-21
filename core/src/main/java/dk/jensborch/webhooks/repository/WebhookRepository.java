@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.publisher;
+package dk.jensborch.webhooks.repository;
 
 import java.util.Set;
 import java.util.UUID;

@@ -6,17 +6,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.Dependent;
-
-import dk.jensborch.webhooks.publisher.Publisher;
-import dk.jensborch.webhooks.publisher.WebhookRepository;
+import dk.jensborch.webhooks.repository.WebhookRepository;
 
 /**
  *
  */
-@Dependent
-@Publisher
-public class HashMapWebhookRepository implements WebhookRepository {
+public abstract class HashMapWebhookRepository implements WebhookRepository {
 
     protected final ConcurrentHashMap<UUID, Webhook> map = new ConcurrentHashMap<>();
 

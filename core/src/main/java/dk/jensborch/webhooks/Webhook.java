@@ -19,6 +19,12 @@ public class Webhook {
     URI publisher;
     Set<String> topics;
 
+    protected Webhook() {
+        this.id = null;
+        this.publisher = null;
+        this.topics = new HashSet<>();
+    }
+
     public Webhook(final URI publisher, final Set<String> topics) {
         this.id = UUID.randomUUID();
         this.publisher = publisher;

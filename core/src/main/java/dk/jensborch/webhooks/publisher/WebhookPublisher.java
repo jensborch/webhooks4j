@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookEvent;
+import dk.jensborch.webhooks.repository.WebhookRepository;
 import dk.jensborch.webhooks.status.ProcessingStatus;
 import dk.jensborch.webhooks.status.StatusRepository;
 

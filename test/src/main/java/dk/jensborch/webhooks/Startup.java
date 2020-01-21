@@ -15,7 +15,7 @@ public class Startup {
 
     public void init(@Observes final StartupEvent ev) {
         try {
-            registry.registre(new Webhook(new URI("http://localhost/webhooks"), "test_topics"));
+            registry.registre(new Webhook(new URI("http://localhost:8080/webhooks"), "test_topics"));
         } catch (URISyntaxException ex) {
             LOG.error("Error registreing webhook");
         }
