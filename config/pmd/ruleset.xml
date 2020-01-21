@@ -10,7 +10,9 @@
         <exclude name="BeanMembersShouldSerialize"/>
         <exclude name="AvoidFieldNameMatchingMethodName"/>        
     </rule>
-    <rule ref="category/java/bestpractices.xml"/>
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="JUnitTestsShouldIncludeAssert"/>
+    </rule>
     <rule ref="category/java/documentation.xml/CommentRequired">
         <properties>            
             <property name="protectedMethodCommentRequirement" value="Ignored"/>

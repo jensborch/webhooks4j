@@ -22,6 +22,8 @@ import dk.jensborch.webhooks.status.StatusRepository;
  *
  */
 @Path("/receive-callback")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class CallbackExposure {
 
     @Inject
@@ -32,8 +34,6 @@ public class CallbackExposure {
     StatusRepository repo;
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response receive(
             final WebhookEvent callbackEvent,
             @Context final UriInfo uriInfo) {

@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.repository.WebhookRepository;
 
 /**
  *
