@@ -10,7 +10,7 @@ import javax.enterprise.event.Observes;
 @ApplicationScoped
 public class TestEventListener {
     
-    public final static String TOPIC = "test_topic";
+    public static final String TOPIC = "test_topic";
      
     private int count;
 

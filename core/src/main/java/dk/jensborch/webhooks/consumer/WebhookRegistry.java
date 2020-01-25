@@ -50,14 +50,14 @@ public class WebhookRegistry {
         }
     }
 
-    private void throwWebhookException(String msg) throws WebhookException {
+    private void throwWebhookException(String msg) {
         LOG.error(msg);
         throw new WebhookException(
                 new WebhookError(WebhookError.Code.REGISTRE_ERROR, msg)
         );
     }
 
-    private void throwWebhookException(String msg, Exception e) throws WebhookException {
+    private void throwWebhookException(String msg, Exception e) {
         LOG.error(msg, e);
         throw new WebhookException(
                 new WebhookError(WebhookError.Code.REGISTRE_ERROR, msg), e

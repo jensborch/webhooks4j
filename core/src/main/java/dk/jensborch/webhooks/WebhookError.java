@@ -1,6 +1,8 @@
 
 package dk.jensborch.webhooks;
 
+import java.io.Serializable;
+
 import javax.ws.rs.core.Response;
 
 import lombok.AllArgsConstructor;
@@ -11,7 +13,9 @@ import lombok.Value;
  * Representation of an error message returned by the API.
  */
 @Value
-public class WebhookError {
+public class WebhookError implements Serializable {
+
+    private static final long serialVersionUID = 8387757018701335705L;
 
     Code code;
     String msg;
