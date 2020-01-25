@@ -7,20 +7,27 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 
 /**
- *
+ * This class defines a Webhook with a publisher and subscribe URI.
  */
 @Value
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Webhook {
 
     UUID id;
+    @NotNull
     URI publisher;
+    @NotNull
     URI consumer;
+    @NotNull
+    @Size(min = 1)
     Set<String> topics;
 
     public Webhook(final URI publisher, final URI consumer, final Set<String> topics) {
