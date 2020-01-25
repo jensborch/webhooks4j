@@ -20,11 +20,8 @@ public class ClientProducer {
     public Client getClient() {
         
         return ClientBuilder.newClient()
-                //.register(JacksonJaxbJsonProvider.class)
-                //.register(ResteasyJackson2Provider.class)
-                //.register(JacksonJsonProvider.class)
-                .register(new ObjectMapperProvider());
-                //.register(LoggingFilter.class);
+                .register(new ObjectMapperProvider())
+                .register(LoggingFilter.class);
     }
 
 }

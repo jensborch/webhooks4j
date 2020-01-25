@@ -14,9 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Simple client log filter for testing.
  */
-//@Provider
 public class LoggingFilter implements ContainerResponseFilter, ContainerRequestFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoggingFilter.class);
@@ -35,7 +34,7 @@ public class LoggingFilter implements ContainerResponseFilter, ContainerRequestF
         LOG.info("URI: {}", requestContext.getUriInfo().getRequestUri());
         if (requestContext.hasEntity()) {
             String text = null;
-            try (Scanner scanner = new Scanner(requestContext.getEntityStream(), StandardCharsets.UTF_8)) {
+            try (Scanner scanner = new Scanner(requestContext.getEntityStream(), StandardCharsets.UTF_8.name())) {
                 text = scanner.useDelimiter("\\A").next();
             }
             LOG.info("Request entity: {}", text);
