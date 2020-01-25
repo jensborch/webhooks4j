@@ -10,9 +10,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookEvent;
@@ -52,6 +54,9 @@ public class WebhookPublisherTest {
         Invocation.Builder builder = mock(Invocation.Builder.class);
         lenient().when(target.request(eq(MediaType.APPLICATION_JSON))).thenReturn(builder);
         lenient().when(client.target(any(URI.class))).thenReturn(target);
+        Response response = mock(Response.class);
+        lenient().when(response.getStatusInfo()).thenReturn(Response.Status.ACCEPTED);
+        lenient().when(builder.post(any(Entity.class))).thenReturn(response);
         lenient().when(statusRepo.save(any())).then(returnsFirstArg());
     }
 
@@ -64,7 +69,7 @@ public class WebhookPublisherTest {
     @Test
     public void testPublish() throws Exception {
         Set<Webhook> hooks = new HashSet<>();
-        hooks.add(new Webhook(new URI("http://test.dk"), new HashSet<>()));
+        hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), new HashSet<>()));
         when(repo.find(TOPIC)).thenReturn(hooks);
         publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
         verify(repo, times(1)).find(eq(TOPIC));

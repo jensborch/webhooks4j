@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks.consumer;
 
+import java.util.Set;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -35,14 +36,19 @@ public class WebhookRegistry {
         try {
             client.target(webhook.getPublisher())
                     .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.entity(webhook, MediaType.APPLICATION_JSON));
+                    .post(Entity.json(webhook));
         } catch (ProcessingException e) {
-            LOG.error("Faild to register");
+            //TODO: throw exception
+            LOG.error("Faild to register", e);
         }
     }
 
     public Webhook get(final UUID id) {
         return repo.get(id);
+    }
+
+    public Set<Webhook> find(String topic) {
+        return repo.find(topic);
     }
 
 }

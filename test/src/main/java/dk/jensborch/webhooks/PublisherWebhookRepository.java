@@ -1,13 +1,13 @@
 package dk.jensborch.webhooks;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 
 import dk.jensborch.webhooks.publisher.Publisher;
 
 /**
  *
  */
-@Dependent
+@ApplicationScoped
 @Publisher
 public class PublisherWebhookRepository extends HashMapWebhookRepository {
 

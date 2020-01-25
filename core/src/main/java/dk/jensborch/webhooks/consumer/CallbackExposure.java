@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks.consumer;
 
+
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
 import javax.enterprise.util.AnnotationLiteral;
@@ -17,6 +18,8 @@ import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventTopic;
 import dk.jensborch.webhooks.status.ProcessingStatus;
 import dk.jensborch.webhooks.status.StatusRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,6 +28,8 @@ import dk.jensborch.webhooks.status.StatusRepository;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CallbackExposure {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CallbackExposure.class);
 
     @Inject
     Event<WebhookEvent> event;
@@ -37,6 +42,7 @@ public class CallbackExposure {
     public Response receive(
             final WebhookEvent callbackEvent,
             @Context final UriInfo uriInfo) {
+        LOG.debug("Receiving event {}", callbackEvent);
         ProcessingStatus status = repo
                 .find(callbackEvent.getId())
                 .orElse(repo.save(new ProcessingStatus(callbackEvent, uriInfo.getRequestUri())));

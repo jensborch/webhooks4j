@@ -7,7 +7,8 @@ import java.util.stream.Collectors;
 import javax.ws.rs.core.Application;
 
 import dk.jensborch.webhooks.consumer.CallbackExposure;
-import dk.jensborch.webhooks.publisher.WebhookExposure;
+import dk.jensborch.webhooks.consumer.ConsumerWebhooksExposure;
+import dk.jensborch.webhooks.publisher.PublisherWebhookExposure;
 
 /**
  *
@@ -18,7 +19,8 @@ public class TestApplication extends Application {
     public Set<Class<?>> getClasses() {
         return Arrays.stream(new Class<?>[]{
             CallbackExposure.class,
-            WebhookExposure.class})
+            ConsumerWebhooksExposure.class,
+            PublisherWebhookExposure.class})
                 .collect(Collectors.toSet());
     }
 
