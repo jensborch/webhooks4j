@@ -4,21 +4,37 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import lombok.Value;
+import javax.validation.constraints.NotNull;
+
+import lombok.AllArgsConstructor;
+
 
 /**
  *
  */
-@Value
+//@Value
+@AllArgsConstructor
 public class WebhookEvent {
 
-    UUID id;
-    String topic;
-    Map<String, Object> data;
+    @NotNull
+    public UUID id;
+    @NotNull
+    public String topic;
+    @NotNull
+    public Map<String, Object> data;
 
     public WebhookEvent(final String topic, final Map<String, Object> data) {
         this.id = UUID.randomUUID();
         this.topic = topic;
         this.data = new HashMap<>(data);
     }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
 }

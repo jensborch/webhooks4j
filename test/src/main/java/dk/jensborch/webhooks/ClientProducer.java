@@ -18,7 +18,13 @@ public class ClientProducer {
     @Consumer
     @Publisher
     public Client getClient() {
-        return ClientBuilder.newClient();
+        
+        return ClientBuilder.newClient()
+                //.register(JacksonJaxbJsonProvider.class)
+                //.register(ResteasyJackson2Provider.class)
+                //.register(JacksonJsonProvider.class)
+                .register(new ObjectMapperProvider());
+                //.register(LoggingFilter.class);
     }
 
 }
