@@ -6,14 +6,16 @@ import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Value;
 
 
 /**
- *
+ * A event emitted by a publisher on a given topic.
  */
-//@Value
-@AllArgsConstructor
+@Value
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class WebhookEvent {
 
     @NotNull

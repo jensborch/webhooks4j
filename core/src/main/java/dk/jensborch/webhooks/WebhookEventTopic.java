@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- *
+ * CDI qualifier for listening on events on a given topic.
  */
 @Qualifier
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
