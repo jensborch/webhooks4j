@@ -19,7 +19,7 @@ import javax.ws.rs.core.UriInfo;
 import dk.jensborch.webhooks.Webhook;
 
 /**
- *
+ * Exposure for registration of webhooks.
  */
 @Path("/consumer-webhooks")
 @Produces(MediaType.APPLICATION_JSON)

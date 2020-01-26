@@ -1,6 +1,5 @@
 package dk.jensborch.webhooks.consumer;
 
-
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
 import javax.enterprise.util.AnnotationLiteral;
@@ -22,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Exposure for receiving callback events.
  */
 @Path("/receive-callback")
 @Produces(MediaType.APPLICATION_JSON)
@@ -45,14 +44,16 @@ public class CallbackExposure {
         LOG.debug("Receiving event {}", callbackEvent);
         ProcessingStatus status = repo
                 .find(callbackEvent.getId())
-                .orElse(repo.save(new ProcessingStatus(callbackEvent, uriInfo.getRequestUri())));
+                .orElseGet(() -> repo.save(new ProcessingStatus(callbackEvent, uriInfo.getRequestUri())));
         if (status.eligible()) {
             try {
                 event
                         .select(WebhookEvent.class, new EventTopicLiteral(callbackEvent.getTopic()))
                         .fire(callbackEvent);
                 repo.save(status.done(true));
+                LOG.debug("Done processing event {}", callbackEvent);
             } catch (ObserverException e) {
+                LOG.warn("Error processing event {}", callbackEvent, e);
                 repo.save(status.done(false));
             }
         }
