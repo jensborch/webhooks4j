@@ -15,11 +15,9 @@ import java.util.Optional;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.WebhookEvent;
-import dk.jensborch.webhooks.consumer.CallbackExposure.EventTopicLiteral;
+import dk.jensborch.webhooks.consumer.WebhookEventConsumer.EventTopicLiteral;
 import dk.jensborch.webhooks.status.ProcessingStatus;
 import dk.jensborch.webhooks.status.StatusRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link CallbackExposure].
  */
 @ExtendWith(MockitoExtension.class)
-public class CallbackExposureTest {
+public class WebhookEventConsumerTest {
 
     @Mock
     private Event<WebhookEvent> event;
@@ -42,11 +40,8 @@ public class CallbackExposureTest {
     @Mock
     private StatusRepository repo;
 
-    @Mock
-    private UriInfo uriInfo;
-
     @InjectMocks
-    private CallbackExposure exposure;
+    private WebhookEventConsumer consumer;
 
     @BeforeEach
     public void setUp() {
@@ -55,10 +50,10 @@ public class CallbackExposureTest {
     }
 
     @Test
-    public void testReceive() {
+    public void testReceive() throws Exception {
         WebhookEvent callbackEvent = new WebhookEvent("topic", new HashMap<>());
-        Response response = exposure.receive(callbackEvent, uriInfo);
-        assertNotNull(response, "Exposure must return a response");
+        ProcessingStatus status = consumer.consume(callbackEvent, new URI("http://test.dk"));
+        assertNotNull(status, "Exposure must return a response");
         verify(repo, times(2)).save(any());
     }
 
@@ -71,16 +66,16 @@ public class CallbackExposureTest {
                                 new ProcessingStatus(callbackEvent, new URI("http://test.dk"))
                                         .done(true))
                 );
-        exposure.receive(callbackEvent, uriInfo);
+        consumer.consume(callbackEvent, new URI("http://test.dk"));
         verify(repo, times(0)).save(any());
     }
 
     @Test
-    public void testReceiveException() {
+    public void testReceiveException() throws Exception {
         doThrow(new ObserverException("Test")).when(event).fire(any());
         WebhookEvent callbackEvent = new WebhookEvent("topic", new HashMap<>());
-        Response response = exposure.receive(callbackEvent, uriInfo);
-        assertNotNull(response, "Exposure must return a response wehn ProcessingException is thrown");
+        ProcessingStatus status = consumer.consume(callbackEvent, new URI("http://test.dk"));
+        assertNotNull(status, "Exposure must return a response wehn ProcessingException is thrown");
         verify(repo, times(2)).save(any());
     }
 
