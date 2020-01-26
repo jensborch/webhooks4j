@@ -32,7 +32,7 @@ public class PublisherTest {
                 .body(new WebhookEvent("test_topic2", new HashMap<>()))
                 .accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
-                .post("receive-callback")
+                .post("consumer-events")
                 .then()
                 .log().all()
                 .statusCode(200);

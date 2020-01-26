@@ -31,7 +31,7 @@ public class RegisterTest {
         String location = given()
                 .when()
                 .log().all()
-                .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/receive-callback"), TestEventListener.TOPIC))
+                .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TestEventListener.TOPIC))
                 .accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .post("consumer-webhooks")
