@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks.repository;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public interface WebhookRepository {
 
     void delte(UUID id);
 
-    Webhook get(UUID id);
+    Optional<Webhook> get(UUID id);
 
     Set<Webhook> find(String topic);
 

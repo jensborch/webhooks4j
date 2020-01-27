@@ -1,4 +1,3 @@
-
 package dk.jensborch.webhooks;
 
 import java.io.Serializable;
@@ -19,12 +18,14 @@ public class WebhookError implements Serializable {
 
     Code code;
     String msg;
-    
+
     @AllArgsConstructor
     public enum Code {
-        UNKNOWN_ERROR(Response.Status.INTERNAL_SERVER_ERROR), 
-        REGISTRE_ERROR(Response.Status.BAD_REQUEST);
-        
-        private final @Getter Response.Status status;                
+        UNKNOWN_ERROR(Response.Status.INTERNAL_SERVER_ERROR),
+        REGISTRE_ERROR(Response.Status.BAD_REQUEST),
+        NOT_FOUND(Response.Status.NOT_FOUND);
+
+        private final @Getter
+        Response.Status status;
     }
 }

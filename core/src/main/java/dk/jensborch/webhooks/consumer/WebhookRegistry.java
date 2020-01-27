@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks.consumer;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -64,7 +65,7 @@ public class WebhookRegistry {
         );
     }
 
-    public Webhook get(final UUID id) {
+    public Optional<Webhook> get(final UUID id) {
         return repo.get(id);
     }
 

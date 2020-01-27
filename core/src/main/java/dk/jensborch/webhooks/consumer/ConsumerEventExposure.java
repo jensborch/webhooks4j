@@ -18,7 +18,7 @@ import dk.jensborch.webhooks.WebhookEvent;
 @Path("/consumer-events")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class CallbackExposure {
+public class ConsumerEventExposure {
 
     @Inject
     WebhookEventConsumer consumer;

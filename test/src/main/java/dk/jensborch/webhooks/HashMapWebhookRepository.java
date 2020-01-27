@@ -1,6 +1,7 @@
 package dk.jensborch.webhooks;
 
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,8 +35,8 @@ public abstract class HashMapWebhookRepository implements WebhookRepository {
     }
 
     @Override
-    public Webhook get(final UUID id) {
-        return map.get(id);
+    public Optional<Webhook> get(final UUID id) {
+        return Optional.ofNullable(map.get(id));
     }
 
 }

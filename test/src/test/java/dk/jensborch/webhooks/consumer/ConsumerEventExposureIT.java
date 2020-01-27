@@ -1,37 +1,28 @@
-package dk.jensborch.webhooks;
+package dk.jensborch.webhooks.consumer;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.Map;
 
-import javax.inject.Inject;
-
-import dk.jensborch.webhooks.publisher.WebhookPublisher;
+import dk.jensborch.webhooks.*;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
 /**
- *
+ * Integration test for
+ * {@link dk.jensborch.webhooks.consumer.ConsumerEventExposur}
  */
 @QuarkusTest
-public class RegisterTest {
-
-    @Inject
-    TestEventListener listener;
-
-    @Inject
-    WebhookPublisher publisher;
+public class ConsumerEventExposureIT {
 
     @Test
-    public void testRegister() throws Exception {
+    public void testRegisterWebhook() throws Exception {
         String location = given()
                 .when()
                 .log().all()
-                .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TestEventListener.TOPIC))
+                .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), this.getClass().getName()))
                 .accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .post("consumer-webhooks")
@@ -40,7 +31,7 @@ public class RegisterTest {
                 .statusCode(201)
                 .extract()
                 .header("location");
-        
+
         given()
                 .when()
                 .log().all()
@@ -50,9 +41,19 @@ public class RegisterTest {
                 .then()
                 .log().all()
                 .statusCode(200);
-        Map<String, Object> data = new HashMap<>();
-        publisher.publish(new WebhookEvent(TestEventListener.TOPIC, data));
-        assertEquals(1, listener.getCount());
     }
 
+    @Test
+    public void testPublishEvent() throws Exception {
+        given()
+                .when()
+                .log().all()
+                .body(new WebhookEvent("test_topic2", new HashMap<>()))
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .post("consumer-events")
+                .then()
+                .log().all()
+                .statusCode(200);
+    }
 }

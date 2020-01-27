@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.WebhookError;
 
 /**
  * Exposure for registration of webhooks.
@@ -50,7 +51,15 @@ public class ConsumerWebhooksExposure {
     @GET
     @Path("{id}")
     public Response get(@NotNull @PathParam("id") final UUID id) {
-        return Response.ok(registry.get(id)).build();
+        //return Response.ok(registry.get(id)).build();
+        return registry.get(id)
+                .map(Response::ok)
+                .orElse(Response.status(
+                        Response.Status.NOT_FOUND).entity(
+                                new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + "not found")
+                        )
+                )
+                .build();
     }
 
 }

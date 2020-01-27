@@ -1,4 +1,6 @@
-package dk.jensborch.webhooks;
+package dk.jensborch.webhooks.consumer;
+
+import dk.jensborch.webhooks.HashMapStatusRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 

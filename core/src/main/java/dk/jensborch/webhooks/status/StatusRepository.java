@@ -13,7 +13,7 @@ public interface StatusRepository {
 
     ProcessingStatus save(ProcessingStatus status);
 
-    ProcessingStatus get(UUID id);
+    Optional<ProcessingStatus> get(UUID id);
 
     Optional<ProcessingStatus> find(UUID eventId);
 
