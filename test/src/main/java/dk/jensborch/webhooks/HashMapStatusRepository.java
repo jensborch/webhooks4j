@@ -22,8 +22,8 @@ public abstract class HashMapStatusRepository implements StatusRepository {
     }
 
     @Override
-    public ProcessingStatus get(final UUID id) {
-        return map.get(id);
+    public Optional<ProcessingStatus> get(final UUID id) {
+        return Optional.ofNullable(map.get(id));
     }
 
     @Override
