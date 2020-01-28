@@ -51,14 +51,14 @@ public class WebhookRegistry {
         }
     }
 
-    private void throwWebhookException(String msg) {
+    private void throwWebhookException(final String msg) {
         LOG.error(msg);
         throw new WebhookException(
                 new WebhookError(WebhookError.Code.REGISTRE_ERROR, msg)
         );
     }
 
-    private void throwWebhookException(String msg, Exception e) {
+    private void throwWebhookException(final String msg, final Exception e) {
         LOG.error(msg, e);
         throw new WebhookException(
                 new WebhookError(WebhookError.Code.REGISTRE_ERROR, msg), e
@@ -69,7 +69,7 @@ public class WebhookRegistry {
         return repo.get(id);
     }
 
-    public Set<Webhook> find(String topic) {
+    public Set<Webhook> find(final String topic) {
         return repo.find(topic);
     }
 

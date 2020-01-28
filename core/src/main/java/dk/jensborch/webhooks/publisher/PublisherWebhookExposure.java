@@ -45,7 +45,7 @@ public class PublisherWebhookExposure {
     }
 
     @GET
-    public Response list(@NotNull @QueryParam("topic") String topic) {
+    public Response list(@NotNull @QueryParam("topic") final String topic) {
         return Response.ok(repo.find(topic)).build();
     }
 

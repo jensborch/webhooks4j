@@ -12,7 +12,7 @@ import javax.ws.rs.ext.Provider;
 public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
     @Override
-    public Response toResponse(Exception e) {
+    public Response toResponse(final Exception e) {
         return Response.status(500)
                 .entity(Entity.json(new WebhookError(WebhookError.Code.UNKNOWN_ERROR, e.getMessage())))
                 .build();

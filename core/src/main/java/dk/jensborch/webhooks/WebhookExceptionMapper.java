@@ -12,7 +12,7 @@ import javax.ws.rs.ext.Provider;
 public class WebhookExceptionMapper implements ExceptionMapper<WebhookException> {
 
     @Override
-    public Response toResponse(WebhookException e) {
+    public Response toResponse(final WebhookException e) {
         return Response.status(e.getError().getCode().getStatus())
                 .entity(Entity.json(e.getError()))
                 .build();

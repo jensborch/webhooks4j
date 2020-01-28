@@ -17,7 +17,7 @@ public class WebhookException extends RuntimeException {
         this.error = error;
     }
 
-    public WebhookException(WebhookError error) {
+    public WebhookException(final WebhookError error) {
         super();
         this.error = error;
     }

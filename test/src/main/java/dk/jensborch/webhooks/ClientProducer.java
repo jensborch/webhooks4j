@@ -18,10 +18,7 @@ public class ClientProducer {
     @Consumer
     @Publisher
     public Client getClient() {
-        
-        return ClientBuilder.newClient()
-                .register(new ObjectMapperProvider())
-                .register(LoggingFilter.class);
+        return ClientBuilder.newClient();
     }
 
 }
