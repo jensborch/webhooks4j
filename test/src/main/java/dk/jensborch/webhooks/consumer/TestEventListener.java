@@ -16,8 +16,8 @@ public class TestEventListener {
 
     private int count;
 
-    public void test(@Observes @WebhookEventTopic(TOPIC) WebhookEvent event) {
-        count = count + 1;
+    public void observe(@Observes @WebhookEventTopic(TOPIC) final WebhookEvent event) {
+        count++;
     }
 
     public int getCount() {

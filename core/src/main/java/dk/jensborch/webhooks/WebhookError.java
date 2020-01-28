@@ -19,6 +19,9 @@ public class WebhookError implements Serializable {
     Code code;
     String msg;
 
+    /**
+     * Error codes that can be returned by the API.
+     */
     @AllArgsConstructor
     public enum Code {
         UNKNOWN_ERROR(Response.Status.INTERNAL_SERVER_ERROR),

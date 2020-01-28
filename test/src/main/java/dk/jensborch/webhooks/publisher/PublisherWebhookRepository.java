@@ -1,10 +1,8 @@
 package dk.jensborch.webhooks.publisher;
 
-import dk.jensborch.webhooks.HashMapWebhookRepository;
-
 import javax.enterprise.context.ApplicationScoped;
 
-import dk.jensborch.webhooks.publisher.Publisher;
+import dk.jensborch.webhooks.HashMapWebhookRepository;
 
 /**
  *

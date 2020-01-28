@@ -18,7 +18,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
     @Override
-    public ObjectMapper getContext(Class<?> objectType) {
+    public ObjectMapper getContext(final Class<?> objectType) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
