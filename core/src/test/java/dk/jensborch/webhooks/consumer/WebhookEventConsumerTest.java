@@ -60,7 +60,7 @@ public class WebhookEventConsumerTest {
     @Test
     public void testReceiveTwice() throws Exception {
         WebhookEvent callbackEvent = new WebhookEvent("topic", new HashMap<>());
-        when(repo.find(any()))
+        when(repo.findByEventId(any()))
                 .thenReturn(
                         Optional.of(
                                 new ProcessingStatus(callbackEvent, new URI("http://test.dk"))

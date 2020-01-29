@@ -46,13 +46,13 @@ public class PublisherWebhookExposure {
 
     @GET
     public Response list(@NotNull @QueryParam("topic") final String topic) {
-        return Response.ok(repo.find(topic)).build();
+        return Response.ok(repo.list(topic)).build();
     }
 
     @GET
     @Path("{id}")
     public Response get(@NotNull @PathParam("id") final UUID id) {
-        return Response.ok(repo.get(id)).build();
+        return Response.ok(repo.find(id)).build();
     }
 
     @DELETE

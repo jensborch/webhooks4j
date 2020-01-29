@@ -66,11 +66,11 @@ public class WebhookRegistry {
     }
 
     public Optional<Webhook> get(final UUID id) {
-        return repo.get(id);
+        return repo.find(id);
     }
 
     public Set<Webhook> find(final String topic) {
-        return repo.find(topic);
+        return repo.list(topic);
     }
 
 }
