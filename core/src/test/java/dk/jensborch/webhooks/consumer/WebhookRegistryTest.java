@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks.consumer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -20,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,9 +78,25 @@ public class WebhookRegistryTest {
     @Test
     public void testRegistreHttp400() {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
-        assertThrows(WebhookException.class, () -> {
+        when(response.getStatus()).thenReturn(404);
+        when(response.readEntity(any(Class.class))).thenReturn(new WebhookError(WebhookError.Code.REGISTRE_ERROR, "test"));
+        WebhookException e = assertThrows(WebhookException.class, () -> {
             registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
         });
+        assertEquals(WebhookError.Code.REGISTRE_ERROR, e.getError().getCode());
+        assertEquals("Faild to register, got HTTP status code 404 and error: WebhookError(code=REGISTRE_ERROR, msg=test)", e.getError().getMsg());
+    }
+
+    @Test
+    public void testRegistreHttp500() {
+        when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
+        //when(response.getStatus()).thenReturn(500);
+        when(response.readEntity(any(Class.class))).thenThrow(new ProcessingException("test"));
+        WebhookException e = assertThrows(WebhookException.class, () -> {
+            registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
+        });
+        assertEquals(WebhookError.Code.REGISTRE_ERROR, e.getError().getCode());
+        assertEquals("Faild to register, error prossing response", e.getError().getMsg());
     }
 
 }
