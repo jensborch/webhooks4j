@@ -18,8 +18,8 @@ public interface WebhookRepository {
 
     void delte(UUID id);
 
-    Optional<Webhook> get(UUID id);
+    Optional<Webhook> find(UUID id);
 
-    Set<Webhook> find(String topic);
+    Set<Webhook> list(String topic);
 
 }

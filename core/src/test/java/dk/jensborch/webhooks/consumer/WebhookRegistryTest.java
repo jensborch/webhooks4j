@@ -90,7 +90,6 @@ public class WebhookRegistryTest {
     @Test
     public void testRegistreHttp500() {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
-        //when(response.getStatus()).thenReturn(500);
         when(response.readEntity(any(Class.class))).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> {
             registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));

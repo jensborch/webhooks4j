@@ -1,6 +1,5 @@
 package dk.jensborch.webhooks;
 
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -17,9 +16,8 @@ public abstract class HashMapWebhookRepository implements WebhookRepository {
     protected final ConcurrentHashMap<UUID, Webhook> map = new ConcurrentHashMap<>();
 
     @Override
-    public Set<Webhook> find(final String topic) {
-        return map.entrySet().stream()
-                .map(Entry::getValue)
+    public Set<Webhook> list(final String topic) {
+        return map.values().stream()
                 .filter(w -> w.getTopics().contains(topic))
                 .collect(Collectors.toSet());
     }
@@ -35,7 +33,7 @@ public abstract class HashMapWebhookRepository implements WebhookRepository {
     }
 
     @Override
-    public Optional<Webhook> get(final UUID id) {
+    public Optional<Webhook> find(final UUID id) {
         return Optional.ofNullable(map.get(id));
     }
 

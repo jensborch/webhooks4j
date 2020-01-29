@@ -38,7 +38,7 @@ public class WebhookPublisher {
 
     public void publish(final WebhookEvent e) {
         LOG.debug("Publishing event {}", e);
-        repo.find(e.getTopic()).forEach(w -> call(w, e));
+        repo.list(e.getTopic()).forEach(w -> call(w, e));
     }
 
     private void call(final Webhook webhook, final WebhookEvent event) {

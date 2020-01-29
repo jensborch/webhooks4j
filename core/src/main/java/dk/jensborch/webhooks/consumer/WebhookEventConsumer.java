@@ -33,7 +33,7 @@ public class WebhookEventConsumer {
     public ProcessingStatus consume(final WebhookEvent callbackEvent, final URI uri) {
         LOG.debug("Receiving event {}", callbackEvent);
         ProcessingStatus status = repo
-                .find(callbackEvent.getId())
+                .findByEventId(callbackEvent.getId())
                 .orElseGet(() -> repo.save(new ProcessingStatus(callbackEvent, uri)));
         if (status.eligible()) {
             try {
