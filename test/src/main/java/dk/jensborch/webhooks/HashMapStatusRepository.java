@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
@@ -35,9 +36,10 @@ public abstract class HashMapStatusRepository implements StatusRepository {
     }
 
     @Override
-    public Set<ProcessingStatus> list(final String... topic) {
+    public Set<ProcessingStatus> list(final ZonedDateTime from, final String... topic) {
         return topic.length > 0
                 ? map.values().stream()
+                        .filter(p -> p.getStart().isAfter(from))
                         .filter(p -> Arrays.binarySearch(topic, p.getEvent().getTopic()) >= 0)
                         .collect(Collectors.toSet())
                 : map.values().stream().collect(Collectors.toSet());
