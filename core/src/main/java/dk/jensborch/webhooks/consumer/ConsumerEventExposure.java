@@ -1,6 +1,9 @@
 package dk.jensborch.webhooks.consumer;
 
+import java.time.ZonedDateTime;
+
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -40,8 +43,9 @@ public class ConsumerEventExposure {
     @GET
     public Response list(
             @QueryParam("topics") final String topics,
+            @NotNull @QueryParam("from") final ZonedDateTime from,
             @Context final UriInfo uriInfo) {
         String[] t = topics == null ? new String[]{} : topics.split(",");
-        return Response.ok(repo.list(t)).build();
+        return Response.ok(repo.list(from, t)).build();
     }
 }

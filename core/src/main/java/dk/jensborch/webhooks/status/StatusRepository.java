@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks.status;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -18,6 +19,6 @@ public interface StatusRepository {
 
     Optional<ProcessingStatus> findByEventId(UUID eventId);
 
-    Set<ProcessingStatus> list(String... topic);
+    Set<ProcessingStatus> list(ZonedDateTime from, String... topic);
 
 }
