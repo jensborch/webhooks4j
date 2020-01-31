@@ -51,15 +51,16 @@ public class ConsumerWebhooksExposure {
     @GET
     @Path("{id}")
     public Response get(@NotNull @PathParam("id") final UUID id) {
-        //return Response.ok(registry.get(id)).build();
         return registry.get(id)
                 .map(Response::ok)
-                .orElse(Response.status(
-                        Response.Status.NOT_FOUND).entity(
-                                new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + "not found")
-                        )
-                )
+                .orElse(notFound(id))
                 .build();
+    }
+
+    private Response.ResponseBuilder notFound(final UUID id) {
+        return Response.status(
+                Response.Status.NOT_FOUND).entity(
+                        new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + "not found"));
     }
 
 }
