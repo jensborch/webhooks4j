@@ -2,6 +2,8 @@ package dk.jensborch.webhooks.publisher;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -36,7 +38,7 @@ public class WebhookPublisher {
     @Publisher
     private StatusRepository statusRepo;
 
-    public void publish(final WebhookEvent e) {
+    public void publish(@NotNull @Valid final WebhookEvent e) {
         LOG.debug("Publishing event {}", e);
         repo.list(e.getTopic()).forEach(w -> call(w, e));
     }

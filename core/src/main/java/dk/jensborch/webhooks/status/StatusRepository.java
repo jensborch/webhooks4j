@@ -5,20 +5,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.enterprise.context.Dependent;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  */
-@Dependent
 public interface StatusRepository {
 
-    ProcessingStatus save(ProcessingStatus status);
+    ProcessingStatus save(@NotNull @Valid ProcessingStatus status);
 
-    Optional<ProcessingStatus> find(UUID id);
+    Optional<ProcessingStatus> find(@NotNull UUID id);
 
-    Optional<ProcessingStatus> findByEventId(UUID eventId);
+    Optional<ProcessingStatus> findByEventId(@NotNull UUID eventId);
 
-    Set<ProcessingStatus> list(ZonedDateTime from, String... topic);
+    Set<ProcessingStatus> list(@NotNull ZonedDateTime from, @NotNull @Size(min = 1) String... topic);
 
 }

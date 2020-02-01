@@ -4,22 +4,23 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.enterprise.context.Dependent;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import dk.jensborch.webhooks.Webhook;
 
 /**
  *
  */
-@Dependent
 public interface WebhookRepository {
 
-    void save(Webhook hook);
+    void save(@NotNull @Valid Webhook hook);
 
-    void delte(UUID id);
+    void delte(@NotNull UUID id);
 
-    Optional<Webhook> find(UUID id);
+    Optional<Webhook> find(@NotNull UUID id);
 
-    Set<Webhook> list(String topic);
+    Set<Webhook> list(@NotNull @Size(min = 1) String... topic);
 
 }

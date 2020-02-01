@@ -6,6 +6,9 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -35,7 +38,7 @@ public class WebhookRegistry {
     @Consumer
     WebhookRepository repo;
 
-    public void registre(final Webhook webhook) {
+    public void registre(@NotNull @Valid final Webhook webhook) {
         //TODO: add status info to webhook
         repo.save(webhook);
         try {
@@ -65,11 +68,11 @@ public class WebhookRegistry {
         );
     }
 
-    public Optional<Webhook> get(final UUID id) {
+    public Optional<Webhook> get(@NotNull final UUID id) {
         return repo.find(id);
     }
 
-    public Set<Webhook> find(final String topic) {
+    public Set<Webhook> list(@NotNull @Size(min = 1) final String... topic) {
         return repo.list(topic);
     }
 
