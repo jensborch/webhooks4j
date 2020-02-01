@@ -3,6 +3,7 @@ package dk.jensborch.webhooks.consumer;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,7 +33,7 @@ public class ConsumerWebhooksExposure {
 
     @POST
     public Response create(
-            @NotNull final Webhook webhook,
+            @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
         registry.registre(webhook);
         return Response.created(uriInfo
@@ -44,8 +45,9 @@ public class ConsumerWebhooksExposure {
     }
 
     @GET
-    public Response list(@NotNull @QueryParam("topic") final String topic) {
-        return Response.ok(registry.find(topic)).build();
+    public Response list(@QueryParam("topic") final String topics) {
+        String[] t = topics == null ? new String[]{} : topics.split(",");
+        return Response.ok(registry.list(t)).build();
     }
 
     @GET

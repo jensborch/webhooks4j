@@ -3,6 +3,7 @@ package dk.jensborch.webhooks.publisher;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -33,7 +34,7 @@ public class PublisherWebhookExposure {
     WebhookRepository repo;
 
     @POST
-    public Response create(@NotNull final Webhook webhook,
+    public Response create(@NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
         repo.save(webhook);
         return Response.created(uriInfo
@@ -45,8 +46,9 @@ public class PublisherWebhookExposure {
     }
 
     @GET
-    public Response list(@NotNull @QueryParam("topic") final String topic) {
-        return Response.ok(repo.list(topic)).build();
+    public Response list(@QueryParam("topic") final String topics) {
+        String[] t = topics == null ? new String[]{} : topics.split(",");
+        return Response.ok(repo.list(t)).build();
     }
 
     @GET
