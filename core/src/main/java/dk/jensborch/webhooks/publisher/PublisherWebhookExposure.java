@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 
 /**
@@ -34,7 +35,8 @@ public class PublisherWebhookExposure {
     WebhookRepository repo;
 
     @POST
-    public Response create(@NotNull @Valid final Webhook webhook,
+    public Response create(
+            @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
         repo.save(webhook);
         return Response.created(uriInfo
@@ -54,7 +56,10 @@ public class PublisherWebhookExposure {
     @GET
     @Path("{id}")
     public Response get(@NotNull @PathParam("id") final UUID id) {
-        return Response.ok(repo.find(id)).build();
+        return repo.find(id)
+                .map(Response::ok)
+                .orElse(notFound(id))
+                .build();
     }
 
     @DELETE
@@ -62,6 +67,12 @@ public class PublisherWebhookExposure {
     public Response delete(@NotNull @PathParam("id") final String id) {
         repo.delte(UUID.fromString(id));
         return Response.noContent().build();
+    }
+
+    private Response.ResponseBuilder notFound(final UUID id) {
+        return Response.status(
+                Response.Status.NOT_FOUND).entity(
+                        new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + "not found"));
     }
 
 }

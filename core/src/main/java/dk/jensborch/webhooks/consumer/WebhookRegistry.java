@@ -68,7 +68,7 @@ public class WebhookRegistry {
         );
     }
 
-    public Optional<Webhook> get(@NotNull final UUID id) {
+    public Optional<Webhook> find(@NotNull final UUID id) {
         return repo.find(id);
     }
 

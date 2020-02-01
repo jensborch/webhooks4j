@@ -53,7 +53,7 @@ public class ConsumerWebhooksExposure {
     @GET
     @Path("{id}")
     public Response get(@NotNull @PathParam("id") final UUID id) {
-        return registry.get(id)
+        return registry.find(id)
                 .map(Response::ok)
                 .orElse(notFound(id))
                 .build();
