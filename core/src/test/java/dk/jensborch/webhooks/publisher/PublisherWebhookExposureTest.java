@@ -42,7 +42,7 @@ public class PublisherWebhookExposureTest {
     private PublisherWebhookExposure exposure;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         UriBuilder uriBuilder = mock(UriBuilder.class);
         lenient().when(uriInfo.getBaseUriBuilder()).thenReturn(uriBuilder);
         lenient().when(uriBuilder.path(any(Class.class))).thenReturn(uriBuilder);
