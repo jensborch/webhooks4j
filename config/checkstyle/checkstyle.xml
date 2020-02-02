@@ -9,14 +9,7 @@
 -->
 
 <module name = "Checker">
-    
-    <module name="TreeWalker">
-        <module name="LineLength">
-            <property name="max" value="180"/>
-            <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
-        </module>
-    </module>
-     
+         
     <property name="charset" value="UTF-8"/>
 
     <!-- Checks whether files end with a new line.                        -->
@@ -52,9 +45,12 @@
     <!--   <property name="headerFile" value="${checkstyle.header.file}"/> -->
     <!--   <property name="fileExtensions" value="java"/> -->
     <!-- </module> -->
-
     <module name="TreeWalker">
-
+        <module name="LineLength">
+            <property name="max" value="180"/>
+            <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+        </module>
+        
         <module name="DeclarationOrderCheck"/>
 
         <module name="Indentation"/>
@@ -169,6 +165,7 @@
         <module name="FinalParameters"/>
         <module name="TodoComment"/>
         <module name="UpperEll"/>
+        <module name="SuppressWarningsHolder" />
     </module>
     <module name="SuppressWarningsFilter"/>
 </module>

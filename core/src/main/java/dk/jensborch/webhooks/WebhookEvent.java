@@ -15,6 +15,7 @@ import lombok.Value;
  */
 @Value
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@SuppressWarnings("checkstyle:visibilitymodifier")
 public class WebhookEvent {
 
     @NotNull
@@ -37,5 +38,4 @@ public class WebhookEvent {
     public UUID getId() {
         return id;
     }
-
 }
