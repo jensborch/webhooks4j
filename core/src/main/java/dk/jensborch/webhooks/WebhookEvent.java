@@ -10,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 
-
 /**
  * A event emitted by a publisher on a given topic.
  */
