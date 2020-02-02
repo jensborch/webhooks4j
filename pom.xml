@@ -8,9 +8,11 @@
     <packaging>pom</packaging>  
     <properties>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <spotbugs-plugin.version>3.1.12.2</spotbugs-plugin.version>
         <jacoco-plugin.version>0.8.5</jacoco-plugin.version>
         <sonar-plugin.version>3.6.0.1398</sonar-plugin.version>
         <pmd-plugin.version>3.12.0</pmd-plugin.version>
+        <checkstyle-plugin.version>3.1.0</checkstyle-plugin.version>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -105,7 +107,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>${checkstyle-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>verify-style</id>
@@ -119,6 +121,22 @@
                     <failOnViolation>false</failOnViolation>
                     <logViolationsToConsole>true</logViolationsToConsole>
                     <configLocation>${maven.multiModuleProjectDirectory}/config/checkstyle/checkstyle.xml</configLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                    <excludeFilterFile>${maven.multiModuleProjectDirectory}/config/spotbugs/exclude.xml</excludeFilterFile>
                 </configuration>
             </plugin>
         </plugins>
