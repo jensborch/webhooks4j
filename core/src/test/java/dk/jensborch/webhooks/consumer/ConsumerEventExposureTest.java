@@ -1,15 +1,18 @@
 package dk.jensborch.webhooks.consumer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.ws.rs.core.Response;
@@ -17,6 +20,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.WebhookEvent;
+import dk.jensborch.webhooks.status.ProcessingStatus;
 import dk.jensborch.webhooks.status.StatusRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,9 +74,19 @@ public class ConsumerEventExposureTest {
     }
 
     @Test
-    public void testGet() {
+    public void testGet404() {
         Response result = exposure.get(UUID.randomUUID());
         assertNotNull(result);
+        assertEquals(404, result.getStatus());
+    }
+
+    @Test
+    public void testGet() throws Exception {
+        WebhookEvent event = new WebhookEvent("test", new HashMap<>());
+        when(repo.findByEventId(any())).thenReturn(Optional.of(new ProcessingStatus(event, new URI("http://test.dk"))));
+        Response result = exposure.get(UUID.randomUUID());
+        assertNotNull(result);
+        assertEquals(200, result.getStatus());
     }
 
 }
