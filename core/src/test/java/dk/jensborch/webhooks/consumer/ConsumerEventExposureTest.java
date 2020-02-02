@@ -2,8 +2,10 @@ package dk.jensborch.webhooks.consumer;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -48,6 +50,7 @@ public class ConsumerEventExposureTest {
         lenient().when(uriBuilder.path(any(Class.class))).thenReturn(uriBuilder);
         lenient().when(uriBuilder.path(any(Class.class), any(String.class))).thenReturn(uriBuilder);
         lenient().when(uriBuilder.build(any())).thenReturn(new URI("http://test.dk"));
+        lenient().when(uriInfo.getRequestUri()).thenReturn(new URI("http://test.dk"));
     }
 
     @Test
@@ -55,12 +58,15 @@ public class ConsumerEventExposureTest {
         WebhookEvent callbackEvent = new WebhookEvent("test_topic", new HashMap<>());
         Response response = exposure.receive(callbackEvent, uriInfo);
         assertNotNull(response);
+        verify(consumer).consume(eq(callbackEvent), any(URI.class));
     }
 
     @Test
     public void testList() {
-        Response response = exposure.list("test1, test2", ZonedDateTime.now(), uriInfo);
+        ZonedDateTime now = ZonedDateTime.now();
+        Response response = exposure.list("test1, test2", now, uriInfo);
         assertNotNull(response);
+        verify(repo).list(eq(now), eq("test1"), eq("test2"));
     }
 
     @Test
