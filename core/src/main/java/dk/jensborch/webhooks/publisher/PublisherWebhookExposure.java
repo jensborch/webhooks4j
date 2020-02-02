@@ -1,6 +1,8 @@
 package dk.jensborch.webhooks.publisher;
 
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -49,7 +51,12 @@ public class PublisherWebhookExposure {
 
     @GET
     public Response list(@QueryParam("topic") final String topics) {
-        String[] t = topics == null ? new String[]{} : topics.split(",");
+        String[] t = topics == null
+                ? new String[]{}
+                : Arrays
+                        .stream(topics.split(","))
+                        .map(String::trim)
+                        .collect(Collectors.toList()).toArray(new String[]{});
         return Response.ok(repo.list(t)).build();
     }
 
@@ -64,8 +71,8 @@ public class PublisherWebhookExposure {
 
     @DELETE
     @Path("{id}")
-    public Response delete(@NotNull @PathParam("id") final String id) {
-        repo.delte(UUID.fromString(id));
+    public Response delete(@NotNull @PathParam("id") final UUID id) {
+        repo.delte(id);
         return Response.noContent().build();
     }
 
