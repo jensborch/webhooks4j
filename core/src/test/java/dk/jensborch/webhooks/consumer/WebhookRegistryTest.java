@@ -95,7 +95,7 @@ public class WebhookRegistryTest {
             registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
         });
         assertEquals(WebhookError.Code.REGISTRE_ERROR, e.getError().getCode());
-        assertEquals("Faild to register, error prossing response", e.getError().getMsg());
+        assertEquals("Faild to register, error processing response", e.getError().getMsg());
     }
 
 }
