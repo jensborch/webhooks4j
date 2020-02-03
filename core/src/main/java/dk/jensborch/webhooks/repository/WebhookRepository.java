@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks.repository;
 
+import java.net.URI;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -20,6 +21,8 @@ public interface WebhookRepository {
     void delte(@NotNull UUID id);
 
     Optional<Webhook> find(@NotNull UUID id);
+
+    Optional<Webhook> findByPublisher(@NotNull URI publisher);
 
     Set<Webhook> list(@NotNull @Size(min = 1) String... topic);
 

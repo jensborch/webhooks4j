@@ -12,10 +12,12 @@ import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
 
+import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.consumer.WebhookEventConsumer.EventTopicLiteral;
 import dk.jensborch.webhooks.status.ProcessingStatus;
@@ -38,13 +40,18 @@ public class WebhookEventConsumerTest {
     private Event<WebhookEvent> event;
 
     @Mock
+    private WebhookRegistry registry;
+
+    @Mock
     private StatusRepository repo;
 
     @InjectMocks
     private WebhookEventConsumer consumer;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
+        lenient().when(registry.findByPublisher(any(URI.class))).thenReturn(Optional.of(webhook));
         lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
         lenient().when(repo.save(any())).then(returnsFirstArg());
     }
@@ -63,7 +70,7 @@ public class WebhookEventConsumerTest {
         when(repo.findByEventId(any()))
                 .thenReturn(
                         Optional.of(
-                                new ProcessingStatus(callbackEvent, new URI("http://test.dk"))
+                                new ProcessingStatus(callbackEvent, UUID.randomUUID())
                                         .done(true))
                 );
         consumer.consume(callbackEvent, new URI("http://test.dk"));

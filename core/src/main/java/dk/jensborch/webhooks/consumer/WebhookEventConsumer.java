@@ -8,8 +8,11 @@ import javax.enterprise.event.ObserverException;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
+import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventTopic;
+import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.status.ProcessingStatus;
 import dk.jensborch.webhooks.status.StatusRepository;
 import org.slf4j.Logger;
@@ -30,11 +33,13 @@ public class WebhookEventConsumer {
     @Consumer
     StatusRepository repo;
 
+    @Inject
+    WebhookRegistry registry;
+
     public ProcessingStatus consume(final WebhookEvent callbackEvent, final URI uri) {
         LOG.debug("Receiving event {}", callbackEvent);
-        ProcessingStatus status = repo
-                .findByEventId(callbackEvent.getId())
-                .orElseGet(() -> repo.save(new ProcessingStatus(callbackEvent, uri)));
+        Webhook webhook = findPublisher(uri);
+        ProcessingStatus status = findOrCrreate(callbackEvent, webhook);
         if (status.eligible()) {
             try {
                 event
@@ -48,6 +53,18 @@ public class WebhookEventConsumer {
             }
         }
         return status;
+    }
+
+    private Webhook findPublisher(final URI uri) {
+        return registry
+                .findByPublisher(uri)
+                .orElseThrow(() -> new WebhookException(new WebhookError(WebhookError.Code.UNKNOWN_PUBLISHER, "Unknown publisher URI: " + uri)));
+    }
+
+    private ProcessingStatus findOrCrreate(final WebhookEvent callbackEvent, final Webhook webhook) {
+        return repo
+                .findByEventId(callbackEvent.getId())
+                .orElseGet(() -> repo.save(new ProcessingStatus(callbackEvent, webhook.getId())));
     }
 
     /**
