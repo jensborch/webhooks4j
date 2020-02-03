@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
@@ -21,6 +22,13 @@ public abstract class HashMapWebhookRepository implements WebhookRepository {
         return map.values().stream()
                 .filter(w -> Arrays.stream(topic).anyMatch(t -> w.getTopics().contains(t)))
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Optional<Webhook> findByPublisher(final URI publisher) {
+        return map.values().stream()
+                .filter(w -> w.getPublisher().equals(publisher))
+                .findAny();
     }
 
     @Override

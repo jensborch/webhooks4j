@@ -24,8 +24,9 @@ public class WebhookError implements Serializable {
      */
     @AllArgsConstructor
     public enum Code {
+        UNKNOWN_PUBLISHER(Response.Status.BAD_REQUEST),
         UNKNOWN_ERROR(Response.Status.INTERNAL_SERVER_ERROR),
-        REGISTRE_ERROR(Response.Status.BAD_REQUEST),
+        REGISTRE_ERROR(Response.Status.SERVICE_UNAVAILABLE),
         NOT_FOUND(Response.Status.NOT_FOUND);
 
         private final @Getter

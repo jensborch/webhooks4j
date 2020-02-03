@@ -83,7 +83,7 @@ public class ConsumerEventExposureTest {
     @Test
     public void testGet() throws Exception {
         WebhookEvent event = new WebhookEvent("test", new HashMap<>());
-        when(repo.findByEventId(any())).thenReturn(Optional.of(new ProcessingStatus(event, new URI("http://test.dk"))));
+        when(repo.findByEventId(any())).thenReturn(Optional.of(new ProcessingStatus(event, UUID.randomUUID())));
         Response result = exposure.get(UUID.randomUUID());
         assertNotNull(result);
         assertEquals(200, result.getStatus());

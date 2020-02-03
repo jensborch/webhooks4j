@@ -45,7 +45,7 @@ public class WebhookPublisher {
 
     private void call(final Webhook webhook, final WebhookEvent event) {
         LOG.debug("Publishing to {}", webhook);
-        ProcessingStatus status = statusRepo.save(new ProcessingStatus(event, webhook.getPublisher()));
+        ProcessingStatus status = statusRepo.save(new ProcessingStatus(event, webhook.getId()));
         try {
             Response response = client.target(webhook.getConsumer())
                     .request(MediaType.APPLICATION_JSON)

@@ -15,15 +15,14 @@ import lombok.Value;
  */
 @Value
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@SuppressWarnings("checkstyle:visibilitymodifier")
 public class WebhookEvent {
 
     @NotNull
-    public UUID id;
+    UUID id;
     @NotNull
-    public String topic;
+    String topic;
     @NotNull
-    public Map<String, Object> data;
+    Map<String, Object> data;
 
     public WebhookEvent(final String topic, final Map<String, Object> data) {
         this.id = UUID.randomUUID();
@@ -31,11 +30,4 @@ public class WebhookEvent {
         this.data = new HashMap<>(data);
     }
 
-    public String getTopic() {
-        return topic;
-    }
-
-    public UUID getId() {
-        return id;
-    }
 }
