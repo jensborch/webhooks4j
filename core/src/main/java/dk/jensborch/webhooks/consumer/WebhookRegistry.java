@@ -40,18 +40,19 @@ public class WebhookRegistry {
     WebhookRepository repo;
 
     public void registre(@NotNull @Valid final Webhook webhook) {
-        //TODO: add status info to webhook
         repo.save(webhook);
         try {
             Response response = client.target(webhook.getPublisher())
                     .request(MediaType.APPLICATION_JSON)
                     .post(Entity.json(webhook));
             if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+                repo.save(webhook.status(Webhook.Status.FAILED));
                 WebhookError error = response.readEntity(WebhookError.class);
                 throwWebhookException("Faild to register, got HTTP status code " + response.getStatus() + " and error: " + error);
             }
         } catch (ProcessingException e) {
-            throwWebhookException("Faild to register, error prossing response", e);
+            repo.save(webhook.status(Webhook.Status.FAILED));
+            throwWebhookException("Faild to register, error processing response", e);
         }
     }
 

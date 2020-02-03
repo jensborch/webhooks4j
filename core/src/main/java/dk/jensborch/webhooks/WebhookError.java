@@ -29,7 +29,7 @@ public class WebhookError implements Serializable {
         REGISTRE_ERROR(Response.Status.SERVICE_UNAVAILABLE),
         NOT_FOUND(Response.Status.NOT_FOUND);
 
-        private final @Getter
-        Response.Status status;
+        @Getter
+        private final Response.Status status;
     }
 }
