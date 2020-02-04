@@ -48,40 +48,47 @@ public class WebhookEventConsumerTest {
     @InjectMocks
     private WebhookEventConsumer consumer;
 
+    private URI publisherUri;
+    private URI consumerUri;
+
     @BeforeEach
     public void setUp() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
+        publisherUri = new URI("http://publisher.dk");
+        consumerUri = new URI("http://consumer.dk");
+        Webhook webhook = new Webhook(publisherUri, consumerUri, "test_topic");
         lenient().when(registry.findByPublisher(any(URI.class))).thenReturn(Optional.of(webhook));
         lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
         lenient().when(repo.save(any())).then(returnsFirstArg());
+        Optional<Webhook> publishers = Optional.of(webhook);
+        lenient().when(registry.findByPublisher(publisherUri)).thenReturn(publishers);
     }
 
     @Test
     public void testReceive() throws Exception {
-        WebhookEvent callbackEvent = new WebhookEvent("topic", new HashMap<>());
-        ProcessingStatus status = consumer.consume(callbackEvent, new URI("http://test.dk"));
+        WebhookEvent callbackEvent = new WebhookEvent("test_topic", new HashMap<>());
+        ProcessingStatus status = consumer.consume(callbackEvent, publisherUri);
         assertNotNull(status, "Exposure must return a response");
         verify(repo, times(2)).save(any());
     }
 
     @Test
     public void testReceiveTwice() throws Exception {
-        WebhookEvent callbackEvent = new WebhookEvent("topic", new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent("test_topic", new HashMap<>());
         when(repo.findByEventId(any()))
                 .thenReturn(
                         Optional.of(
                                 new ProcessingStatus(callbackEvent, UUID.randomUUID())
                                         .done(true))
                 );
-        consumer.consume(callbackEvent, new URI("http://test.dk"));
+        consumer.consume(callbackEvent, publisherUri);
         verify(repo, times(0)).save(any());
     }
 
     @Test
     public void testReceiveException() throws Exception {
         doThrow(new ObserverException("Test")).when(event).fire(any());
-        WebhookEvent callbackEvent = new WebhookEvent("topic", new HashMap<>());
-        ProcessingStatus status = consumer.consume(callbackEvent, new URI("http://test.dk"));
+        WebhookEvent callbackEvent = new WebhookEvent("test_topic", new HashMap<>());
+        ProcessingStatus status = consumer.consume(callbackEvent, publisherUri);
         assertNotNull(status, "Exposure must return a response wehn ProcessingException is thrown");
         verify(repo, times(2)).save(any());
     }
