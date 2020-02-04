@@ -38,7 +38,7 @@ public class WebhookEventConsumer {
 
     public ProcessingStatus consume(final WebhookEvent callbackEvent, final URI uri) {
         LOG.debug("Receiving event {}", callbackEvent);
-        Webhook webhook = findPublisher(uri);
+        Webhook webhook = findPublisher(callbackEvent, uri);
         ProcessingStatus status = findOrCrreate(callbackEvent, webhook);
         if (status.eligible()) {
             try {
@@ -55,10 +55,15 @@ public class WebhookEventConsumer {
         return status;
     }
 
-    private Webhook findPublisher(final URI uri) {
+    private Webhook findPublisher(final WebhookEvent callbackEvent, final URI uri) {
         return registry
                 .findByPublisher(uri)
-                .orElseThrow(() -> new WebhookException(new WebhookError(WebhookError.Code.UNKNOWN_PUBLISHER, "Unknown publisher URI: " + uri)));
+                .filter(w -> w.getTopics().contains(callbackEvent.getTopic()))
+                .orElseThrow(() -> new WebhookException(
+                new WebhookError(
+                        WebhookError.Code.UNKNOWN_PUBLISHER,
+                        "Unknown publisher " + uri + " for " + callbackEvent.getTopic()))
+                );
     }
 
     private ProcessingStatus findOrCrreate(final WebhookEvent callbackEvent, final Webhook webhook) {
