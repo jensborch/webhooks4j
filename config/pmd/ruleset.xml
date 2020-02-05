@@ -21,6 +21,7 @@
         </properties>
     </rule>
     <rule ref="category/java/codestyle.xml">
+        <exclude name="OnlyOneReturn"/>
         <exclude name="ShortVariable"/>
         <exclude name="LongVariable"/>
         <exclude name="DefaultPackage"/>

@@ -68,7 +68,7 @@ public class ConsumerEventExposureTest {
     @Test
     public void testList() {
         ZonedDateTime now = ZonedDateTime.now();
-        Response response = exposure.list("test1, test2", now, uriInfo);
+        Response response = exposure.list("test1, test2", now.toString(), uriInfo);
         assertNotNull(response);
         verify(repo).list(eq(now), eq("test1"), eq("test2"));
     }
