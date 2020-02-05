@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 import dk.jensborch.webhooks.status.ProcessingStatus;
@@ -55,6 +56,8 @@ public class WebhookPublisher {
                 statusRepo.save(status.done(true));
             } else {
                 LOG.warn("Error publishing event {} to {} got HTTP error response {}", event, webhook, response.getStatus());
+                WebhookError error = response.readEntity(WebhookError.class);
+                LOG.warn("Error response is {}", error);
                 statusRepo.save(status.done(false));
             }
         } catch (ProcessingException e) {
