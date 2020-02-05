@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import dk.jensborch.webhooks.ValidZonedDateTime;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.status.StatusRepository;
@@ -54,7 +55,7 @@ public class ConsumerEventExposure {
     @GET
     public Response list(
             @QueryParam("topics") final String topics,
-            @NotNull @QueryParam("from") final ZonedDateTime from,
+            @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
             @Context final UriInfo uriInfo) {
         String[] t = topics == null
                 ? new String[]{}
@@ -62,7 +63,7 @@ public class ConsumerEventExposure {
                         .stream(topics.split(","))
                         .map(String::trim)
                         .collect(Collectors.toList()).toArray(new String[]{});
-        return Response.ok(repo.list(from, t)).build();
+        return Response.ok(repo.list(ZonedDateTime.parse(from), t)).build();
     }
 
     @GET

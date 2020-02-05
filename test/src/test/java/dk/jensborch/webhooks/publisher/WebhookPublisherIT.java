@@ -1,9 +1,5 @@
 package dk.jensborch.webhooks.publisher;
 
-import dk.jensborch.webhooks.consumer.TestEventListener;
-import dk.jensborch.webhooks.Webhook;
-import dk.jensborch.webhooks.WebhookEvent;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
@@ -12,13 +8,15 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.WebhookEvent;
+import dk.jensborch.webhooks.consumer.TestEventListener;
 import dk.jensborch.webhooks.consumer.WebhookRegistry;
-import dk.jensborch.webhooks.publisher.WebhookPublisher;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 /**
- *
+ * Integration test for {@link WebhookPublisher}.
  */
 @QuarkusTest
 public class WebhookPublisherIT {
