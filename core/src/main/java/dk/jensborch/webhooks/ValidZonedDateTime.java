@@ -43,7 +43,9 @@ public @interface ValidZonedDateTime {
         @Override
         public boolean isValid(final String value, final ConstraintValidatorContext context) {
             try {
-                ZonedDateTime.parse(value);
+                if (value != null) {
+                    ZonedDateTime.parse(value);
+                }
                 return true;
             } catch (DateTimeParseException e) {
                 return false;
