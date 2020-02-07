@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
  * Integration test for {@link WebhookPublisher}.
  */
 @QuarkusTest
-public class WebhookPublisherIT {
+public class WebhookPublisherTest {
 
     @Inject
     WebhookRegistry registry;
@@ -32,9 +32,10 @@ public class WebhookPublisherIT {
 
     @Test
     public void testRegister() throws Exception {
-        registry.registre(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TestEventListener.TOPIC));
+        Webhook webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TestEventListener.TOPIC);
+        registry.registre(webhook);
         Map<String, Object> data = new HashMap<>();
-        publisher.publish(new WebhookEvent(TestEventListener.TOPIC, data));
+        publisher.publish(new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, data));
         assertEquals(1, listener.getCount());
     }
 

@@ -8,6 +8,8 @@ import java.util.HashMap;
 import dk.jensborch.webhooks.*;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -17,12 +19,20 @@ import org.junit.jupiter.api.Test;
 @QuarkusTest
 public class ConsumerEventExposureIT {
 
+    private Webhook webhook;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), this.getClass().getName());
+    }
+
     @Test
+    @Order(1)
     public void testRegisterWebhook() throws Exception {
         String location = given()
                 .when()
                 .log().all()
-                .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), this.getClass().getName()))
+                .body(webhook)
                 .accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .post("consumer-webhooks")
@@ -44,11 +54,12 @@ public class ConsumerEventExposureIT {
     }
 
     @Test
+    @Order(2)
     public void testPublishEvent() throws Exception {
         given()
                 .when()
                 .log().all()
-                .body(new WebhookEvent("test_topic2", new HashMap<>()))
+                .body(new WebhookEvent(webhook.getId(), "test_topic2", new HashMap<>()))
                 .accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .post("consumer-events")

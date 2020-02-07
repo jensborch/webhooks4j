@@ -20,11 +20,14 @@ public class WebhookEvent {
     @NotNull
     UUID id;
     @NotNull
+    UUID publisher;
+    @NotNull
     String topic;
     @NotNull
     Map<String, Object> data;
 
-    public WebhookEvent(final String topic, final Map<String, Object> data) {
+    public WebhookEvent(final UUID publisher, final String topic, final Map<String, Object> data) {
+        this.publisher = publisher;
         this.id = UUID.randomUUID();
         this.topic = topic;
         this.data = new HashMap<>(data);

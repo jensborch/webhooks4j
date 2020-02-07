@@ -1,7 +1,5 @@
 package dk.jensborch.webhooks.consumer;
 
-import java.net.URI;
-
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
@@ -36,9 +34,9 @@ public class WebhookEventConsumer {
     @Inject
     WebhookRegistry registry;
 
-    public ProcessingStatus consume(final WebhookEvent callbackEvent, final URI uri) {
+    public ProcessingStatus consume(final WebhookEvent callbackEvent) {
         LOG.debug("Receiving event {}", callbackEvent);
-        Webhook webhook = findPublisher(callbackEvent, uri);
+        Webhook webhook = findPublisher(callbackEvent);
         ProcessingStatus status = findOrCrreate(callbackEvent, webhook);
         if (status.eligible()) {
             try {
@@ -55,14 +53,14 @@ public class WebhookEventConsumer {
         return status;
     }
 
-    private Webhook findPublisher(final WebhookEvent callbackEvent, final URI uri) {
+    private Webhook findPublisher(final WebhookEvent callbackEvent) {
         return registry
-                .findByPublisher(uri)
+                .find(callbackEvent.getPublisher())
                 .filter(w -> w.getTopics().contains(callbackEvent.getTopic()))
                 .orElseThrow(() -> new WebhookException(
                 new WebhookError(
                         WebhookError.Code.UNKNOWN_PUBLISHER,
-                        "Unknown publisher " + uri + " for " + callbackEvent.getTopic()))
+                        "Unknown publisher " + callbackEvent.getPublisher() + " for " + callbackEvent.getTopic()))
                 );
     }
 
