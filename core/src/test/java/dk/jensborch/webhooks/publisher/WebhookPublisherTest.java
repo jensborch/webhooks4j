@@ -8,17 +8,18 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.Webhook;
-import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 import dk.jensborch.webhooks.status.StatusRepository;
@@ -66,7 +67,7 @@ public class WebhookPublisherTest {
 
     @Test
     public void testNoPublishers() {
-        publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
+        publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
     }
 
@@ -75,7 +76,7 @@ public class WebhookPublisherTest {
         Set<Webhook> hooks = new HashSet<>();
         hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), new HashSet<>()));
         when(repo.list(TOPIC)).thenReturn(hooks);
-        publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
+        publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
         verify(statusRepo, times(2)).save(any());
     }
@@ -83,11 +84,11 @@ public class WebhookPublisherTest {
     @Test
     public void testPublishProcessingException() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.BAD_REQUEST);
-        when(response.readEntity(any(Class.class))).thenThrow(new ProcessingException("test"));
+        when(response.readEntity(any(GenericType.class))).thenThrow(new ProcessingException("test"));
         Set<Webhook> hooks = new HashSet<>();
         hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), new HashSet<>()));
         when(repo.list(TOPIC)).thenReturn(hooks);
-        publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
+        publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
         verify(statusRepo, times(2)).save(any());
     }
@@ -95,11 +96,11 @@ public class WebhookPublisherTest {
     @Test
     public void testPublishFailure() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.BAD_REQUEST);
-        when(response.readEntity(any(Class.class))).thenReturn(new WebhookError(WebhookError.Code.UNKNOWN_PUBLISHER, "test"));
+        when(response.readEntity(any(GenericType.class))).thenReturn(new HashMap<String, Object>());
         Set<Webhook> hooks = new HashSet<>();
         hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), new HashSet<>()));
         when(repo.list(TOPIC)).thenReturn(hooks);
-        publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
+        publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
         verify(statusRepo, times(2)).save(any());
     }

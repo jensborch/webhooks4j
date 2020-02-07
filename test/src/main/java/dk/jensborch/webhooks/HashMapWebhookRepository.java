@@ -2,6 +2,7 @@ package dk.jensborch.webhooks;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 
 /**
- *
+ * Test implementation of a WebhookRepository.
  */
 public abstract class HashMapWebhookRepository implements WebhookRepository {
 
@@ -19,9 +20,13 @@ public abstract class HashMapWebhookRepository implements WebhookRepository {
 
     @Override
     public Set<Webhook> list(final String... topic) {
-        return map.values().stream()
-                .filter(w -> Arrays.stream(topic).anyMatch(t -> w.getTopics().contains(t)))
-                .collect(Collectors.toSet());
+        if (topic.length > 0) {
+            return map.values().stream()
+                    .filter(w -> Arrays.stream(topic).anyMatch(t -> w.getTopics().contains(t)))
+                    .collect(Collectors.toSet());
+        } else {
+            return new HashSet<>(map.values());
+        }
     }
 
     @Override

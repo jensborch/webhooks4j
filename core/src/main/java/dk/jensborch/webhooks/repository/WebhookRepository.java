@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import dk.jensborch.webhooks.Webhook;
 
@@ -24,6 +23,6 @@ public interface WebhookRepository {
 
     Optional<Webhook> findByPublisher(@NotNull URI publisher);
 
-    Set<Webhook> list(@NotNull @Size(min = 1) String... topic);
+    Set<Webhook> list(@NotNull String... topic);
 
 }

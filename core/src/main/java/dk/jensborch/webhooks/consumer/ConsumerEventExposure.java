@@ -43,7 +43,7 @@ public class ConsumerEventExposure {
     public Response receive(
             @NotNull @Valid final WebhookEvent callbackEvent,
             @Context final UriInfo uriInfo) {
-        consumer.consume(callbackEvent, uriInfo.getRequestUri());
+        consumer.consume(callbackEvent);
         return Response.created(uriInfo
                 .getBaseUriBuilder()
                 .path(ConsumerEventExposure.class)

@@ -62,60 +62,65 @@ public class WebhookEventConsumerTest {
         publisherUri = new URI("http://publisher.dk");
         consumerUri = new URI("http://consumer.dk");
         Webhook webhook = new Webhook(publisherUri, consumerUri, TEST_TOPIC);
-        lenient().when(registry.findByPublisher(any(URI.class))).thenReturn(Optional.of(webhook));
+        lenient().when(registry.find(any())).thenReturn(Optional.of(webhook));
         lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
         lenient().when(repo.save(any())).then(returnsFirstArg());
         Optional<Webhook> publishers = Optional.of(webhook);
-        lenient().when(registry.findByPublisher(any())).thenReturn(publishers);
+        lenient().when(registry.find(any())).thenReturn(publishers);
     }
 
     @Test
     public void testReceive() throws Exception {
-        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>());
-        ProcessingStatus status = consumer.consume(callbackEvent, publisherUri);
+        UUID publisher = UUID.randomUUID();
+        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
+        ProcessingStatus status = consumer.consume(callbackEvent);
         assertNotNull(status, "Exposure must return a response");
         verify(repo, times(2)).save(any());
     }
 
     @Test
     public void testReceiveTwice() throws Exception {
-        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>());
+        UUID publisher = UUID.randomUUID();
+        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         when(repo.findByEventId(any()))
                 .thenReturn(
                         Optional.of(
                                 new ProcessingStatus(callbackEvent, UUID.randomUUID())
                                         .done(true))
                 );
-        consumer.consume(callbackEvent, publisherUri);
+        consumer.consume(callbackEvent);
         verify(repo, times(0)).save(any());
     }
 
     @Test
     public void testReceiveUnknownPublisher() throws Exception {
-        when(registry.findByPublisher(any())).thenReturn(Optional.empty());
-        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>());
+        UUID publisher = UUID.randomUUID();
+        when(registry.find(any())).thenReturn(Optional.empty());
+        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         WebhookException e = assertThrows(WebhookException.class, () -> {
-            consumer.consume(callbackEvent, new URI("http://test.dk"));
+            consumer.consume(callbackEvent);
         });
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
-        assertEquals("Unknown publisher http://test.dk for test_topic", e.getError().getMsg());
+        assertEquals("Unknown publisher " + publisher + " for test_topic", e.getError().getMsg());
     }
 
     @Test
     public void testReceiveUnknowntopic() throws Exception {
-        WebhookEvent callbackEvent = new WebhookEvent("unknown_topic", new HashMap<>());
+        UUID publisher = UUID.randomUUID();
+        WebhookEvent callbackEvent = new WebhookEvent(publisher, "unknown_topic", new HashMap<>());
         WebhookException e = assertThrows(WebhookException.class, () -> {
-            consumer.consume(callbackEvent, publisherUri);
+            consumer.consume(callbackEvent);
         });
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
-        assertEquals("Unknown publisher http://publisher.dk for unknown_topic", e.getError().getMsg());
+        assertEquals("Unknown publisher " + publisher + " for unknown_topic", e.getError().getMsg());
     }
 
     @Test
     public void testReceiveException() throws Exception {
+        UUID publisher = UUID.randomUUID();
         doThrow(new ObserverException("Test")).when(event).fire(any());
-        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>());
-        ProcessingStatus status = consumer.consume(callbackEvent, publisherUri);
+        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
+        ProcessingStatus status = consumer.consume(callbackEvent);
         assertNotNull(status, "Exposure must return a response wehn ProcessingException is thrown");
         verify(repo, times(2)).save(any());
     }

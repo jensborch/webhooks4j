@@ -59,10 +59,11 @@ public class ConsumerEventExposureTest {
 
     @Test
     public void testReceive() {
-        WebhookEvent callbackEvent = new WebhookEvent("test_topic", new HashMap<>());
+        UUID publisher = UUID.randomUUID();
+        WebhookEvent callbackEvent = new WebhookEvent(publisher, "test_topic", new HashMap<>());
         Response response = exposure.receive(callbackEvent, uriInfo);
         assertNotNull(response);
-        verify(consumer).consume(eq(callbackEvent), any(URI.class));
+        verify(consumer).consume(eq(callbackEvent));
     }
 
     @Test
@@ -82,7 +83,8 @@ public class ConsumerEventExposureTest {
 
     @Test
     public void testGet() throws Exception {
-        WebhookEvent event = new WebhookEvent("test", new HashMap<>());
+        UUID publisher = UUID.randomUUID();
+        WebhookEvent event = new WebhookEvent(publisher, "test", new HashMap<>());
         when(repo.findByEventId(any())).thenReturn(Optional.of(new ProcessingStatus(event, UUID.randomUUID())));
         Response result = exposure.get(UUID.randomUUID());
         assertNotNull(result);
