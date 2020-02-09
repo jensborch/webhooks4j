@@ -18,6 +18,9 @@ public class TestApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         return Arrays.stream(new Class<?>[]{
+            DefaultExceptionMapper.class,
+            WebhookExceptionMapper.class,
+            ConstraintViolationExceptionMapper.class,
             ConsumerEventExposure.class,
             ConsumerWebhooksExposure.class,
             PublisherWebhookExposure.class})
