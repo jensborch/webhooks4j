@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.greaterThan;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.UUID;
 
 import dk.jensborch.webhooks.*;
 import io.quarkus.test.junit.QuarkusTest;
@@ -80,5 +81,16 @@ public class ConsumerEventExposureTest {
                 .post("consumer-events")
                 .then()
                 .statusCode(201);
+    }
+
+    @Test
+    public void testPublishEvent400() {
+        given()
+                .spec(spec)
+                .when()
+                .body(new WebhookEvent(UUID.randomUUID(), TEST_TOPIC, new HashMap<>()))
+                .post("consumer-events")
+                .then()
+                .statusCode(400);
     }
 }
