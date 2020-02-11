@@ -93,4 +93,15 @@ public class ConsumerEventExposureTest {
                 .then()
                 .statusCode(400);
     }
+
+    @Test
+    public void testList() {
+        given()
+                .spec(spec)
+                .when()
+                .queryParam("from", "2007-12-03T10:15:30+01:00")
+                .get("consumer-events")
+                .then()
+                .statusCode(200);
+    }
 }

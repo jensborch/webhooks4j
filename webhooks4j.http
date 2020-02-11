@@ -1,2 +1,6 @@
 
+### Get event
 GET http://localhost:8080/consumer-events/e9b285cc-9c88-4618-99c9-88aa91f24e3e
+
+### List all events
+GET http://localhost:8080/consumer-events/?from=2007-12-03T10%3A15%3A30%2B01%3A00

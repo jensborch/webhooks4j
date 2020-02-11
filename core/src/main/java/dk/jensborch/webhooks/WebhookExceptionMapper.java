@@ -1,7 +1,5 @@
 package dk.jensborch.webhooks;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -15,7 +13,7 @@ public class WebhookExceptionMapper implements ExceptionMapper<WebhookException>
     @Override
     public Response toResponse(final WebhookException e) {
         return Response.status(e.getError().getCode().getStatus())
-                .entity(Entity.entity(e.getError(), MediaType.APPLICATION_JSON))
+                .entity(e.getError())
                 .build();
     }
 }
