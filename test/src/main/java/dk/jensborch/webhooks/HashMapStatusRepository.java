@@ -37,7 +37,7 @@ public abstract class HashMapStatusRepository implements StatusRepository {
 
     @Override
     public Set<ProcessingStatus> list(final ZonedDateTime from, final String... topic) {
-        return topic.length > 0
+        return topic != null && topic.length > 0
                 ? map.values().stream()
                         .filter(p -> p.getStart().isAfter(from))
                         .filter(p -> Arrays.binarySearch(topic, p.getEvent().getTopic()) >= 0)
