@@ -37,7 +37,7 @@ public class WebhookEventConsumer {
     public ProcessingStatus consume(final WebhookEvent callbackEvent) {
         LOG.debug("Receiving event {}", callbackEvent);
         Webhook webhook = findPublisher(callbackEvent);
-        ProcessingStatus status = findOrCrreate(callbackEvent, webhook);
+        ProcessingStatus status = findOrCreate(callbackEvent, webhook);
         if (status.eligible()) {
             try {
                 event
@@ -64,7 +64,7 @@ public class WebhookEventConsumer {
                 );
     }
 
-    private ProcessingStatus findOrCrreate(final WebhookEvent callbackEvent, final Webhook webhook) {
+    private ProcessingStatus findOrCreate(final WebhookEvent callbackEvent, final Webhook webhook) {
         return repo
                 .findByEventId(callbackEvent.getId())
                 .orElseGet(() -> repo.save(new ProcessingStatus(callbackEvent, webhook.getId())));

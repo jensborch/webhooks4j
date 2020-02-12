@@ -47,7 +47,7 @@ public class WebhookRegistry {
                     .post(Entity.json(webhook));
             if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
                 repo.save(webhook.status(Webhook.Status.FAILED));
-                WebhookError error = response.readEntity(WebhookError.class);
+                String error = WebhookError.parseErrorResponseToString(response);
                 throwWebhookException("Faild to register, got HTTP status code " + response.getStatus() + " and error: " + error);
             }
         } catch (ProcessingException e) {
