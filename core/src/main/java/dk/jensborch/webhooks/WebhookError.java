@@ -1,7 +1,11 @@
 package dk.jensborch.webhooks;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +22,17 @@ public class WebhookError implements Serializable {
 
     Code code;
     String msg;
+
+    public static Map<String, Object> parseErrorResponse(final Response response) {
+        return response.readEntity(new GenericType<HashMap<String, Object>>() {
+        });
+    }
+
+    public static String parseErrorResponseToString(final Response response) {
+        return parseErrorResponse(response).entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining(", ", "{", "}"));
+    }
 
     /**
      * Error codes that can be returned by the API.

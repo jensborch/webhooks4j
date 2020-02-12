@@ -1,8 +1,5 @@
 package dk.jensborch.webhooks.publisher;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -10,11 +7,11 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 import dk.jensborch.webhooks.status.ProcessingStatus;
@@ -59,8 +56,7 @@ public class WebhookPublisher {
                 statusRepo.save(status.done(true));
             } else {
                 LOG.warn("Error publishing event {} to {} got HTTP error response {}", event, webhook, response.getStatus());
-                Map<String, Object> error = response.readEntity(new GenericType<HashMap<String, Object>>() {
-                });
+                String error = WebhookError.parseErrorResponseToString(response);
                 LOG.warn("Error response is {}", error);
                 statusRepo.save(status.done(false));
             }

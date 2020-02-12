@@ -11,12 +11,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.util.HashMap;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -70,27 +72,30 @@ public class WebhookRegistryTest {
     @Test
     public void testRegistreProcessingException() {
         when(builder.post(any(Entity.class))).thenThrow(new ProcessingException("test"));
-        assertThrows(WebhookException.class, () -> {
+        WebhookException e = assertThrows(WebhookException.class, () -> {
             registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
         });
+        assertEquals(WebhookError.Code.REGISTRE_ERROR, e.getError().getCode());
     }
 
     @Test
     public void testRegistreHttp400() {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
         when(response.getStatus()).thenReturn(404);
-        when(response.readEntity(any(Class.class))).thenReturn(new WebhookError(WebhookError.Code.REGISTRE_ERROR, "test"));
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("code", WebhookError.Code.REGISTRE_ERROR);
+        when(response.readEntity(any(GenericType.class))).thenReturn(map);
         WebhookException e = assertThrows(WebhookException.class, () -> {
             registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
         });
         assertEquals(WebhookError.Code.REGISTRE_ERROR, e.getError().getCode());
-        assertEquals("Faild to register, got HTTP status code 404 and error: WebhookError(code=REGISTRE_ERROR, msg=test)", e.getError().getMsg());
+        assertEquals("Faild to register, got HTTP status code 404 and error: {code=REGISTRE_ERROR}", e.getError().getMsg());
     }
 
     @Test
     public void testRegistreHttp500() {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
-        when(response.readEntity(any(Class.class))).thenThrow(new ProcessingException("test"));
+        when(response.readEntity(any(GenericType.class))).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> {
             registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
         });
