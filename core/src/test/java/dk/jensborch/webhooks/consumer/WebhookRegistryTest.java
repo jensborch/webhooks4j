@@ -58,14 +58,24 @@ public class WebhookRegistryTest {
     public void setUp() {
         WebTarget target = mock(WebTarget.class);
         lenient().when(target.request(eq(MediaType.APPLICATION_JSON))).thenReturn(builder);
+        lenient().when(target.request()).thenReturn(builder);
+        lenient().when(target.path(any(String.class))).thenReturn(target);
+        lenient().when(target.resolveTemplate(any(String.class), any())).thenReturn(target);
         lenient().when(client.target(any(URI.class))).thenReturn(target);
         lenient().when(response.getStatusInfo()).thenReturn(Response.Status.ACCEPTED);
         lenient().when(builder.post(any(Entity.class))).thenReturn(response);
+        lenient().when(builder.delete()).thenReturn(response);
     }
 
     @Test
     public void testRegistre() throws Exception {
-        registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
+        registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
+        verify(repo, times(1)).save(any());
+    }
+
+    @Test
+    public void testUnregistre() throws Exception {
+        registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
         verify(repo, times(1)).save(any());
     }
 
@@ -73,9 +83,9 @@ public class WebhookRegistryTest {
     public void testRegistreProcessingException() {
         when(builder.post(any(Entity.class))).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> {
-            registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
+            registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
         });
-        assertEquals(WebhookError.Code.REGISTRE_ERROR, e.getError().getCode());
+        assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
     }
 
     @Test
@@ -83,13 +93,13 @@ public class WebhookRegistryTest {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
         when(response.getStatus()).thenReturn(404);
         HashMap<String, Object> map = new HashMap<>();
-        map.put("code", WebhookError.Code.REGISTRE_ERROR);
+        map.put("code", WebhookError.Code.REGISTER_ERROR);
         when(response.readEntity(any(GenericType.class))).thenReturn(map);
         WebhookException e = assertThrows(WebhookException.class, () -> {
-            registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
+            registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
         });
-        assertEquals(WebhookError.Code.REGISTRE_ERROR, e.getError().getCode());
-        assertEquals("Faild to register, got HTTP status code 404 and error: {code=REGISTRE_ERROR}", e.getError().getMsg());
+        assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
+        assertEquals("Faild to register, got HTTP status code 404 and error: {code=REGISTER_ERROR}", e.getError().getMsg());
     }
 
     @Test
@@ -97,9 +107,9 @@ public class WebhookRegistryTest {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
         when(response.readEntity(any(GenericType.class))).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> {
-            registry.registre(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
+            registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
         });
-        assertEquals(WebhookError.Code.REGISTRE_ERROR, e.getError().getCode());
+        assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
         assertEquals("Faild to register, error processing response", e.getError().getMsg());
     }
 

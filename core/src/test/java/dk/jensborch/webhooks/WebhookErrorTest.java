@@ -35,7 +35,7 @@ public class WebhookErrorTest {
 
     @Test
     public void testParseErrorResponse() {
-        Map<String, Object> result = WebhookError.parseErrorResponse(response);
+        Map<String, Object> result = WebhookError.parseErrorResponseToMap(response);
         assertEquals(map, result);
     }
 

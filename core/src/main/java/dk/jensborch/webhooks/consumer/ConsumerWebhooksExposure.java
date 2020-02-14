@@ -37,7 +37,7 @@ public class ConsumerWebhooksExposure {
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
-        registry.registre(webhook);
+        registry.register(webhook);
         return Response.created(uriInfo
                 .getBaseUriBuilder()
                 .path(ConsumerWebhooksExposure.class)

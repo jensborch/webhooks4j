@@ -23,13 +23,17 @@ public class WebhookError implements Serializable {
     Code code;
     String msg;
 
-    public static Map<String, Object> parseErrorResponse(final Response response) {
+    public static WebhookError parseErrorResponse(final Response response) {
+        return response.readEntity(WebhookError.class);
+    }
+
+    public static Map<String, Object> parseErrorResponseToMap(final Response response) {
         return response.readEntity(new GenericType<HashMap<String, Object>>() {
         });
     }
 
     public static String parseErrorResponseToString(final Response response) {
-        return parseErrorResponse(response).entrySet().stream()
+        return parseErrorResponseToMap(response).entrySet().stream()
                 .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining(", ", "{", "}"));
     }
@@ -42,7 +46,7 @@ public class WebhookError implements Serializable {
         VALIDATION_ERROR(Response.Status.BAD_REQUEST),
         UNKNOWN_PUBLISHER(Response.Status.BAD_REQUEST),
         UNKNOWN_ERROR(Response.Status.INTERNAL_SERVER_ERROR),
-        REGISTRE_ERROR(Response.Status.SERVICE_UNAVAILABLE),
+        REGISTER_ERROR(Response.Status.SERVICE_UNAVAILABLE),
         NOT_FOUND(Response.Status.NOT_FOUND);
 
         @Getter
