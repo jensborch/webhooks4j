@@ -53,7 +53,7 @@ public class ConsumerWebhooksExposureTest {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
         Response result = exposure.create(webhook, uriInfo);
         assertNotNull(result);
-        verify(registry).registre(webhook);
+        verify(registry).register(webhook);
     }
 
     @Test

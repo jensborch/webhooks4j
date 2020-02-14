@@ -33,7 +33,7 @@ public class WebhookPublisherTest {
     @Test
     public void testRegister() throws Exception {
         Webhook webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TestEventListener.TOPIC);
-        registry.registre(webhook);
+        registry.register(webhook);
         Map<String, Object> data = new HashMap<>();
         publisher.publish(new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, data));
         assertEquals(1, listener.getCount());
