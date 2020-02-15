@@ -41,7 +41,10 @@ public class WebhookPublisher {
 
     public void publish(@NotNull @Valid final WebhookEvent e) {
         LOG.debug("Publishing event {}", e);
-        repo.list(e.getTopic()).forEach(w -> call(w, e));
+        repo.list(e.getTopic())
+                .stream()
+                .filter(Webhook::isActive)
+                .forEach(w -> call(w, e));
     }
 
     private void call(final Webhook webhook, final WebhookEvent event) {

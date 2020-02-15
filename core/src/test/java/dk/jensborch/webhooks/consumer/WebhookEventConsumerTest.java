@@ -101,7 +101,7 @@ public class WebhookEventConsumerTest {
             consumer.consume(callbackEvent);
         });
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
-        assertEquals("Unknown publisher " + publisher + " for test_topic", e.getError().getMsg());
+        assertEquals("Unknown/inactive publisher " + publisher + " for topic test_topic", e.getError().getMsg());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class WebhookEventConsumerTest {
             consumer.consume(callbackEvent);
         });
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
-        assertEquals("Unknown publisher " + publisher + " for unknown_topic", e.getError().getMsg());
+        assertEquals("Unknown/inactive publisher " + publisher + " for topic unknown_topic", e.getError().getMsg());
     }
 
     @Test

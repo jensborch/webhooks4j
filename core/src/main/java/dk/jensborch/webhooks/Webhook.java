@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -48,6 +49,11 @@ public class Webhook {
     public Webhook status(final Status status) {
         this.status = status;
         return this;
+    }
+
+    @JsonIgnore
+    public boolean isActive() {
+        return status == Status.ACTIVE;
     }
 
     /**
