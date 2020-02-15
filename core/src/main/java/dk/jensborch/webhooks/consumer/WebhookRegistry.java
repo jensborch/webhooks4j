@@ -1,6 +1,5 @@
 package dk.jensborch.webhooks.consumer;
 
-import java.net.URI;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -115,10 +114,6 @@ public class WebhookRegistry {
 
     public Optional<Webhook> find(@NotNull final UUID id) {
         return repo.find(id);
-    }
-
-    Optional<Webhook> findByPublisher(@NotNull final URI publisher) {
-        return repo.findByPublisher(publisher);
     }
 
     public Set<Webhook> list(@NotNull @Size(min = 1) final String... topic) {
