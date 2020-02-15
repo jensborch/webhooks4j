@@ -80,6 +80,14 @@ public class WebhookRegistryTest {
     }
 
     @Test
+    public void testUnregistre404() throws Exception {
+        when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
+        when(response.readEntity(any(Class.class))).thenReturn(new WebhookError(WebhookError.Code.NOT_FOUND, "test"));
+        registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
+        verify(repo, times(1)).save(any());
+    }
+
+    @Test
     public void testRegistreProcessingException() {
         when(builder.post(any(Entity.class))).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> {

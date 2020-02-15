@@ -79,19 +79,23 @@ public class WebhookRegistry {
             if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
                 repo.save(webhook.status(Webhook.Status.INACTIVE));
             } else if (response.getStatusInfo() == Response.Status.NOT_FOUND) {
-                WebhookError error = WebhookError.parseErrorResponse(response);
-                if (error.getCode() == WebhookError.Code.NOT_FOUND) {
-                    LOG.info("Webhook {} not found at publisher", error);
-                    repo.save(webhook.status(Webhook.Status.INACTIVE));
-                } else {
-                    throwWebhookException("Faild to unregister, unexpected error cod: " + error);
-                }
+                handleNotFound(response, webhook);
             } else {
                 String error = WebhookError.parseErrorResponseToString(response);
                 throwWebhookException("Faild to unregister, got HTTP status code " + response.getStatus() + " and error: " + error);
             }
         } catch (ProcessingException e) {
             throwWebhookException("Faild to unregister, error processing response", e);
+        }
+    }
+
+    private void handleNotFound(final Response response, final Webhook webhook) {
+        WebhookError error = WebhookError.parseErrorResponse(response);
+        if (error.getCode() == WebhookError.Code.NOT_FOUND) {
+            LOG.info("Webhook {} not found at publisher", error);
+            repo.save(webhook.status(Webhook.Status.INACTIVE));
+        } else {
+            throwWebhookException("Faild to unregister, got HTTP status code 404, but unexpected error code: " + error);
         }
     }
 
