@@ -57,10 +57,11 @@ public class WebhookEventConsumer {
         return registry
                 .find(callbackEvent.getPublisher())
                 .filter(w -> w.getTopics().contains(callbackEvent.getTopic()))
+                .filter(Webhook::isActive)
                 .orElseThrow(() -> new WebhookException(
                 new WebhookError(
                         WebhookError.Code.UNKNOWN_PUBLISHER,
-                        "Unknown publisher " + callbackEvent.getPublisher() + " for " + callbackEvent.getTopic()))
+                        "Unknown/inactive publisher " + callbackEvent.getPublisher() + " for topic " + callbackEvent.getTopic()))
                 );
     }
 
