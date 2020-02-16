@@ -88,6 +88,28 @@ public class WebhookRegistryTest {
     }
 
     @Test
+    public void testUnregistre500() throws Exception {
+        when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("code", WebhookError.Code.REGISTER_ERROR);
+        when(response.readEntity(any(GenericType.class))).thenReturn(map);
+        WebhookException e = assertThrows(WebhookException.class, () -> {
+            registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
+        });
+        verify(repo, times(0)).save(any());
+        assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
+    }
+
+    @Test
+    public void testUnregistreProcessingException() {
+        when(builder.delete()).thenThrow(new ProcessingException("test"));
+        WebhookException e = assertThrows(WebhookException.class, () -> {
+            registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic"));
+        });
+        assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
+    }
+
+    @Test
     public void testRegistreProcessingException() {
         when(builder.post(any(Entity.class))).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> {
