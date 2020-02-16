@@ -1,9 +1,7 @@
 package dk.jensborch.webhooks.consumer;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -22,6 +20,7 @@ import javax.ws.rs.core.UriInfo;
 import dk.jensborch.webhooks.ValidZonedDateTime;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
+import dk.jensborch.webhooks.WebhookEventTopics;
 import dk.jensborch.webhooks.status.StatusRepository;
 
 /**
@@ -57,13 +56,7 @@ public class ConsumerEventExposure {
             @QueryParam("topics") final String topics,
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
             @Context final UriInfo uriInfo) {
-        String[] t = topics == null
-                ? new String[]{}
-                : Arrays
-                        .stream(topics.split(","))
-                        .map(String::trim)
-                        .collect(Collectors.toList()).toArray(new String[]{});
-        return Response.ok(repo.list(ZonedDateTime.parse(from), t)).build();
+        return Response.ok(repo.list(ZonedDateTime.parse(from), WebhookEventTopics.parse(topics).getTopics())).build();
     }
 
     @GET

@@ -1,8 +1,6 @@
 package dk.jensborch.webhooks.publisher;
 
-import java.util.Arrays;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -22,6 +20,7 @@ import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
+import dk.jensborch.webhooks.WebhookEventTopics;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 
 /**
@@ -51,13 +50,7 @@ public class PublisherWebhookExposure {
 
     @GET
     public Response list(@QueryParam("topic") final String topics) {
-        String[] t = topics == null
-                ? new String[]{}
-                : Arrays
-                        .stream(topics.split(","))
-                        .map(String::trim)
-                        .collect(Collectors.toList()).toArray(new String[]{});
-        return Response.ok(repo.list(t)).build();
+        return Response.ok(repo.list(WebhookEventTopics.parse(topics).getTopics())).build();
     }
 
     @GET
