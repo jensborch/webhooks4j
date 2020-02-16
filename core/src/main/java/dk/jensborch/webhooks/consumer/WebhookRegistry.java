@@ -88,6 +88,19 @@ public class WebhookRegistry {
         }
     }
 
+    /**
+     * Unregister a webhook from a publisher. This will throw a
+     * {@link WebhookError} runtime exception if it isn't possible to
+     * unregister.
+     *
+     * @param id of webhook to unregister.
+     */
+    public void unregister(@NotNull final UUID id) {
+        Webhook w = find(id).orElseThrow(() -> new WebhookException(
+                new WebhookError(WebhookError.Code.REGISTER_ERROR, "WEbhook with id " + id + " not found")));
+        unregister(w);
+    }
+
     private void handleNotFound(final Response response, final Webhook webhook) {
         WebhookError error = WebhookError.parseErrorResponse(response);
         if (error.getCode() == WebhookError.Code.NOT_FOUND) {

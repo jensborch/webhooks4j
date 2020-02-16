@@ -74,7 +74,7 @@ public class WebhookPublisherTest {
     @Test
     public void testPublish() throws Exception {
         Set<Webhook> hooks = new HashSet<>();
-        hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), new HashSet<>()));
+        hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), TOPIC));
         when(repo.list(TOPIC)).thenReturn(hooks);
         publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
@@ -86,7 +86,7 @@ public class WebhookPublisherTest {
         when(response.getStatusInfo()).thenReturn(Response.Status.BAD_REQUEST);
         when(response.readEntity(any(GenericType.class))).thenThrow(new ProcessingException("test"));
         Set<Webhook> hooks = new HashSet<>();
-        hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), new HashSet<>()));
+        hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), TOPIC));
         when(repo.list(TOPIC)).thenReturn(hooks);
         publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
@@ -98,7 +98,7 @@ public class WebhookPublisherTest {
         when(response.getStatusInfo()).thenReturn(Response.Status.BAD_REQUEST);
         when(response.readEntity(any(GenericType.class))).thenReturn(new HashMap<String, Object>());
         Set<Webhook> hooks = new HashSet<>();
-        hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), new HashSet<>()));
+        hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), TOPIC));
         when(repo.list(TOPIC)).thenReturn(hooks);
         publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));

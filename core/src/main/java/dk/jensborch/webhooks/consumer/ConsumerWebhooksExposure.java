@@ -1,13 +1,12 @@
 package dk.jensborch.webhooks.consumer;
 
-import java.util.Arrays;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -21,6 +20,7 @@ import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
+import dk.jensborch.webhooks.WebhookEventTopics;
 
 /**
  * Exposure for registration of webhooks.
@@ -48,13 +48,7 @@ public class ConsumerWebhooksExposure {
 
     @GET
     public Response list(@QueryParam("topic") final String topics) {
-        String[] t = topics == null
-                ? new String[]{}
-                : Arrays
-                        .stream(topics.split(","))
-                        .map(String::trim)
-                        .collect(Collectors.toList()).toArray(new String[]{});
-        return Response.ok(registry.list(t)).build();
+        return Response.ok(registry.list(WebhookEventTopics.parse(topics).getTopics())).build();
     }
 
     @GET
@@ -64,6 +58,13 @@ public class ConsumerWebhooksExposure {
                 .map(Response::ok)
                 .orElse(notFound(id))
                 .build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response delete(@NotNull @PathParam("id") final UUID id) {
+        registry.unregister(id);
+        return Response.noContent().build();
     }
 
     private Response.ResponseBuilder notFound(final UUID id) {
