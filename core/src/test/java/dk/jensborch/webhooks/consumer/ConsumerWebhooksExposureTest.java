@@ -3,8 +3,10 @@ package dk.jensborch.webhooks.consumer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -77,6 +79,15 @@ public class ConsumerWebhooksExposureTest {
         Response result = exposure.get(UUID.randomUUID());
         assertNotNull(result);
         assertEquals(200, result.getStatus());
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        UUID id = UUID.randomUUID();
+        Response result = exposure.delete(id);
+        assertNotNull(result);
+        assertEquals(204, result.getStatus());
+        verify(registry, times(1)).unregister(eq(id));
     }
 
 }

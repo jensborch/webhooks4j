@@ -43,6 +43,7 @@ public class WebhookPublisher {
         LOG.debug("Publishing event {}", e);
         repo.list(e.getTopic())
                 .stream()
+                .filter(w -> w.getTopics().contains(e.getTopic()))
                 .filter(Webhook::isActive)
                 .forEach(w -> call(w, e));
     }
