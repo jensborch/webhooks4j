@@ -12,10 +12,10 @@ Webhooks4j is currently under development.
 
 ## Building
 
-The Webhooks4j is build using Gradle.
+The Webhooks4j is build using Maven.
 
 To build the application run the following command:
 
 ```
-gradle build
+./mvnw package
 ```

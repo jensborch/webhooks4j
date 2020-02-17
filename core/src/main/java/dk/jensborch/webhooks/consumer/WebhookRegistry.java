@@ -45,19 +45,23 @@ public class WebhookRegistry {
      * @param webhook to register.
      */
     public void register(@NotNull @Valid final Webhook webhook) {
-        repo.save(webhook);
-        try {
-            Response response = client.target(webhook.getPublisher())
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.json(webhook));
-            if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+        if (repo.find(webhook.getId()).filter(w -> w.equals(webhook)).isPresent()) {
+            LOG.info("Webhook {} already exists", webhook);
+        } else {
+            repo.save(webhook);
+            try {
+                Response response = client.target(webhook.getPublisher())
+                        .request(MediaType.APPLICATION_JSON)
+                        .post(Entity.json(webhook));
+                if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+                    repo.save(webhook.status(Webhook.Status.FAILED));
+                    String error = WebhookError.parseErrorResponseToString(response);
+                    throwWebhookException("Faild to register, got HTTP status code " + response.getStatus() + " and error: " + error);
+                }
+            } catch (ProcessingException e) {
                 repo.save(webhook.status(Webhook.Status.FAILED));
-                String error = WebhookError.parseErrorResponseToString(response);
-                throwWebhookException("Faild to register, got HTTP status code " + response.getStatus() + " and error: " + error);
+                throwWebhookException("Faild to register, error processing response", e);
             }
-        } catch (ProcessingException e) {
-            repo.save(webhook.status(Webhook.Status.FAILED));
-            throwWebhookException("Faild to register, error processing response", e);
         }
     }
 
