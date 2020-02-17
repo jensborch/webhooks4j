@@ -9,15 +9,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
- *
+ * Repository for manipulating webhook event statuses.
  */
 public interface StatusRepository {
 
     ProcessingStatus save(@NotNull @Valid ProcessingStatus status);
 
-    Optional<ProcessingStatus> find(@NotNull UUID id);
-
-    Optional<ProcessingStatus> findByEventId(@NotNull UUID eventId);
+    Optional<ProcessingStatus> find(@NotNull UUID eventId);
 
     Set<ProcessingStatus> list(@NotNull ZonedDateTime from, @NotNull String... topic);
 

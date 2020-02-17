@@ -73,7 +73,7 @@ public class WebhookEventConsumer {
 
     private ProcessingStatus findOrCreate(final WebhookEvent callbackEvent, final Webhook webhook) {
         return repo
-                .findByEventId(callbackEvent.getId())
+                .find(callbackEvent.getId())
                 .orElseGet(() -> repo.save(new ProcessingStatus(callbackEvent, webhook.getId())));
     }
 
