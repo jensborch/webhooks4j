@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.Setter;
 
 /**
- *
+ * Processing status for a webhook event.
  */
 @Data
 public class ProcessingStatus {

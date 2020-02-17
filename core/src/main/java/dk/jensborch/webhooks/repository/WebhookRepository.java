@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import dk.jensborch.webhooks.Webhook;
 
 /**
- *
+ * Repository for manipulating webhooks, used by both publisher and consumer.
  */
 public interface WebhookRepository {
 
