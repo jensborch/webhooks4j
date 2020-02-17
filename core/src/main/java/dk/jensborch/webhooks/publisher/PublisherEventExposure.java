@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -43,7 +44,7 @@ public class PublisherEventExposure {
     @GET
     @Path("{id}")
     public Response get(
-            @NotNull @QueryParam("id") final UUID id) {
+            @NotNull @PathParam("id") final UUID id) {
         return repo.find(id)
                 .map(Response::ok)
                 .orElse(notFound(id))
