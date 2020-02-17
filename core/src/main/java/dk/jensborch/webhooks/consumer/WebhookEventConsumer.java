@@ -34,6 +34,12 @@ public class WebhookEventConsumer {
     @Inject
     WebhookRegistry registry;
 
+    /**
+     * Consume a callback webhook event and fire CDI events.
+     *
+     * @param callbackEvent to process
+     * @return Processing status for the event
+     */
     public ProcessingStatus consume(final WebhookEvent callbackEvent) {
         LOG.debug("Receiving event {}", callbackEvent);
         Webhook webhook = findPublisher(callbackEvent);

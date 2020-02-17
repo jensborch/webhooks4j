@@ -24,7 +24,7 @@ import dk.jensborch.webhooks.WebhookEventTopics;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 
 /**
- *
+ * Exposure for registration of webhooks.
  */
 @Path("/publisher-webhooks")
 @Produces(MediaType.APPLICATION_JSON)

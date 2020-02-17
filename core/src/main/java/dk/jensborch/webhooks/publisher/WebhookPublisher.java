@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Webhook publisher.
  */
 @Dependent
 public class WebhookPublisher {
@@ -39,13 +39,18 @@ public class WebhookPublisher {
     @Publisher
     private StatusRepository statusRepo;
 
-    public void publish(@NotNull @Valid final WebhookEvent e) {
-        LOG.debug("Publishing event {}", e);
-        repo.list(e.getTopic())
+    /**
+     * Publish a webhook event.
+     *
+     * @param event to publish.
+     */
+    public void publish(@NotNull @Valid final WebhookEvent event) {
+        LOG.debug("Publishing event {}", event);
+        repo.list(event.getTopic())
                 .stream()
-                .filter(w -> w.getTopics().contains(e.getTopic()))
+                .filter(w -> w.getTopics().contains(event.getTopic()))
                 .filter(Webhook::isActive)
-                .forEach(w -> call(w, e));
+                .forEach(w -> call(w, event));
     }
 
     private void call(final Webhook webhook, final WebhookEvent event) {
