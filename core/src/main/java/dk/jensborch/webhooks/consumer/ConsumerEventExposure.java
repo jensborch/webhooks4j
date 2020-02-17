@@ -63,7 +63,7 @@ public class ConsumerEventExposure {
     @Path("{id}")
     public Response get(
             @NotNull @QueryParam("id") final UUID id) {
-        return repo.findByEventId(id)
+        return repo.find(id)
                 .map(Response::ok)
                 .orElse(notFound(id))
                 .build();

@@ -82,7 +82,7 @@ public class WebhookEventConsumerTest {
     public void testReceiveTwice() throws Exception {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
-        when(repo.findByEventId(any()))
+        when(repo.find(any()))
                 .thenReturn(
                         Optional.of(
                                 new ProcessingStatus(callbackEvent, UUID.randomUUID())

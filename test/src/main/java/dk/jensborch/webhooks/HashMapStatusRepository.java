@@ -30,12 +30,6 @@ public abstract class HashMapStatusRepository implements StatusRepository {
     }
 
     @Override
-    public Optional<ProcessingStatus> findByEventId(final UUID eventId) {
-        return map.values().stream().filter(p -> p.getEvent().getId().equals(eventId))
-                .findAny();
-    }
-
-    @Override
     public Set<ProcessingStatus> list(final ZonedDateTime from, final String... topic) {
         return topic != null && topic.length > 0
                 ? map.values().stream()

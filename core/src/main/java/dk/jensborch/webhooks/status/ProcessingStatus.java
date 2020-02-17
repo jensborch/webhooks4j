@@ -24,7 +24,7 @@ public class ProcessingStatus {
     private final UUID webhook;
 
     public ProcessingStatus(final WebhookEvent event, final UUID webhook) {
-        this.id = UUID.randomUUID();
+        this.id = event.getId();
         this.event = event;
         this.start = ZonedDateTime.now();
         this.status = Status.STARTED;
