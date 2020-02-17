@@ -11,7 +11,7 @@ import lombok.Setter;
  * Processing status for a webhook event.
  */
 @Data
-public class ProcessingStatus {
+public class ProcessingStatus implements Comparable<ProcessingStatus> {
 
     @Setter
     ZonedDateTime end;
@@ -43,6 +43,11 @@ public class ProcessingStatus {
 
     public boolean eligible() {
         return status == Status.FAILD || status == Status.STARTED;
+    }
+
+    @Override
+    public int compareTo(final ProcessingStatus other) {
+        return end.compareTo(other.end);
     }
 
     /**
