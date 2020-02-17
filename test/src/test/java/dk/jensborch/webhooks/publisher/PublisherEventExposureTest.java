@@ -4,8 +4,12 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.greaterThan;
 
 import java.net.URI;
+import java.util.HashMap;
+
+import javax.inject.Inject;
 
 import dk.jensborch.webhooks.*;
+import dk.jensborch.webhooks.consumer.WebhookRegistry;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -23,6 +27,12 @@ import org.junit.jupiter.api.Test;
 @QuarkusTest
 public class PublisherEventExposureTest {
 
+    @Inject
+    WebhookRegistry registry;
+
+    @Inject
+    WebhookPublisher publisher;
+
     private static final String TEST_TOPIC = PublisherEventExposureTest.class.getName();
     private static Webhook webhook;
     private RequestSpecification spec;
@@ -34,8 +44,9 @@ public class PublisherEventExposureTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        RequestSpecBuilder builder = new RequestSpecBuilder();
-        spec = builder
+        registry.register(webhook);
+        publisher.publish(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()));
+        spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
                 .addFilter(new ResponseLoggingFilter())
@@ -44,24 +55,15 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testRegisterWebhook() {
-        String location = given()
-                .spec(spec)
-                .when()
-                .body(webhook)
-                .post("publisher-webhooks")
-                .then()
-                .statusCode(201)
-                .extract()
-                .header("location");
-
+    public void testList() {
         given()
                 .spec(spec)
                 .when()
-                .get(location)
+                .queryParam("from", "2007-12-03T10:15:30+01:00")
+                .get("publisher-events")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(1));
+                .body("size()", greaterThan(0));
     }
 
 }
