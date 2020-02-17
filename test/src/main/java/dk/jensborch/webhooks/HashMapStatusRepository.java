@@ -32,12 +32,10 @@ public abstract class HashMapStatusRepository implements StatusRepository {
 
     @Override
     public SortedSet<ProcessingStatus> list(final ZonedDateTime from, final String... topic) {
-        return topic != null && topic.length > 0
-                ? map.values().stream()
-                        .filter(p -> p.getStart().isAfter(from))
-                        .filter(p -> Arrays.binarySearch(topic, p.getEvent().getTopic()) >= 0)
-                        .collect(Collectors.toCollection(TreeSet::new))
-                : map.values().stream().collect(Collectors.toCollection(TreeSet::new));
+        return map.values().stream()
+                .filter(p -> p.getStart().isAfter(from))
+                .filter(p -> topic == null || topic.length == 0 || Arrays.binarySearch(topic, p.getEvent().getTopic()) >= 0)
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
 }
