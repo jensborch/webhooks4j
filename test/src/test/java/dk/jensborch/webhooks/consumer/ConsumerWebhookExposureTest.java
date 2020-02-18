@@ -1,14 +1,15 @@
 package dk.jensborch.webhooks.consumer;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
-import dk.jensborch.webhooks.*;
+import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.publisher.*;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -20,16 +21,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Integration test for
- * {@link dk.jensborch.webhooks.consumer.ConsumerEventExposur}
+ * Integration test for {@link PublisherWebhookExposure}.
  */
 @QuarkusTest
-public class ConsumerEventExposureTest {
+public class ConsumerWebhookExposureTest {
 
     @Inject
     WebhookRegistry registry;
 
-    private static final String TEST_TOPIC = ConsumerEventExposureTest.class.getName();
+    private static final String TEST_TOPIC = ConsumerWebhookExposureTest.class.getName();
     private static Webhook webhook;
     private RequestSpecification spec;
 
@@ -50,35 +50,27 @@ public class ConsumerEventExposureTest {
     }
 
     @Test
-    public void testPublishEvent() {
+    public void testGetWebhook() throws Exception {
         given()
                 .spec(spec)
                 .when()
-                .body(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()))
-                .post("consumer-events")
+                .pathParam("id", webhook.getId())
+                .get("consumer-webhooks/{id}")
                 .then()
-                .statusCode(201);
+                .statusCode(200)
+                .body("topics[0]", is(TEST_TOPIC));
     }
 
     @Test
-    public void testPublishEvent400() {
+    public void testListWebhooks() throws Exception {
         given()
                 .spec(spec)
                 .when()
-                .body(new WebhookEvent(UUID.randomUUID(), TEST_TOPIC, new HashMap<>()))
-                .post("consumer-events")
+                .queryParam("topics", TEST_TOPIC)
+                .get("consumer-webhooks")
                 .then()
-                .statusCode(400);
+                .statusCode(200)
+                .body("size()", equalTo(1));
     }
 
-    @Test
-    public void testList() {
-        given()
-                .spec(spec)
-                .when()
-                .queryParam("from", "2007-12-03T10:15:30+01:00")
-                .get("consumer-events")
-                .then()
-                .statusCode(200);
-    }
 }

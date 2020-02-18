@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -133,7 +132,7 @@ public class WebhookRegistry {
         return repo.find(id);
     }
 
-    public Set<Webhook> list(@NotNull @Size(min = 1) final String... topic) {
+    public Set<Webhook> list(@NotNull final String... topic) {
         return repo.list(topic);
     }
 
