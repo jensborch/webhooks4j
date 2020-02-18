@@ -1,6 +1,7 @@
 package dk.jensborch.webhooks.consumer;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -58,6 +59,18 @@ public class ConsumerEventExposureTest {
                 .post("consumer-events")
                 .then()
                 .statusCode(201);
+    }
+
+    @Test
+    public void testPublishInvalidEvent() {
+        given()
+                .spec(spec)
+                .when()
+                .body("{}")
+                .post("consumer-events")
+                .then()
+                .statusCode(400)
+                .body("code", equalTo(WebhookError.Code.VALIDATION_ERROR.toString()));
     }
 
     @Test

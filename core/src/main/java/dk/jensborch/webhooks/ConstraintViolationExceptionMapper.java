@@ -2,13 +2,18 @@ package dk.jensborch.webhooks;
 
 import java.util.stream.Collectors;
 
+import javax.annotation.Priority;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
  * JAX-RS exception mapper for {@link ConstraintViolationException}.
  */
+@Provider
+@Priority(Priorities.USER - 100)
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
     @Override
