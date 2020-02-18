@@ -3,10 +3,8 @@ package dk.jensborch.webhooks.consumer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,14 +49,6 @@ public class ConsumerWebhooksExposureTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
-        Response result = exposure.create(webhook, uriInfo);
-        assertNotNull(result);
-        verify(registry).register(webhook);
-    }
-
-    @Test
     public void testList() {
         Response result = exposure.list("test_topic");
         assertNotNull(result);
@@ -79,15 +69,6 @@ public class ConsumerWebhooksExposureTest {
         Response result = exposure.get(UUID.randomUUID());
         assertNotNull(result);
         assertEquals(200, result.getStatus());
-    }
-
-    @Test
-    public void testDelete() throws Exception {
-        UUID id = UUID.randomUUID();
-        Response result = exposure.delete(id);
-        assertNotNull(result);
-        assertEquals(204, result.getStatus());
-        verify(registry, times(1)).unregister(eq(id));
     }
 
 }

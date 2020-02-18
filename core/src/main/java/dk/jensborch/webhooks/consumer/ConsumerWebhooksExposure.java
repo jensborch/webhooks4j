@@ -3,22 +3,16 @@ package dk.jensborch.webhooks.consumer;
 import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEventTopics;
 
@@ -33,21 +27,8 @@ public class ConsumerWebhooksExposure {
     @Inject
     WebhookRegistry registry;
 
-    @POST
-    public Response create(
-            @NotNull @Valid final Webhook webhook,
-            @Context final UriInfo uriInfo) {
-        registry.register(webhook);
-        return Response.created(uriInfo
-                .getBaseUriBuilder()
-                .path(ConsumerWebhooksExposure.class)
-                .path(ConsumerWebhooksExposure.class, "get")
-                .build(webhook.getId()))
-                .build();
-    }
-
     @GET
-    public Response list(@QueryParam("topic") final String topics) {
+    public Response list(@QueryParam("topics") final String topics) {
         return Response.ok(registry.list(WebhookEventTopics.parse(topics).getTopics())).build();
     }
 
@@ -58,13 +39,6 @@ public class ConsumerWebhooksExposure {
                 .map(Response::ok)
                 .orElse(notFound(id))
                 .build();
-    }
-
-    @DELETE
-    @Path("{id}")
-    public Response delete(@NotNull @PathParam("id") final UUID id) {
-        registry.unregister(id);
-        return Response.noContent().build();
     }
 
     private Response.ResponseBuilder notFound(final UUID id) {
