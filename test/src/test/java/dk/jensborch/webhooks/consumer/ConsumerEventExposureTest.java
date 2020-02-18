@@ -18,13 +18,17 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 /**
  * Integration test for
  * {@link dk.jensborch.webhooks.consumer.ConsumerEventExposur}
  */
 @QuarkusTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ConsumerEventExposureTest {
 
     @Inject
@@ -51,6 +55,7 @@ public class ConsumerEventExposureTest {
     }
 
     @Test
+    @Order(1)
     public void testPublishEvent() {
         given()
                 .spec(spec)
@@ -59,6 +64,32 @@ public class ConsumerEventExposureTest {
                 .post("consumer-events")
                 .then()
                 .statusCode(201);
+    }
+
+    @Test
+    @Order(2)
+    public void testList() {
+        given()
+                .spec(spec)
+                .when()
+                .queryParam("from", "2007-12-03T10:15:30+01:00")
+                .get("consumer-events")
+                .then()
+                .statusCode(200)
+                .body("size()", equalTo(1));
+    }
+
+    @Test
+    public void testListUnknownTopic() {
+        given()
+                .spec(spec)
+                .when()
+                .queryParam("from", "2007-12-03T10:15:30+01:00")
+                .queryParam("topics", "unknown")
+                .get("consumer-events")
+                .then()
+                .statusCode(200)
+                .body("size()", equalTo(0));
     }
 
     @Test
@@ -74,24 +105,27 @@ public class ConsumerEventExposureTest {
     }
 
     @Test
-    public void testPublishEvent400() {
+    public void testPublishEventInvalidPublisher() {
         given()
                 .spec(spec)
                 .when()
                 .body(new WebhookEvent(UUID.randomUUID(), TEST_TOPIC, new HashMap<>()))
                 .post("consumer-events")
                 .then()
-                .statusCode(400);
+                .statusCode(400)
+                .body("code", equalTo(WebhookError.Code.UNKNOWN_PUBLISHER.toString()));
     }
 
     @Test
-    public void testList() {
+    public void testPublishEventUnknownTopic() {
         given()
                 .spec(spec)
                 .when()
-                .queryParam("from", "2007-12-03T10:15:30+01:00")
-                .get("consumer-events")
+                .body(new WebhookEvent(webhook.getId(), "unknown", new HashMap<>()))
+                .post("consumer-events")
                 .then()
-                .statusCode(200);
+                .statusCode(400)
+                .body("code", equalTo(WebhookError.Code.UNKNOWN_PUBLISHER.toString()));
     }
+
 }
