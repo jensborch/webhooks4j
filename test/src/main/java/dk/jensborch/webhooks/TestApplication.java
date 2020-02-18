@@ -12,15 +12,13 @@ import dk.jensborch.webhooks.publisher.PublisherEventExposure;
 import dk.jensborch.webhooks.publisher.PublisherWebhookExposure;
 
 /**
- *
+ * Defines the test application.
  */
 public class TestApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
         return Arrays.stream(new Class<?>[]{
-            DefaultExceptionMapper.class,
-            ConstraintViolationExceptionMapper.class,
             ConsumerEventExposure.class,
             ConsumerWebhooksExposure.class,
             PublisherEventExposure.class,
