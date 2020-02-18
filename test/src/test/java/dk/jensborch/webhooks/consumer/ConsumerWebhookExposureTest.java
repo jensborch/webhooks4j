@@ -62,11 +62,34 @@ public class ConsumerWebhookExposureTest {
     }
 
     @Test
+    public void testListWebhooksWithTopics() throws Exception {
+        given()
+                .spec(spec)
+                .when()
+                .queryParam("topics", TEST_TOPIC + ",testtest")
+                .get("consumer-webhooks")
+                .then()
+                .statusCode(200)
+                .body("size()", equalTo(1));
+    }
+
+    @Test
+    public void testListWebhooksUnknownTopic() throws Exception {
+        given()
+                .spec(spec)
+                .when()
+                .queryParam("topics", "unknown")
+                .get("consumer-webhooks")
+                .then()
+                .statusCode(200)
+                .body("size()", equalTo(0));
+    }
+
+    @Test
     public void testListWebhooks() throws Exception {
         given()
                 .spec(spec)
                 .when()
-                .queryParam("topics", TEST_TOPIC)
                 .get("consumer-webhooks")
                 .then()
                 .statusCode(200)
