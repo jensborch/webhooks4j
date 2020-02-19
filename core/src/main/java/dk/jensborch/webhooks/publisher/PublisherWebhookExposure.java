@@ -49,7 +49,7 @@ public class PublisherWebhookExposure {
     }
 
     @GET
-    public Response list(@QueryParam("topic") final String topics) {
+    public Response list(@QueryParam("topics") final String topics) {
         return Response.ok(repo.list(WebhookEventTopics.parse(topics).getTopics())).build();
     }
 
