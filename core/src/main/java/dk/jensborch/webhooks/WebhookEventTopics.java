@@ -1,8 +1,8 @@
 package dk.jensborch.webhooks;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
  */
 public final class WebhookEventTopics {
 
-    private final List<String> topics;
+    private final Set<String> topics;
 
     private WebhookEventTopics(final String topics) {
         this.topics = topics == null
-                ? new ArrayList<>(0)
+                ? new HashSet<>(0)
                 : Arrays
                         .stream(topics.split(","))
                         .map(String::trim)
-                        .collect(Collectors.toList());
+                        .collect(Collectors.toSet());
     }
 
     public static WebhookEventTopics parse(final String topics) {

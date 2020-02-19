@@ -1,4 +1,8 @@
-package dk.jensborch.webhooks;
+package dk.jensborch.webhooks.exceptionmappers;
+
+import dk.jensborch.webhooks.WebhookError;
+import dk.jensborch.webhooks.WebhookException;
+import dk.jensborch.webhooks.exceptionmappers.WebhookExceptionMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

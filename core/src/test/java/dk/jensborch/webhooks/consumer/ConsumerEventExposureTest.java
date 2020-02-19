@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -71,7 +72,7 @@ public class ConsumerEventExposureTest {
         ZonedDateTime now = ZonedDateTime.now();
         Response response = exposure.list("test1, test2", now.toString(), uriInfo);
         assertNotNull(response);
-        verify(repo).list(eq(now), eq("test1"), eq("test2"));
+        verify(repo).list(eq(now), startsWith("test"), startsWith("test"));
     }
 
     @Test

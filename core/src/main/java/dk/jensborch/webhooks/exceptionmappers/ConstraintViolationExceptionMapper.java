@@ -1,4 +1,6 @@
-package dk.jensborch.webhooks;
+package dk.jensborch.webhooks.exceptionmappers;
+
+import dk.jensborch.webhooks.WebhookError;
 
 import java.util.stream.Collectors;
 
