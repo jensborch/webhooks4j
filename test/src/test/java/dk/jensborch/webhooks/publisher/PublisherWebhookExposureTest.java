@@ -2,6 +2,7 @@ package dk.jensborch.webhooks.publisher;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
 import java.net.URI;
@@ -31,8 +32,7 @@ public class PublisherWebhookExposureTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        RequestSpecBuilder builder = new RequestSpecBuilder();
-        spec = builder
+        spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
                 .addFilter(new ResponseLoggingFilter())
@@ -63,7 +63,33 @@ public class PublisherWebhookExposureTest {
     }
 
     @Test
-    @Order(1)
+    @Order(2)
+    public void testListWebhooksWithTopics() throws Exception {
+        given()
+                .spec(spec)
+                .when()
+                .queryParam("topics", TEST_TOPIC + ",testtest")
+                .get("publisher-webhooks")
+                .then()
+                .statusCode(200)
+                .body("size()", equalTo(1));
+    }
+
+    @Test
+    @Order(2)
+    public void testListWebhooksUnknownTopic() throws Exception {
+        given()
+                .spec(spec)
+                .when()
+                .queryParam("topics", "unknown")
+                .get("publisher-webhooks")
+                .then()
+                .statusCode(200)
+                .body("size()", equalTo(0));
+    }
+
+    @Test
+    @Order(2)
     public void testListWebhooks() throws Exception {
         given()
                 .spec(spec)
