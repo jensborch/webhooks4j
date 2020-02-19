@@ -1,4 +1,6 @@
-package dk.jensborch.webhooks;
+package dk.jensborch.webhooks.exceptionmappers;
+
+import dk.jensborch.webhooks.WebhookException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
