@@ -56,7 +56,7 @@ public class ConsumerEventExposure {
     }
 
     @GET
-    @RolesAllowed("consumer")
+    @RolesAllowed({"consumer", "publisher"})
     public Response list(
             @QueryParam("topics") final String topics,
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
@@ -66,7 +66,7 @@ public class ConsumerEventExposure {
 
     @GET
     @Path("{id}")
-    @RolesAllowed("consumer")
+    @RolesAllowed({"consumer", "publisher"})
     public Response get(
             @NotNull @QueryParam("id") final UUID id) {
         return repo.find(id)

@@ -45,6 +45,7 @@ public class PublisherWebhookExposureTest {
     public void testCreateWebhook() throws Exception {
         String location = given()
                 .spec(spec)
+                .auth().basic("consumer", "concon")
                 .when()
                 .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TEST_TOPIC))
                 .post("publisher-webhooks")
@@ -55,6 +56,7 @@ public class PublisherWebhookExposureTest {
 
         given()
                 .spec(spec)
+                .auth().basic("consumer", "concon")
                 .when()
                 .get(location)
                 .then()
@@ -67,6 +69,7 @@ public class PublisherWebhookExposureTest {
     public void testListWebhooksWithTopics() throws Exception {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .queryParam("topics", TEST_TOPIC + ",testtest")
                 .get("publisher-webhooks")
@@ -80,6 +83,7 @@ public class PublisherWebhookExposureTest {
     public void testListWebhooksUnknownTopic() throws Exception {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .queryParam("topics", "unknown")
                 .get("publisher-webhooks")
@@ -93,6 +97,7 @@ public class PublisherWebhookExposureTest {
     public void testListWebhooks() throws Exception {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .get("publisher-webhooks")
                 .then()

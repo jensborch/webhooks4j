@@ -3,6 +3,8 @@ package dk.jensborch.webhooks.publisher;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -25,6 +27,8 @@ import dk.jensborch.webhooks.status.StatusRepository;
  * Exposure for listing events published.
  */
 @Path("/publisher-events")
+@DeclareRoles("publisher")
+@RolesAllowed("publisher")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PublisherEventExposure {

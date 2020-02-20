@@ -2,6 +2,8 @@ package dk.jensborch.webhooks.publisher;
 
 import java.util.UUID;
 
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -27,6 +29,7 @@ import dk.jensborch.webhooks.repository.WebhookRepository;
  * Exposure for registration of webhooks.
  */
 @Path("/publisher-webhooks")
+@DeclareRoles({"consumer", "publisher"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PublisherWebhookExposure {
@@ -36,6 +39,7 @@ public class PublisherWebhookExposure {
     WebhookRepository repo;
 
     @POST
+    @RolesAllowed("consumer")
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
@@ -49,11 +53,13 @@ public class PublisherWebhookExposure {
     }
 
     @GET
+    @RolesAllowed({"consumer", "publisher"})
     public Response list(@QueryParam("topics") final String topics) {
         return Response.ok(repo.list(WebhookEventTopics.parse(topics).getTopics())).build();
     }
 
     @GET
+    @RolesAllowed({"consumer", "publisher"})
     @Path("{id}")
     public Response get(@NotNull @PathParam("id") final UUID id) {
         return repo.find(id)
@@ -63,6 +69,7 @@ public class PublisherWebhookExposure {
     }
 
     @DELETE
+    @RolesAllowed("consumer")
     @Path("{id}")
     public Response delete(@NotNull @PathParam("id") final UUID id) {
         repo.delte(id);

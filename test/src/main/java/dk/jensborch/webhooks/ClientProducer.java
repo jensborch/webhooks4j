@@ -27,7 +27,7 @@ public class ClientProducer {
     public Client getConsumerClient() {
         return ClientBuilder
                 .newClient()
-                .register(new BasicAuthClientRequestFilter("publisher", "pubpub"));
+                .register(new BasicAuthClientRequestFilter("consumer", "concon"));
     }
 
 }

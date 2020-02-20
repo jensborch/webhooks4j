@@ -63,6 +63,7 @@ public class PublisherEventExposureTest {
     public void testGet() {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .pathParam("id", event.getId())
                 .get("publisher-events/{id}")
@@ -74,6 +75,7 @@ public class PublisherEventExposureTest {
     public void testListTopics() {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
                 .queryParam("topics", TEST_TOPIC)
@@ -87,6 +89,7 @@ public class PublisherEventExposureTest {
     public void testList() {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
                 .get("publisher-events")
@@ -99,6 +102,7 @@ public class PublisherEventExposureTest {
     public void testListUnknownTopics() {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
                 .queryParam("topics", "t1,t2,t3")
@@ -112,6 +116,7 @@ public class PublisherEventExposureTest {
     public void testListFuture() {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .queryParam("from", ZonedDateTime.now().plusHours(1).format(DateTimeFormatter.ISO_DATE_TIME))
                 .get("publisher-events")
