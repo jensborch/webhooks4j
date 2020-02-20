@@ -1,7 +1,6 @@
 package dk.jensborch.webhooks;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
