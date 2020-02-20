@@ -72,7 +72,7 @@ public class PublisherWebhookExposure {
     @RolesAllowed("consumer")
     @Path("{id}")
     public Response delete(@NotNull @PathParam("id") final UUID id) {
-        repo.delte(id);
+        repo.delete(id);
         return Response.noContent().build();
     }
 

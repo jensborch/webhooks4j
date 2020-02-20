@@ -70,16 +70,16 @@ public class WebhookEventConsumerTest {
     }
 
     @Test
-    public void testReceive() throws Exception {
+    public void testReceive() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         ProcessingStatus status = consumer.consume(callbackEvent);
-        assertNotNull(status, "Exposure must return a response");
+        assertNotNull(status);
         verify(repo, times(2)).save(any());
     }
 
     @Test
-    public void testReceiveTwice() throws Exception {
+    public void testReceiveTwice() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         when(repo.find(any()))
@@ -93,35 +93,31 @@ public class WebhookEventConsumerTest {
     }
 
     @Test
-    public void testReceiveUnknownPublisher() throws Exception {
+    public void testReceiveUnknownPublisher() {
         UUID publisher = UUID.randomUUID();
         when(registry.find(any())).thenReturn(Optional.empty());
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
-        WebhookException e = assertThrows(WebhookException.class, () -> {
-            consumer.consume(callbackEvent);
-        });
+        WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
         assertEquals("Unknown/inactive publisher " + publisher + " for topic test_topic", e.getError().getMsg());
     }
 
     @Test
-    public void testReceiveUnknowntopic() throws Exception {
+    public void testReceiveUnknownTopic() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, "unknown_topic", new HashMap<>());
-        WebhookException e = assertThrows(WebhookException.class, () -> {
-            consumer.consume(callbackEvent);
-        });
+        WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
         assertEquals("Unknown/inactive publisher " + publisher + " for topic unknown_topic", e.getError().getMsg());
     }
 
     @Test
-    public void testReceiveException() throws Exception {
+    public void testReceiveException() {
         UUID publisher = UUID.randomUUID();
         doThrow(new ObserverException("Test")).when(event).fire(any());
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         ProcessingStatus status = consumer.consume(callbackEvent);
-        assertNotNull(status, "Exposure must return a response wehn ProcessingException is thrown");
+        assertNotNull(status);
         verify(repo, times(2)).save(any());
     }
 

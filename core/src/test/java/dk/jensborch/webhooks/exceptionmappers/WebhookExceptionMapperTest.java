@@ -22,8 +22,8 @@ public class WebhookExceptionMapperTest {
         WebhookExceptionMapper mapper = new WebhookExceptionMapper();
         Response response = mapper.toResponse(e);
         assertNotNull(response);
-        WebhookError entiry = (WebhookError) response.getEntity();
-        assertEquals("test", entiry.getMsg());
+        WebhookError entity = (WebhookError) response.getEntity();
+        assertEquals("test", entity.getMsg());
     }
 
 }

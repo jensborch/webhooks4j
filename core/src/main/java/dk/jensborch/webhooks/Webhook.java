@@ -60,7 +60,7 @@ public class Webhook {
      * Webhook status.
      */
     public enum Status {
-        ACTIVE, INACTIVE, FAILED;
+        ACTIVE, INACTIVE, FAILED
     }
 
 }

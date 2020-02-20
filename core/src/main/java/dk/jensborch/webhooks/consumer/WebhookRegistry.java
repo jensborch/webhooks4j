@@ -55,11 +55,11 @@ public class WebhookRegistry {
                 if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
                     repo.save(webhook.status(Webhook.Status.FAILED));
                     String error = WebhookError.parseErrorResponseToString(response);
-                    throwWebhookException("Faild to register, got HTTP status code " + response.getStatus() + " and error: " + error);
+                    throwWebhookException("Failed to register, got HTTP status code " + response.getStatus() + " and error: " + error);
                 }
             } catch (ProcessingException e) {
                 repo.save(webhook.status(Webhook.Status.FAILED));
-                throwWebhookException("Faild to register, error processing response", e);
+                throwWebhookException("Failed to register, error processing response", e);
             }
         }
     }
@@ -84,10 +84,10 @@ public class WebhookRegistry {
                 handleNotFound(response, webhook);
             } else {
                 String error = WebhookError.parseErrorResponseToString(response);
-                throwWebhookException("Faild to unregister, got HTTP status code " + response.getStatus() + " and error: " + error);
+                throwWebhookException("Failed to unregister, got HTTP status code " + response.getStatus() + " and error: " + error);
             }
         } catch (ProcessingException e) {
-            throwWebhookException("Faild to unregister, error processing response", e);
+            throwWebhookException("Failed to unregister, error processing response", e);
         }
     }
 
@@ -100,7 +100,7 @@ public class WebhookRegistry {
      */
     public void unregister(@NotNull final UUID id) {
         Webhook w = find(id).orElseThrow(() -> new WebhookException(
-                new WebhookError(WebhookError.Code.REGISTER_ERROR, "WEbhook with id " + id + " not found")));
+                new WebhookError(WebhookError.Code.REGISTER_ERROR, "Webhook with id " + id + " not found")));
         unregister(w);
     }
 
@@ -110,7 +110,7 @@ public class WebhookRegistry {
             LOG.info("Webhook {} not found at publisher", error);
             repo.save(webhook.status(Webhook.Status.INACTIVE));
         } else {
-            throwWebhookException("Faild to unregister, got HTTP status code 404, but unexpected error code: " + error);
+            throwWebhookException("Failed to unregister, got HTTP status code 404, but unexpected error code: " + error);
         }
     }
 

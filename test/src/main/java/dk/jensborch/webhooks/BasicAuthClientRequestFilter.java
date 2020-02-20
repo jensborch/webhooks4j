@@ -2,6 +2,7 @@ package dk.jensborch.webhooks;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import javax.ws.rs.client.ClientRequestContext;
@@ -28,8 +29,8 @@ public class BasicAuthClientRequestFilter implements ClientRequestFilter {
         );
     }
 
-    public static String encodeCredentials(final String user, final String password) throws UnsupportedEncodingException {
-        return "BASIC " + Base64.getEncoder().encodeToString((user + ":" + password).getBytes("UTF-8"));
+    public static String encodeCredentials(final String user, final String password) {
+        return "BASIC " + Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8));
     }
 
 }
