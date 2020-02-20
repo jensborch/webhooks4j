@@ -18,20 +18,16 @@ public class ClientProducer {
     @Publisher
     public Client getPublisherClient() {
         return ClientBuilder
-                .newBuilder()
-                //.register(new BasicAuthClientRequestFilter("consumer", "concon"))
-                .register(new BasicAuthClientRequestFilter("publisher", "pubpub"))
-                .build();
+                .newClient()
+                .register(new BasicAuthClientRequestFilter("publisher", "pubpub"));
     }
 
     @Produces
     @Consumer
     public Client getConsumerClient() {
         return ClientBuilder
-                .newBuilder()
-                .register(new BasicAuthClientRequestFilter("publisher", "pubpub"))
-                //.register(new BasicAuthClientRequestFilter("consumer", "concon"))
-                .build();
+                .newClient()
+                .register(new BasicAuthClientRequestFilter("publisher", "pubpub"));
     }
 
 }

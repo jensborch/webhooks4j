@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -31,7 +30,6 @@ import dk.jensborch.webhooks.status.StatusRepository;
  */
 @Path("/consumer-events")
 @DeclareRoles({"consumer", "publisher"})
-@RolesAllowed("publisher")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ConsumerEventExposure {
@@ -44,7 +42,7 @@ public class ConsumerEventExposure {
     StatusRepository repo;
 
     @POST
-    @PermitAll
+    @RolesAllowed("publisher")
     public Response receive(
             @NotNull @Valid final WebhookEvent callbackEvent,
             @Context final UriInfo uriInfo) {
