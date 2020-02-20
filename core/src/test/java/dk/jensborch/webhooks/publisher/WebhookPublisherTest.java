@@ -63,6 +63,7 @@ public class WebhookPublisherTest {
         lenient().when(response.getStatusInfo()).thenReturn(Response.Status.ACCEPTED);
         lenient().when(builder.post(any(Entity.class))).thenReturn(response);
         lenient().when(statusRepo.save(any())).then(returnsFirstArg());
+        lenient().when(response.hasEntity()).thenReturn(true);
     }
 
     @Test

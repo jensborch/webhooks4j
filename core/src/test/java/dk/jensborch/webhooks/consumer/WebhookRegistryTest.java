@@ -65,6 +65,7 @@ public class WebhookRegistryTest {
         lenient().when(response.getStatusInfo()).thenReturn(Response.Status.ACCEPTED);
         lenient().when(builder.post(any(Entity.class))).thenReturn(response);
         lenient().when(builder.delete()).thenReturn(response);
+        lenient().when(response.hasEntity()).thenReturn(true);
     }
 
     @Test

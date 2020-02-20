@@ -59,6 +59,7 @@ public class ConsumerEventExposureTest {
     public void testPublishEvent() {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .body(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()))
                 .post("consumer-events")
@@ -71,6 +72,7 @@ public class ConsumerEventExposureTest {
     public void testList() {
         given()
                 .spec(spec)
+                .auth().basic("consumer", "concon")
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
                 .get("consumer-events")
@@ -83,6 +85,7 @@ public class ConsumerEventExposureTest {
     public void testListUnknownTopic() {
         given()
                 .spec(spec)
+                .auth().basic("consumer", "concon")
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
                 .queryParam("topics", "unknown")
@@ -96,6 +99,7 @@ public class ConsumerEventExposureTest {
     public void testPublishInvalidEvent() {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .body("{}")
                 .post("consumer-events")
@@ -108,6 +112,7 @@ public class ConsumerEventExposureTest {
     public void testPublishEventInvalidPublisher() {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .body(new WebhookEvent(UUID.randomUUID(), TEST_TOPIC, new HashMap<>()))
                 .post("consumer-events")
@@ -120,6 +125,7 @@ public class ConsumerEventExposureTest {
     public void testPublishEventUnknownTopic() {
         given()
                 .spec(spec)
+                .auth().basic("publisher", "pubpub")
                 .when()
                 .body(new WebhookEvent(webhook.getId(), "unknown", new HashMap<>()))
                 .post("consumer-events")

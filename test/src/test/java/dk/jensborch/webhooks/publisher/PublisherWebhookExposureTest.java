@@ -97,7 +97,7 @@ public class PublisherWebhookExposureTest {
                 .get("publisher-webhooks")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(1));
+                .body("size()", greaterThan(0));
     }
 
 }

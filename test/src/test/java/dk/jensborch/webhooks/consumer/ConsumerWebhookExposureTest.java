@@ -53,6 +53,7 @@ public class ConsumerWebhookExposureTest {
     public void testGetWebhook() throws Exception {
         given()
                 .spec(spec)
+                .auth().basic("consumer", "concon")
                 .when()
                 .pathParam("id", webhook.getId())
                 .get("consumer-webhooks/{id}")
@@ -65,6 +66,7 @@ public class ConsumerWebhookExposureTest {
     public void testListWebhooksWithTopics() throws Exception {
         given()
                 .spec(spec)
+                .auth().basic("consumer", "concon")
                 .when()
                 .queryParam("topics", TEST_TOPIC + ",testtest")
                 .get("consumer-webhooks")
@@ -77,6 +79,7 @@ public class ConsumerWebhookExposureTest {
     public void testListWebhooksUnknownTopic() throws Exception {
         given()
                 .spec(spec)
+                .auth().basic("consumer", "concon")
                 .when()
                 .queryParam("topics", "unknown")
                 .get("consumer-webhooks")
@@ -89,6 +92,7 @@ public class ConsumerWebhookExposureTest {
     public void testListWebhooks() throws Exception {
         given()
                 .spec(spec)
+                .auth().basic("consumer", "concon")
                 .when()
                 .get("consumer-webhooks")
                 .then()

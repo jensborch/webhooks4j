@@ -19,7 +19,8 @@ public class ClientProducer {
     public Client getPublisherClient() {
         return ClientBuilder
                 .newBuilder()
-                .register(new BasicAuthClientRequestFilter("consumer", "concon"))
+                //.register(new BasicAuthClientRequestFilter("consumer", "concon"))
+                .register(new BasicAuthClientRequestFilter("publisher", "pubpub"))
                 .build();
     }
 
@@ -29,6 +30,7 @@ public class ClientProducer {
         return ClientBuilder
                 .newBuilder()
                 .register(new BasicAuthClientRequestFilter("publisher", "pubpub"))
+                //.register(new BasicAuthClientRequestFilter("consumer", "concon"))
                 .build();
     }
 
