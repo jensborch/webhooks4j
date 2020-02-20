@@ -30,6 +30,7 @@ public class WebhookErrorTest {
     @BeforeEach
     public void setUp() {
         map = new HashMap<>();
+        when(response.hasEntity()).thenReturn(true);
         when(response.readEntity(any(GenericType.class))).thenReturn(map);
     }
 

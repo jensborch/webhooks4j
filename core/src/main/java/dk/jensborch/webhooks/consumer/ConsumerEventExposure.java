@@ -3,6 +3,9 @@ package dk.jensborch.webhooks.consumer;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -27,6 +30,8 @@ import dk.jensborch.webhooks.status.StatusRepository;
  * Exposure for receiving callback events.
  */
 @Path("/consumer-events")
+@DeclareRoles({"consumer", "publisher"})
+@RolesAllowed("publisher")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ConsumerEventExposure {
@@ -39,6 +44,7 @@ public class ConsumerEventExposure {
     StatusRepository repo;
 
     @POST
+    @PermitAll
     public Response receive(
             @NotNull @Valid final WebhookEvent callbackEvent,
             @Context final UriInfo uriInfo) {
@@ -52,6 +58,7 @@ public class ConsumerEventExposure {
     }
 
     @GET
+    @RolesAllowed("consumer")
     public Response list(
             @QueryParam("topics") final String topics,
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
@@ -61,6 +68,7 @@ public class ConsumerEventExposure {
 
     @GET
     @Path("{id}")
+    @RolesAllowed("consumer")
     public Response get(
             @NotNull @QueryParam("id") final UUID id) {
         return repo.find(id)

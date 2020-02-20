@@ -28,8 +28,10 @@ public class WebhookError implements Serializable {
     }
 
     public static Map<String, Object> parseErrorResponseToMap(final Response response) {
-        return response.readEntity(new GenericType<HashMap<String, Object>>() {
-        });
+        return response.hasEntity()
+                ? response.readEntity(new GenericType<HashMap<String, Object>>() {
+                })
+                : new HashMap<>(0);
     }
 
     public static String parseErrorResponseToString(final Response response) {
