@@ -44,7 +44,7 @@ public class ConsumerEventExposureTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         registry.register(webhook);
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)

@@ -34,7 +34,7 @@ public abstract class HashMapWebhookRepository implements WebhookRepository {
     }
 
     @Override
-    public void delte(final UUID id) {
+    public void delete(final UUID id) {
         map.remove(id);
     }
 

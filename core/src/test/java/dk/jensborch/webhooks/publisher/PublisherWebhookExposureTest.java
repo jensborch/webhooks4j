@@ -86,7 +86,7 @@ public class PublisherWebhookExposureTest {
         UUID id = UUID.randomUUID();
         Response result = exposure.delete(id);
         assertNotNull(result);
-        verify(repo).delte(eq(id));
+        verify(repo).delete(eq(id));
     }
 
 }

@@ -31,18 +31,18 @@ public class ProcessingStatus implements Comparable<ProcessingStatus> {
         this.webhook = webhook;
     }
 
-    public ProcessingStatus done(final boolean sucess) {
-        if (sucess) {
+    public ProcessingStatus done(final boolean success) {
+        if (success) {
             status = Status.SUCCESS;
         } else {
-            status = Status.FAILD;
+            status = Status.FAILED;
         }
         end = ZonedDateTime.now();
         return this;
     }
 
     public boolean eligible() {
-        return status == Status.FAILD || status == Status.STARTED;
+        return status == Status.FAILED || status == Status.STARTED;
     }
 
     @Override
@@ -54,6 +54,6 @@ public class ProcessingStatus implements Comparable<ProcessingStatus> {
      * The processing status of the event.
      */
     public enum Status {
-        STARTED, FAILD, SUCCESS;
+        STARTED, FAILED, SUCCESS
     }
 }

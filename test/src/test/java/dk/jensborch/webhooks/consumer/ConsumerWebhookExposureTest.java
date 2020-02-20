@@ -39,7 +39,7 @@ public class ConsumerWebhookExposureTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         registry.register(webhook);
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
@@ -50,7 +50,7 @@ public class ConsumerWebhookExposureTest {
     }
 
     @Test
-    public void testGetWebhook() throws Exception {
+    public void testGetWebhook() {
         given()
                 .spec(spec)
                 .auth().basic("consumer", "concon")
@@ -63,7 +63,7 @@ public class ConsumerWebhookExposureTest {
     }
 
     @Test
-    public void testListWebhooksWithTopics() throws Exception {
+    public void testListWebhooksWithTopics() {
         given()
                 .spec(spec)
                 .auth().basic("consumer", "concon")
@@ -76,7 +76,7 @@ public class ConsumerWebhookExposureTest {
     }
 
     @Test
-    public void testListWebhooksUnknownTopic() throws Exception {
+    public void testListWebhooksUnknownTopic() {
         given()
                 .spec(spec)
                 .auth().basic("consumer", "concon")
@@ -89,7 +89,7 @@ public class ConsumerWebhookExposureTest {
     }
 
     @Test
-    public void testListWebhooks() throws Exception {
+    public void testListWebhooks() {
         given()
                 .spec(spec)
                 .auth().basic("consumer", "concon")

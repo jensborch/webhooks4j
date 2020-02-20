@@ -31,7 +31,7 @@ public class PublisherWebhookExposureTest {
     private RequestSpecification spec;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
@@ -66,7 +66,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(2)
-    public void testListWebhooksWithTopics() throws Exception {
+    public void testListWebhooksWithTopics() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -80,7 +80,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(2)
-    public void testListWebhooksUnknownTopic() throws Exception {
+    public void testListWebhooksUnknownTopic() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -94,7 +94,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(2)
-    public void testListWebhooks() throws Exception {
+    public void testListWebhooks() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")

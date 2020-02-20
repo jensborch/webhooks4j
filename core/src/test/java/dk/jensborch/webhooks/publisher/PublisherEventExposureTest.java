@@ -71,7 +71,7 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent event = new WebhookEvent(publisher, "test", new HashMap<>());
         when(repo.find(any())).thenReturn(Optional.of(new ProcessingStatus(event, UUID.randomUUID())));

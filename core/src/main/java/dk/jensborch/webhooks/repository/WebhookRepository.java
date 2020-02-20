@@ -16,7 +16,7 @@ public interface WebhookRepository {
 
     void save(@NotNull @Valid Webhook hook);
 
-    void delte(@NotNull UUID id);
+    void delete(@NotNull UUID id);
 
     Optional<Webhook> find(@NotNull UUID id);
 

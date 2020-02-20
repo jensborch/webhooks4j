@@ -48,7 +48,7 @@ public class PublisherEventExposureTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         registry.register(webhook);
         publisher.publish(event);
         spec = new RequestSpecBuilder()
