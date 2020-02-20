@@ -9,16 +9,27 @@ import dk.jensborch.webhooks.consumer.Consumer;
 import dk.jensborch.webhooks.publisher.Publisher;
 
 /**
- *
+ * CDI producer for getting a JAX-RS client.
  */
 @Dependent
 public class ClientProducer {
 
     @Produces
-    @Consumer
     @Publisher
-    public Client getClient() {
-        return ClientBuilder.newClient();
+    public Client getPublisherClient() {
+        return ClientBuilder
+                .newBuilder()
+                .register(new BasicAuthClientRequestFilter("consumer", "concon"))
+                .build();
+    }
+
+    @Produces
+    @Consumer
+    public Client getConsumerClient() {
+        return ClientBuilder
+                .newBuilder()
+                .register(new BasicAuthClientRequestFilter("publisher", "pubpub"))
+                .build();
     }
 
 }
