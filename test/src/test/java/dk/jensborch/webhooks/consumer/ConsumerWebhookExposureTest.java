@@ -3,6 +3,7 @@ package dk.jensborch.webhooks.consumer;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 import java.net.URI;
 
@@ -97,7 +98,7 @@ public class ConsumerWebhookExposureTest {
                 .get("consumer-webhooks")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(1));
+                .body("size()", greaterThan(0));
     }
 
 }
