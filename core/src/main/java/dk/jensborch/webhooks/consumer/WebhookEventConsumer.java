@@ -8,6 +8,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
@@ -71,33 +72,42 @@ public class WebhookEventConsumer {
     }
 
     /**
-     * Synchronize with old events.
+     * Synchronize with old events from publisher.
      *
-     * @param from
-     * @param webhook
+     * @param from when to synchronize events.
+     * @param webhook to synchronize.
      */
     public void sync(final ZonedDateTime from, final Webhook webhook) {
-        ZonedDateTime last = repo.list(from, webhook)
+        try {
+            Response response = client.target(webhook.getPublisher())
+                    .queryParam("from", lastEvent(from, webhook))
+                    .queryParam("webhook", webhook.getId())
+                    .request(MediaType.APPLICATION_JSON)
+                    .get();
+            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
+                response
+                        .readEntity(new GenericType<SortedSet<ProcessingStatus>>() {
+                        })
+                        .stream()
+                        .map(ProcessingStatus::getEvent).forEach(this::consume);
+            } else {
+                String msg = "Error synchronizing old events, got HTTP status code " + response.getStatus() + " for webhook: " + webhook;
+                LOG.warn(msg);
+                throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg));
+            }
+        } catch (ProcessingException e) {
+            String msg = "Processing error synchronizing old events for webhook: " + webhook;
+            LOG.warn(msg, e);
+            throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg), e);
+        }
+    }
+
+    private ZonedDateTime lastEvent(final ZonedDateTime from, final Webhook webhook) {
+        return repo.list(from, webhook)
                 .stream()
                 .findFirst()
                 .map(ProcessingStatus::getEnd)
                 .orElse(ZonedDateTime.now());
-        Response response = client.target(webhook.getPublisher())
-                .queryParam("from", last)
-                .queryParam("webhook", webhook.getId())
-                .request(MediaType.APPLICATION_JSON)
-                .get();
-        if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-            response
-                    .readEntity(new GenericType<SortedSet<ProcessingStatus>>() {
-                    })
-                    .stream()
-                    .map(ProcessingStatus::getEvent).forEach(this::consume);
-        } else {
-            String msg = "Error synchronizing old events, got HTTP status code " + response.getStatus() + " for webhook: " + webhook;
-            LOG.warn(msg);
-            throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg));
-        }
     }
 
     private Webhook findPublisher(final WebhookEvent callbackEvent) {

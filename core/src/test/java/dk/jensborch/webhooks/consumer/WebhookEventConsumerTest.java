@@ -5,19 +5,30 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
@@ -41,6 +52,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class WebhookEventConsumerTest {
 
     private static final String TEST_TOPIC = "test_topic";
+    
+    @Mock
+    private Client client;
 
     @Mock
     private Event<WebhookEvent> event;
@@ -119,6 +133,23 @@ public class WebhookEventConsumerTest {
         ProcessingStatus status = consumer.consume(callbackEvent);
         assertNotNull(status);
         verify(repo, times(2)).save(any());
+    }
+
+    @Test
+    public void testSync() {
+        WebTarget target = mock(WebTarget.class);
+        when(client.target(any(URI.class))).thenReturn(target);
+        when(target.queryParam(any(String.class), any())).thenReturn(target);
+        Invocation.Builder builder = mock(Invocation.Builder.class);
+        when(target.request(eq(MediaType.APPLICATION_JSON))).thenReturn(builder);
+        Response response = mock(Response.class);
+        when(response.getStatusInfo()).thenReturn(Response.Status.OK);
+        when(builder.get()).thenReturn(response);
+        SortedSet<ProcessingStatus> status = new TreeSet<>();
+        when(response.readEntity(any(GenericType.class))).thenReturn(status);
+        Webhook webhook = new Webhook(publisherUri, consumerUri, TEST_TOPIC);
+        consumer.sync(ZonedDateTime.now(), webhook);
+        verify(event, times(0)).select(any(Class.class), any(EventTopicLiteral.class));
     }
 
 }

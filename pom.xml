@@ -99,7 +99,6 @@
                 <groupId>eu.stamp-project</groupId>
                 <artifactId>pitmp-maven-plugin</artifactId>
                 <version>${pitest-plugin.version}</version>
-
                 <configuration>
                     <targetModules>
                         <param>core</param>
