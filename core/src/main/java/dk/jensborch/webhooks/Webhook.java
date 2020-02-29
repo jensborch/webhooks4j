@@ -53,7 +53,7 @@ public class Webhook {
 
     @JsonIgnore
     public boolean isActive() {
-        return status == Status.ACTIVE;
+        return status == Status.ACTIVE || status == Status.FAILED;
     }
 
     /**

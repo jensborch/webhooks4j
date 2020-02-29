@@ -8,6 +8,8 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import dk.jensborch.webhooks.Webhook;
+
 /**
  * Repository for manipulating webhook event statuses.
  */
@@ -18,5 +20,7 @@ public interface StatusRepository {
     Optional<ProcessingStatus> find(@NotNull UUID eventId);
 
     SortedSet<ProcessingStatus> list(@NotNull ZonedDateTime from, @NotNull String... topic);
+
+    SortedSet<ProcessingStatus> list(@NotNull ZonedDateTime from, Webhook webhook);
 
 }
