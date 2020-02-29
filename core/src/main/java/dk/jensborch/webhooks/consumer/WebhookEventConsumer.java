@@ -1,10 +1,17 @@
 package dk.jensborch.webhooks.consumer;
 
+import java.time.ZonedDateTime;
+import java.util.SortedSet;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
@@ -34,6 +41,10 @@ public class WebhookEventConsumer {
     @Inject
     WebhookRegistry registry;
 
+    @Inject
+    @Consumer
+    Client client;
+
     /**
      * Consume a callback webhook event and fire CDI events.
      *
@@ -57,6 +68,36 @@ public class WebhookEventConsumer {
             }
         }
         return status;
+    }
+
+    /**
+     * Synchronize with old events.
+     *
+     * @param from
+     * @param webhook
+     */
+    public void sync(final ZonedDateTime from, final Webhook webhook) {
+        ZonedDateTime last = repo.list(from, webhook)
+                .stream()
+                .findFirst()
+                .map(ProcessingStatus::getEnd)
+                .orElse(ZonedDateTime.now());
+        Response response = client.target(webhook.getPublisher())
+                .queryParam("from", last)
+                .queryParam("webhook", webhook.getId())
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+        if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
+            response
+                    .readEntity(new GenericType<SortedSet<ProcessingStatus>>() {
+                    })
+                    .stream()
+                    .map(ProcessingStatus::getEvent).forEach(this::consume);
+        } else {
+            String msg = "Error synchronizing old events, got HTTP status code " + response.getStatus() + " for webhook: " + webhook;
+            LOG.warn(msg);
+            throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg));
+        }
     }
 
     private Webhook findPublisher(final WebhookEvent callbackEvent) {
