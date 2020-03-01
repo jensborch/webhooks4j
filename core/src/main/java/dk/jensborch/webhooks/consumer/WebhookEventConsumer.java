@@ -106,7 +106,7 @@ public class WebhookEventConsumer {
         return repo.list(from, webhook)
                 .stream()
                 .findFirst()
-                .map(ProcessingStatus::getEnd)
+                .map(ProcessingStatus::getStart)
                 .orElse(ZonedDateTime.now());
     }
 

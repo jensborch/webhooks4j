@@ -47,7 +47,7 @@ public class ProcessingStatus implements Comparable<ProcessingStatus> {
 
     @Override
     public int compareTo(final ProcessingStatus other) {
-        return end.compareTo(other.end);
+        return other.start.compareTo(this.start);
     }
 
     /**
