@@ -128,12 +128,15 @@ public class WebhookRegistry {
         );
     }
 
-    public Optional<Webhook> find(@NotNull final UUID id) {
+    public Optional<Webhook> find(final UUID id) {
         return repo.find(id);
     }
 
-    public Set<Webhook> list(@NotNull final String... topic) {
+    public Set<Webhook> list(final String... topic) {
         return repo.list(topic);
     }
 
+    public void save(final Webhook hook) {
+        repo.save(hook);
+    }
 }

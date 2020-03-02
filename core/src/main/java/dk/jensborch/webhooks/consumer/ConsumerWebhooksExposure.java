@@ -5,18 +5,26 @@ import java.util.UUID;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
+import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEventTopics;
+import dk.jensborch.webhooks.WebhookException;
+import dk.jensborch.webhooks.publisher.PublisherWebhookExposure;
 
 /**
  * Exposure for registration of webhooks.
@@ -31,6 +39,54 @@ public class ConsumerWebhooksExposure {
     @Inject
     WebhookRegistry registry;
 
+    @Inject
+    WebhookEventConsumer consumer;
+
+    @POST
+    @RolesAllowed("consumer")
+    public Response create(
+            @NotNull @Valid final Webhook webhook,
+            @Context final UriInfo uriInfo) {
+        registry.register(webhook);
+        return Response.created(uriInfo
+                .getBaseUriBuilder()
+                .path(PublisherWebhookExposure.class)
+                .path(PublisherWebhookExposure.class, "get")
+                .build(webhook.getId()))
+                .build();
+    }
+
+    @PUT
+    @RolesAllowed("consumer")
+    public Response update(
+            @NotNull @Valid final Webhook webhook,
+            @Context final UriInfo uriInfo) {
+        Webhook w = find(webhook);
+        switch (webhook.getStatus()) {
+            case SYNCHRONIZING:
+                consumer.sync(w);
+                break;
+            case INACTIVE:
+                registry.unregister(w);
+                break;
+            default:
+                WebhookError error = new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + w.getStatus());
+                return Response
+                        .status(error.getCode().getStatus())
+                        .entity(error)
+                        .build();
+        }
+        return Response.ok(webhook).build();
+    }
+
+    private Webhook find(final Webhook webhook) {
+        return registry.find(webhook.getId())
+                .orElseThrow(() -> throwNotFound(webhook.getId()))
+                .status(webhook.getStatus())
+                .topics(webhook.getTopics())
+                .updated(webhook.getUpdated());
+    }
+
     @GET
     public Response list(@QueryParam("topics") final String topics) {
         return Response.ok(registry.list(WebhookEventTopics.parse(topics).getTopics())).build();
@@ -41,14 +97,13 @@ public class ConsumerWebhooksExposure {
     public Response get(@NotNull @PathParam("id") final UUID id) {
         return registry.find(id)
                 .map(Response::ok)
-                .orElse(notFound(id))
+                .orElseThrow(() -> throwNotFound(id))
                 .build();
     }
 
-    private Response.ResponseBuilder notFound(final UUID id) {
-        return Response.status(
-                Response.Status.NOT_FOUND).entity(
-                        new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + "not found"));
+    private WebhookException throwNotFound(final UUID id) {
+        WebhookError error = new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + " not found");
+        return new WebhookException(error);
     }
 
 }

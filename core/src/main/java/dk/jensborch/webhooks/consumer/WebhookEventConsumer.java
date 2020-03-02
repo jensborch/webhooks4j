@@ -1,6 +1,5 @@
 package dk.jensborch.webhooks.consumer;
 
-import java.time.ZonedDateTime;
 import java.util.SortedSet;
 
 import javax.enterprise.context.Dependent;
@@ -62,6 +61,7 @@ public class WebhookEventConsumer {
                         .select(WebhookEvent.class, new EventTopicLiteral(callbackEvent.getTopic()))
                         .fire(callbackEvent);
                 repo.save(status.done(true));
+                registry.save(webhook.updated());
                 LOG.debug("Done processing event {}", callbackEvent);
             } catch (ObserverException e) {
                 LOG.warn("Error processing event {}", callbackEvent, e);
@@ -74,13 +74,12 @@ public class WebhookEventConsumer {
     /**
      * Synchronize with old events from publisher.
      *
-     * @param from when to synchronize events.
      * @param webhook to synchronize.
      */
-    public void sync(final ZonedDateTime from, final Webhook webhook) {
+    public void sync(final Webhook webhook) {
         try {
             Response response = client.target(webhook.getPublisher())
-                    .queryParam("from", lastEvent(from, webhook))
+                    .queryParam("from", webhook.getUpdated())
                     .queryParam("webhook", webhook.getId())
                     .request(MediaType.APPLICATION_JSON)
                     .get();
@@ -100,14 +99,6 @@ public class WebhookEventConsumer {
             LOG.warn(msg, e);
             throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg), e);
         }
-    }
-
-    private ZonedDateTime lastEvent(final ZonedDateTime from, final Webhook webhook) {
-        return repo.list(from, webhook)
-                .stream()
-                .findFirst()
-                .map(ProcessingStatus::getStart)
-                .orElse(ZonedDateTime.now());
     }
 
     private Webhook findPublisher(final WebhookEvent callbackEvent) {

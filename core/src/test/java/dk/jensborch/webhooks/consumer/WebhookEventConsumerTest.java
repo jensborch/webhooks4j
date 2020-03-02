@@ -14,7 +14,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
@@ -158,7 +157,7 @@ public class WebhookEventConsumerTest {
     @Test
     public void testSyncNoData() {
         setupSyncResponse();
-        consumer.sync(ZonedDateTime.now(), webhook);
+        consumer.sync(webhook);
         verify(event, times(0)).select(any(Class.class), any(EventTopicLiteral.class));
     }
 
@@ -166,7 +165,7 @@ public class WebhookEventConsumerTest {
     public void testSync() {
         ProcessingStatus status = new ProcessingStatus(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()), webhook.getId());
         setupSyncResponse(status);
-        consumer.sync(ZonedDateTime.now(), webhook);
+        consumer.sync(webhook);
         verify(event, times(1)).select(any(Class.class), any(EventTopicLiteral.class));
     }
 

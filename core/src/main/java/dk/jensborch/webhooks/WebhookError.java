@@ -50,7 +50,8 @@ public class WebhookError implements Serializable {
         UNKNOWN_ERROR(Response.Status.INTERNAL_SERVER_ERROR),
         REGISTER_ERROR(Response.Status.SERVICE_UNAVAILABLE),
         NOT_FOUND(Response.Status.NOT_FOUND),
-        SYNC_ERROR(Response.Status.SERVICE_UNAVAILABLE);
+        SYNC_ERROR(Response.Status.SERVICE_UNAVAILABLE),
+        ILLEGAL_STATUS(Response.Status.BAD_REQUEST);
 
         @Getter
         private final Response.Status status;

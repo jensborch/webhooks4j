@@ -19,6 +19,7 @@ public class ClientProducer {
     public Client getPublisherClient() {
         return ClientBuilder
                 .newClient()
+                .register(ObjectMapperProvider.class)
                 .register(new BasicAuthClientRequestFilter("publisher", "pubpub"));
     }
 
@@ -27,6 +28,7 @@ public class ClientProducer {
     public Client getConsumerClient() {
         return ClientBuilder
                 .newClient()
+                .register(ObjectMapperProvider.class)
                 .register(new BasicAuthClientRequestFilter("consumer", "concon"));
     }
 
