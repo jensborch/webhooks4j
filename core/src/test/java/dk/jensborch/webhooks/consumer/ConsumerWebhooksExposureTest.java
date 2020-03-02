@@ -2,6 +2,7 @@ package dk.jensborch.webhooks.consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.WebhookException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,9 +59,9 @@ public class ConsumerWebhooksExposureTest {
 
     @Test
     public void testGet404() {
-        Response result = exposure.get(UUID.randomUUID());
-        assertNotNull(result);
-        assertEquals(404, result.getStatus());
+        WebhookException e = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID()));
+        assertNotNull(e);
+        assertEquals(Response.Status.NOT_FOUND, e.getError().getCode().getStatus());
     }
 
     @Test
