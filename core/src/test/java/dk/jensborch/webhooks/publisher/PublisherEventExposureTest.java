@@ -56,11 +56,20 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testList() {
+    public void testListByTopic() {
         ZonedDateTime now = ZonedDateTime.now();
         Response response = exposure.list("test1, test2", null, now.toString(), uriInfo);
         assertNotNull(response);
         verify(repo).list(eq(now), startsWith("test"), startsWith("test"));
+    }
+
+    @Test
+    public void testListByWebhook() {
+        ZonedDateTime now = ZonedDateTime.now();
+        UUID id = UUID.randomUUID();
+        Response response = exposure.list(null, id, now.toString(), uriInfo);
+        assertNotNull(response);
+        verify(repo).list(eq(now), eq(id));
     }
 
     @Test
