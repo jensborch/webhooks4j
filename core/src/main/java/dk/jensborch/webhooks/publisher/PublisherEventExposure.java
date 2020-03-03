@@ -40,9 +40,18 @@ public class PublisherEventExposure {
     @GET
     public Response list(
             @QueryParam("topics") final String topics,
+            @QueryParam("webhook") final UUID webhook,
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
             @Context final UriInfo uriInfo) {
-        return Response.ok(repo.list(ZonedDateTime.parse(from), WebhookEventTopics.parse(topics).getTopics())).build();
+        if (webhook == null) {
+            return Response
+                    .ok(repo.list(ZonedDateTime.parse(from), WebhookEventTopics.parse(topics).getTopics()))
+                    .build();
+        } else {
+            return Response
+                    .ok(repo.list(ZonedDateTime.parse(from), webhook))
+                    .build();
+        }
     }
 
     @GET
