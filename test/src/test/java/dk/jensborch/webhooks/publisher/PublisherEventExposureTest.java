@@ -8,6 +8,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -83,6 +84,20 @@ public class PublisherEventExposureTest {
                 .then()
                 .statusCode(200)
                 .body("size()", greaterThan(0));
+    }
+
+    @Test
+    public void testListWebhook() {
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .when()
+                .queryParam("from", "2007-12-03T10:15:30+01:00")
+                .queryParam("webhook", UUID.randomUUID())
+                .get("publisher-events")
+                .then()
+                .statusCode(200)
+                .body("size()", equalTo(0));
     }
 
     @Test
