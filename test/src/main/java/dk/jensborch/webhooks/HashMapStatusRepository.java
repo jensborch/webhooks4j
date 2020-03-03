@@ -39,10 +39,10 @@ public abstract class HashMapStatusRepository implements StatusRepository {
     }
 
     @Override
-    public SortedSet<ProcessingStatus> list(final ZonedDateTime from, final Webhook webhook) {
+    public SortedSet<ProcessingStatus> list(final ZonedDateTime from, final UUID webhook) {
         return map.values().stream()
                 .filter(p -> p.getStart().isAfter(from))
-                .filter(p -> p.getWebhook().equals(webhook.getId()))
+                .filter(p -> p.getWebhook().equals(webhook))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 

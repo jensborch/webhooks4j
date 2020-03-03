@@ -58,7 +58,7 @@ public class PublisherEventExposureTest {
     @Test
     public void testList() {
         ZonedDateTime now = ZonedDateTime.now();
-        Response response = exposure.list("test1, test2", now.toString(), uriInfo);
+        Response response = exposure.list("test1, test2", null, now.toString(), uriInfo);
         assertNotNull(response);
         verify(repo).list(eq(now), startsWith("test"), startsWith("test"));
     }
