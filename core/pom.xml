@@ -16,6 +16,12 @@
             <artifactId>jackson-annotations</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
             <version>${javax.annotation-api.version}</version>
@@ -62,4 +68,38 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>${swagger-plugin.version}</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <swaggerDirectory>${project.build.directory}</swaggerDirectory>
+                            <locations>
+                                <location>dk.jensborch.webhooks.consumer</location>
+                                <location>dk.jensborch.webhooks.publisher</location>
+                            </locations>
+                            <info>
+                                <title>Webhooks4j</title>
+                                <version>v1</version>
+                                <description>Small, simple and extendable Java library for messaging using webhooks.</description>
+                            </info>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
