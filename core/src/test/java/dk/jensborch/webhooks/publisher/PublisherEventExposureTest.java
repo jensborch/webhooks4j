@@ -2,6 +2,7 @@ package dk.jensborch.webhooks.publisher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
@@ -21,6 +22,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.WebhookEvent;
+import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.status.ProcessingStatus;
 import dk.jensborch.webhooks.status.StatusRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,16 +69,15 @@ public class PublisherEventExposureTest {
     public void testListByWebhook() {
         ZonedDateTime now = ZonedDateTime.now();
         UUID id = UUID.randomUUID();
-        Response response = exposure.list(null, id, now.toString(), uriInfo);
+        Response response = exposure.list(null, id.toString(), now.toString(), uriInfo);
         assertNotNull(response);
         verify(repo).list(eq(now), eq(id));
     }
 
     @Test
     public void testGet404() {
-        Response result = exposure.get(UUID.randomUUID());
-        assertNotNull(result);
-        assertEquals(404, result.getStatus());
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString()));
+        assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 
     @Test
@@ -84,7 +85,7 @@ public class PublisherEventExposureTest {
         UUID publisher = UUID.randomUUID();
         WebhookEvent event = new WebhookEvent(publisher, "test", new HashMap<>());
         when(repo.find(any())).thenReturn(Optional.of(new ProcessingStatus(event, UUID.randomUUID())));
-        Response result = exposure.get(UUID.randomUUID());
+        Response result = exposure.get(UUID.randomUUID().toString());
         assertNotNull(result);
         assertEquals(200, result.getStatus());
     }

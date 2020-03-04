@@ -20,9 +20,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import dk.jensborch.webhooks.ValidUUID;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEventTopics;
+import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 
 /**
@@ -61,25 +63,23 @@ public class PublisherWebhookExposure {
     @GET
     @RolesAllowed({"consumer", "publisher"})
     @Path("{id}")
-    public Response get(@NotNull @PathParam("id") final UUID id) {
-        return repo.find(id)
+    public Response get(@NotNull @ValidUUID @PathParam("id") final String id) {
+        return repo.find(UUID.fromString(id))
                 .map(Response::ok)
-                .orElse(notFound(id))
+                .orElseThrow(() -> notFound(id))
                 .build();
     }
 
     @DELETE
     @RolesAllowed("consumer")
     @Path("{id}")
-    public Response delete(@NotNull @PathParam("id") final UUID id) {
-        repo.delete(id);
+    public Response delete(@NotNull @ValidUUID @PathParam("id") final String id) {
+        repo.delete(UUID.fromString(id));
         return Response.noContent().build();
     }
 
-    private Response.ResponseBuilder notFound(final UUID id) {
-        return Response.status(
-                Response.Status.NOT_FOUND).entity(
-                        new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + "not found"));
+    private WebhookException notFound(final String id) {
+        return new WebhookException(new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + " not found"));
     }
 
 }
