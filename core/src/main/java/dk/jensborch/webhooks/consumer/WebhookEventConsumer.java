@@ -18,10 +18,10 @@ import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventTopic;
 import dk.jensborch.webhooks.WebhookException;
-import dk.jensborch.webhooks.status.ProcessingStatus;
-import dk.jensborch.webhooks.status.StatusRepository;
+import dk.jensborch.webhooks.WebhookEventStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Webhook event consumer.
@@ -36,7 +36,7 @@ public class WebhookEventConsumer {
 
     @Inject
     @Consumer
-    StatusRepository repo;
+    WebhookEventStatusRepository repo;
 
     @Inject
     WebhookRegistry registry;
@@ -51,10 +51,10 @@ public class WebhookEventConsumer {
      * @param callbackEvent to process
      * @return Processing status for the event
      */
-    public ProcessingStatus consume(final WebhookEvent callbackEvent) {
+    public WebhookEventStatus consume(final WebhookEvent callbackEvent) {
         LOG.debug("Receiving event {}", callbackEvent);
         Webhook webhook = findPublisher(callbackEvent);
-        ProcessingStatus status = findOrCreate(callbackEvent, webhook);
+        WebhookEventStatus status = findOrCreate(callbackEvent, webhook);
         if (status.eligible()) {
             try {
                 event
@@ -85,10 +85,10 @@ public class WebhookEventConsumer {
                     .get();
             if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
                 response
-                        .readEntity(new GenericType<SortedSet<ProcessingStatus>>() {
+                        .readEntity(new GenericType<SortedSet<WebhookEventStatus>>() {
                         })
                         .stream()
-                        .map(ProcessingStatus::getEvent).forEach(this::consume);
+                        .map(WebhookEventStatus::getEvent).forEach(this::consume);
             } else {
                 String msg = "Error synchronizing old events, got HTTP status code " + response.getStatus() + " for webhook: " + webhook;
                 LOG.warn(msg);
@@ -113,10 +113,10 @@ public class WebhookEventConsumer {
                 );
     }
 
-    private ProcessingStatus findOrCreate(final WebhookEvent callbackEvent, final Webhook webhook) {
+    private WebhookEventStatus findOrCreate(final WebhookEvent callbackEvent, final Webhook webhook) {
         return repo
                 .find(callbackEvent.getId())
-                .orElseGet(() -> repo.save(new ProcessingStatus(callbackEvent, webhook.getId())));
+                .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent, webhook.getId())));
     }
 
     /**

@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookException;
-import dk.jensborch.webhooks.repository.WebhookRepository;
+import dk.jensborch.webhooks.repositories.WebhookRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

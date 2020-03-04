@@ -13,11 +13,11 @@ import javax.ws.rs.core.Response;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
-import dk.jensborch.webhooks.repository.WebhookRepository;
-import dk.jensborch.webhooks.status.ProcessingStatus;
-import dk.jensborch.webhooks.status.StatusRepository;
+import dk.jensborch.webhooks.repositories.WebhookRepository;
+import dk.jensborch.webhooks.WebhookEventStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Webhook publisher.
@@ -37,7 +37,7 @@ public class WebhookPublisher {
 
     @Inject
     @Publisher
-    private StatusRepository statusRepo;
+    private WebhookEventStatusRepository statusRepo;
 
     /**
      * Publish a webhook event.
@@ -55,7 +55,7 @@ public class WebhookPublisher {
 
     private void call(final Webhook webhook, final WebhookEvent event) {
         LOG.debug("Publishing to {}", webhook);
-        ProcessingStatus status = statusRepo.save(new ProcessingStatus(event, webhook.getId()));
+        WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event, webhook.getId()));
         try {
             Response response = client.target(webhook.getConsumer())
                     .request(MediaType.APPLICATION_JSON)

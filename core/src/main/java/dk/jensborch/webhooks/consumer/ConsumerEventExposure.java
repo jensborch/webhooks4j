@@ -20,13 +20,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import dk.jensborch.webhooks.ValidUUID;
-import dk.jensborch.webhooks.ValidZonedDateTime;
+import dk.jensborch.webhooks.validation.ValidUUID;
+import dk.jensborch.webhooks.validation.ValidZonedDateTime;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventTopics;
 import dk.jensborch.webhooks.WebhookException;
-import dk.jensborch.webhooks.status.StatusRepository;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Exposure for receiving callback events.
@@ -42,7 +42,7 @@ public class ConsumerEventExposure {
 
     @Inject
     @Consumer
-    StatusRepository repo;
+    WebhookEventStatusRepository repo;
 
     @POST
     @RolesAllowed("publisher")

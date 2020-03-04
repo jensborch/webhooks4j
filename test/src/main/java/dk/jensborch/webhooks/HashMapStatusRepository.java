@@ -9,29 +9,28 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import dk.jensborch.webhooks.status.ProcessingStatus;
-import dk.jensborch.webhooks.status.StatusRepository;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
- * HashMap based {@link StatusRepository} implementation.
+ * HashMap based {@link WebhookEventStatusRepository} implementation.
  */
-public abstract class HashMapStatusRepository implements StatusRepository {
+public abstract class HashMapStatusRepository implements WebhookEventStatusRepository {
 
-    private final ConcurrentHashMap<UUID, ProcessingStatus> map = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, WebhookEventStatus> map = new ConcurrentHashMap<>();
 
     @Override
-    public ProcessingStatus save(final ProcessingStatus status) {
+    public WebhookEventStatus save(final WebhookEventStatus status) {
         map.put(status.getId(), status);
         return status;
     }
 
     @Override
-    public Optional<ProcessingStatus> find(final UUID id) {
+    public Optional<WebhookEventStatus> find(final UUID id) {
         return Optional.ofNullable(map.get(id));
     }
 
     @Override
-    public SortedSet<ProcessingStatus> list(final ZonedDateTime from, final String... topic) {
+    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final String... topic) {
         return map.values().stream()
                 .filter(p -> p.getStart().isAfter(from))
                 .filter(p -> topic == null || topic.length == 0 || Arrays.binarySearch(topic, p.getEvent().getTopic()) >= 0)
@@ -39,7 +38,7 @@ public abstract class HashMapStatusRepository implements StatusRepository {
     }
 
     @Override
-    public SortedSet<ProcessingStatus> list(final ZonedDateTime from, final UUID webhook) {
+    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final UUID webhook) {
         return map.values().stream()
                 .filter(p -> p.getStart().isAfter(from))
                 .filter(p -> p.getWebhook().equals(webhook))

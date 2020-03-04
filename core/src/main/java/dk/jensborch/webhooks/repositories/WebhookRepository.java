@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.repository;
+package dk.jensborch.webhooks.repositories;
 
 import java.util.Optional;
 import java.util.Set;
