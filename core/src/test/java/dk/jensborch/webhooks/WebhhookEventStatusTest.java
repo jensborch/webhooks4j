@@ -1,4 +1,6 @@
-package dk.jensborch.webhooks.status;
+package dk.jensborch.webhooks;
+
+import dk.jensborch.webhooks.WebhookEventStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -14,25 +16,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link ProcessingStatus}.
+ * Test for {@link WebhookEventStatus}.
  */
-public class ProcessingStatusTest {
+public class WebhhookEventStatusTest {
 
     private Webhook webhook;
-    private ProcessingStatus status;
+    private WebhookEventStatus status;
 
     @BeforeEach
     public void setUp() throws Exception {
         URI publisherUri = new URI("http://publisher.dk");
         URI consumerUri = new URI("http://consumer.dk");
         webhook = new Webhook(publisherUri, consumerUri, "test");
-        status = new ProcessingStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
+        status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
     }
 
     @Test
     public void testDone() {
-        ProcessingStatus result = status.done(true);
-        assertEquals(ProcessingStatus.Status.SUCCESS, status.getStatus());
+        WebhookEventStatus result = status.done(true);
+        assertEquals(WebhookEventStatus.Status.SUCCESS, status.getStatus());
     }
 
     @Test
@@ -42,9 +44,9 @@ public class ProcessingStatusTest {
 
     @Test
     public void testCompareTo() {
-        ProcessingStatus status2 = new ProcessingStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
+        WebhookEventStatus status2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
         assertTrue(status.compareTo(status2) > 0);
-        TreeSet<ProcessingStatus> list = new TreeSet<>();
+        TreeSet<WebhookEventStatus> list = new TreeSet<>();
         list.add(status);
         list.add(status2);
         assertEquals(status2, list.stream().findFirst().get());

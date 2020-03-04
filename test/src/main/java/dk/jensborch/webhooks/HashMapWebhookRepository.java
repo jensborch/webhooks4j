@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import dk.jensborch.webhooks.repository.WebhookRepository;
+import dk.jensborch.webhooks.repositories.WebhookRepository;
 
 /**
  * Test implementation of a WebhookRepository.

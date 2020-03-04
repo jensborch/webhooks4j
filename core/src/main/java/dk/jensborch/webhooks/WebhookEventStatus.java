@@ -1,9 +1,8 @@
-package dk.jensborch.webhooks.status;
+package dk.jensborch.webhooks;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import dk.jensborch.webhooks.WebhookEvent;
 import lombok.Data;
 import lombok.Setter;
 
@@ -11,7 +10,7 @@ import lombok.Setter;
  * Processing status for a webhook event.
  */
 @Data
-public class ProcessingStatus implements Comparable<ProcessingStatus> {
+public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
 
     @Setter
     ZonedDateTime end;
@@ -23,7 +22,7 @@ public class ProcessingStatus implements Comparable<ProcessingStatus> {
     private final ZonedDateTime start;
     private final UUID webhook;
 
-    public ProcessingStatus(final WebhookEvent event, final UUID webhook) {
+    public WebhookEventStatus(final WebhookEvent event, final UUID webhook) {
         this.id = event.getId();
         this.event = event;
         this.start = ZonedDateTime.now();
@@ -31,7 +30,7 @@ public class ProcessingStatus implements Comparable<ProcessingStatus> {
         this.webhook = webhook;
     }
 
-    public ProcessingStatus done(final boolean success) {
+    public WebhookEventStatus done(final boolean success) {
         if (success) {
             status = Status.SUCCESS;
         } else {
@@ -46,7 +45,7 @@ public class ProcessingStatus implements Comparable<ProcessingStatus> {
     }
 
     @Override
-    public int compareTo(final ProcessingStatus other) {
+    public int compareTo(final WebhookEventStatus other) {
         return other.start.compareTo(this.start);
     }
 

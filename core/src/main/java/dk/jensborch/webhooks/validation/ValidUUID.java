@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks;
+package dk.jensborch.webhooks.validation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -12,7 +12,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 
-import dk.jensborch.webhooks.ValidUUID.UUIDValidator;
+import dk.jensborch.webhooks.validation.ValidUUID.UUIDValidator;
 
 /**
  * UUID validator annotation.

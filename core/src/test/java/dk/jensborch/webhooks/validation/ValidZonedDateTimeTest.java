@@ -1,4 +1,6 @@
-package dk.jensborch.webhooks;
+package dk.jensborch.webhooks.validation;
+
+import dk.jensborch.webhooks.validation.ValidZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -6,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link ValidZonedDateTime].
+ * Test for {@link ValidZonedDateTime}.
  */
 public class ValidZonedDateTimeTest {
 

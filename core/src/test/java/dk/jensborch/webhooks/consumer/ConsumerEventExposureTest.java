@@ -23,14 +23,14 @@ import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookException;
-import dk.jensborch.webhooks.status.ProcessingStatus;
-import dk.jensborch.webhooks.status.StatusRepository;
+import dk.jensborch.webhooks.WebhookEventStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Test for {@link ConsumerEventExposure}.
@@ -42,7 +42,7 @@ public class ConsumerEventExposureTest {
     private WebhookEventConsumer consumer;
 
     @Mock
-    private StatusRepository repo;
+    private WebhookEventStatusRepository repo;
 
     @Mock
     private UriInfo uriInfo;
@@ -96,7 +96,7 @@ public class ConsumerEventExposureTest {
     public void testGet() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent event = new WebhookEvent(publisher, "test", new HashMap<>());
-        when(repo.find(any())).thenReturn(Optional.of(new ProcessingStatus(event, UUID.randomUUID())));
+        when(repo.find(any())).thenReturn(Optional.of(new WebhookEventStatus(event, UUID.randomUUID())));
         Response result = exposure.get(UUID.randomUUID().toString());
         assertNotNull(result);
         assertEquals(200, result.getStatus());

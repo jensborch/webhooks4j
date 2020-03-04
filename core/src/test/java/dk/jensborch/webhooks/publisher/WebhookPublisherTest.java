@@ -20,14 +20,14 @@ import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookEvent;
-import dk.jensborch.webhooks.repository.WebhookRepository;
-import dk.jensborch.webhooks.status.StatusRepository;
+import dk.jensborch.webhooks.repositories.WebhookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Test for {@link CallbackExposure].
@@ -45,7 +45,7 @@ public class WebhookPublisherTest {
     private WebhookRepository repo;
 
     @Mock
-    private StatusRepository statusRepo;
+    private WebhookEventStatusRepository statusRepo;
 
     @Mock
     private Response response;

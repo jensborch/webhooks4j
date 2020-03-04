@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookException;
-import dk.jensborch.webhooks.repository.WebhookRepository;
+import dk.jensborch.webhooks.repositories.WebhookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

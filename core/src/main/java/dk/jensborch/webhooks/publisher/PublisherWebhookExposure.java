@@ -20,12 +20,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import dk.jensborch.webhooks.ValidUUID;
+import dk.jensborch.webhooks.validation.ValidUUID;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEventTopics;
 import dk.jensborch.webhooks.WebhookException;
-import dk.jensborch.webhooks.repository.WebhookRepository;
+import dk.jensborch.webhooks.repositories.WebhookRepository;
 
 /**
  * Exposure for registration of webhooks.

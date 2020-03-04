@@ -35,8 +35,7 @@ import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.consumer.WebhookEventConsumer.EventTopicLiteral;
-import dk.jensborch.webhooks.status.ProcessingStatus;
-import dk.jensborch.webhooks.status.StatusRepository;
+import dk.jensborch.webhooks.WebhookEventStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +43,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Test for {@link CallbackExposure].
@@ -63,7 +63,7 @@ public class WebhookEventConsumerTest {
     private WebhookRegistry registry;
 
     @Mock
-    private StatusRepository repo;
+    private WebhookEventStatusRepository repo;
 
     @InjectMocks
     private WebhookEventConsumer consumer;
@@ -88,7 +88,7 @@ public class WebhookEventConsumerTest {
     public void testReceive() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
-        ProcessingStatus status = consumer.consume(callbackEvent);
+        WebhookEventStatus status = consumer.consume(callbackEvent);
         assertNotNull(status);
         verify(repo, times(2)).save(any());
     }
@@ -98,9 +98,7 @@ public class WebhookEventConsumerTest {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         when(repo.find(any()))
-                .thenReturn(
-                        Optional.of(
-                                new ProcessingStatus(callbackEvent, UUID.randomUUID())
+                .thenReturn(Optional.of(new WebhookEventStatus(callbackEvent, UUID.randomUUID())
                                         .done(true))
                 );
         consumer.consume(callbackEvent);
@@ -131,12 +129,12 @@ public class WebhookEventConsumerTest {
         UUID publisher = UUID.randomUUID();
         doThrow(new ObserverException("Test")).when(event).fire(any());
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
-        ProcessingStatus status = consumer.consume(callbackEvent);
+        WebhookEventStatus status = consumer.consume(callbackEvent);
         assertNotNull(status);
         verify(repo, times(2)).save(any());
     }
 
-    public void setupSyncResponse(ProcessingStatus... status) {
+    public void setupSyncResponse(WebhookEventStatus... status) {
         WebTarget target = mock(WebTarget.class);
         when(client.target(any(URI.class))).thenReturn(target);
         when(target.queryParam(any(String.class), any())).thenReturn(target);
@@ -145,7 +143,7 @@ public class WebhookEventConsumerTest {
         Response response = mock(Response.class);
         when(response.getStatusInfo()).thenReturn(Response.Status.OK);
         when(builder.get()).thenReturn(response);
-        SortedSet<ProcessingStatus> statusSet = new TreeSet<>();
+        SortedSet<WebhookEventStatus> statusSet = new TreeSet<>();
         if (status != null && status.length > 0) {
             Event cdiEvent = mock(Event.class);
             when(event.select(any(Class.class), any(EventTopicLiteral.class))).thenReturn(cdiEvent);
@@ -163,7 +161,7 @@ public class WebhookEventConsumerTest {
 
     @Test
     public void testSync() {
-        ProcessingStatus status = new ProcessingStatus(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()), webhook.getId());
+        WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()), webhook.getId());
         setupSyncResponse(status);
         consumer.sync(webhook);
         verify(event, times(1)).select(any(Class.class), any(EventTopicLiteral.class));
