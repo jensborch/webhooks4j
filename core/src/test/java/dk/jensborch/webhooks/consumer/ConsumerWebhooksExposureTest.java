@@ -60,7 +60,6 @@ public class ConsumerWebhooksExposureTest {
     @Test
     public void testGet404() {
         WebhookException e = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString()));
-        assertNotNull(e);
         assertEquals(Response.Status.NOT_FOUND, e.getError().getCode().getStatus());
     }
 

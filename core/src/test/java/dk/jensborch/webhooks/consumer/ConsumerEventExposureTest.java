@@ -70,7 +70,7 @@ public class ConsumerEventExposureTest {
     }
 
     @Test
-    public void testList() {
+    public void testListByTopic() {
         ZonedDateTime now = ZonedDateTime.now();
         Response response = exposure.list("test1, test2", null, now.toString(), uriInfo);
         assertNotNull(response);
@@ -78,9 +78,17 @@ public class ConsumerEventExposureTest {
     }
 
     @Test
+    public void testListByWebhook() {
+        ZonedDateTime now = ZonedDateTime.now();
+        UUID id = UUID.randomUUID();
+        Response response = exposure.list(null, id.toString(), now.toString(), uriInfo);
+        assertNotNull(response);
+        verify(repo).list(eq(now), eq(id));
+    }
+
+    @Test
     public void testGet404() {
         WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString()));
-        assertNotNull(result);
         assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 
