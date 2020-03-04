@@ -59,7 +59,7 @@ public class ConsumerWebhooksExposureTest {
 
     @Test
     public void testGet404() {
-        WebhookException e = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID()));
+        WebhookException e = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString()));
         assertNotNull(e);
         assertEquals(Response.Status.NOT_FOUND, e.getError().getCode().getStatus());
     }
@@ -68,7 +68,7 @@ public class ConsumerWebhooksExposureTest {
     public void testGet() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
         when(registry.find(any())).thenReturn(Optional.of(webhook));
-        Response result = exposure.get(UUID.randomUUID());
+        Response result = exposure.get(UUID.randomUUID().toString());
         assertNotNull(result);
         assertEquals(200, result.getStatus());
     }

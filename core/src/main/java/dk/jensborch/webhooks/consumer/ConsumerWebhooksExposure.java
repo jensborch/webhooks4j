@@ -20,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import dk.jensborch.webhooks.ValidUUID;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEventTopics;
@@ -81,7 +82,7 @@ public class ConsumerWebhooksExposure {
 
     private Webhook find(final Webhook webhook) {
         return registry.find(webhook.getId())
-                .orElseThrow(() -> throwNotFound(webhook.getId()))
+                .orElseThrow(() -> throwNotFound(webhook.getId().toString()))
                 .status(webhook.getStatus())
                 .topics(webhook.getTopics())
                 .updated(webhook.getUpdated());
@@ -94,14 +95,14 @@ public class ConsumerWebhooksExposure {
 
     @GET
     @Path("{id}")
-    public Response get(@NotNull @PathParam("id") final UUID id) {
-        return registry.find(id)
+    public Response get(@ValidUUID @NotNull @PathParam("id") final String id) {
+        return registry.find(UUID.fromString(id))
                 .map(Response::ok)
                 .orElseThrow(() -> throwNotFound(id))
                 .build();
     }
 
-    private WebhookException throwNotFound(final UUID id) {
+    private WebhookException throwNotFound(final String id) {
         WebhookError error = new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + " not found");
         return new WebhookException(error);
     }

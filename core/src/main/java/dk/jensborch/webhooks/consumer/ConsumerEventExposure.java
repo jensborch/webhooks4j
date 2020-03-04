@@ -12,6 +12,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -19,10 +20,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import dk.jensborch.webhooks.ValidUUID;
 import dk.jensborch.webhooks.ValidZonedDateTime;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventTopics;
+import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.status.StatusRepository;
 
 /**
@@ -59,25 +62,33 @@ public class ConsumerEventExposure {
     @RolesAllowed({"consumer", "publisher"})
     public Response list(
             @QueryParam("topics") final String topics,
+            @ValidUUID @QueryParam("webhook") final String webhook,
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
             @Context final UriInfo uriInfo) {
-        return Response.ok(repo.list(ZonedDateTime.parse(from), WebhookEventTopics.parse(topics).getTopics())).build();
+        if (webhook == null) {
+            return Response
+                    .ok(repo.list(ZonedDateTime.parse(from), WebhookEventTopics.parse(topics).getTopics()))
+                    .build();
+        } else {
+            return Response
+                    .ok(repo.list(ZonedDateTime.parse(from), UUID.fromString(webhook)))
+                    .build();
+        }
     }
 
     @GET
     @Path("{id}")
     @RolesAllowed({"consumer", "publisher"})
     public Response get(
-            @NotNull @QueryParam("id") final UUID id) {
-        return repo.find(id)
+            @NotNull @ValidUUID @PathParam("id") final String id) {
+        return repo.find(UUID.fromString(id))
                 .map(Response::ok)
-                .orElse(notFound(id))
+                .orElseThrow(() -> notFound(id))
                 .build();
     }
 
-    private Response.ResponseBuilder notFound(final UUID id) {
-        return Response.status(
-                Response.Status.NOT_FOUND).entity(
-                        new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + "not found"));
+    private WebhookException notFound(final String id) {
+        return new WebhookException(new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + " not found"));
     }
+
 }
