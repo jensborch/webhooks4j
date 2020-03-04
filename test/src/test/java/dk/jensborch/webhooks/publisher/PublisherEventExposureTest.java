@@ -101,6 +101,20 @@ public class PublisherEventExposureTest {
     }
 
     @Test
+    public void testListWrongWebhook() {
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .when()
+                .queryParam("from", "2007-12-03T10:15:30+01:00")
+                .queryParam("webhook", 42)
+                .get("publisher-events")
+                .then()
+                .statusCode(400)
+                .body("code", equalTo("VALIDATION_ERROR"));
+    }
+
+    @Test
     public void testList() {
         given()
                 .spec(spec)

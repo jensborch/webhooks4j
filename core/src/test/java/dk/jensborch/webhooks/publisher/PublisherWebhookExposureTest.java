@@ -2,6 +2,7 @@ package dk.jensborch.webhooks.publisher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.Webhook;
+import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.repository.WebhookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,16 +69,15 @@ public class PublisherWebhookExposureTest {
 
     @Test
     public void testGet404() {
-        Response result = exposure.get(UUID.randomUUID());
-        assertNotNull(result);
-        assertEquals(404, result.getStatus());
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString()));
+        assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 
     @Test
     public void testGet() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
         when(repo.find(any())).thenReturn(Optional.of(webhook));
-        Response result = exposure.get(UUID.randomUUID());
+        Response result = exposure.get(UUID.randomUUID().toString());
         assertNotNull(result);
         assertEquals(200, result.getStatus());
     }
@@ -84,7 +85,7 @@ public class PublisherWebhookExposureTest {
     @Test
     public void testDelete() {
         UUID id = UUID.randomUUID();
-        Response result = exposure.delete(id);
+        Response result = exposure.delete(id.toString());
         assertNotNull(result);
         verify(repo).delete(eq(id));
     }
