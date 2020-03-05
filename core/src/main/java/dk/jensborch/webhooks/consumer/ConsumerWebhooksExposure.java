@@ -62,25 +62,22 @@ public class ConsumerWebhooksExposure {
     public Response update(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
-        Webhook w = find(webhook);
-        switch (webhook.getStatus()) {
+        Webhook w = findAndMerge(webhook);
+        switch (w.getStatus()) {
             case SYNCHRONIZING:
                 consumer.sync(w);
                 break;
             case INACTIVE:
-                registry.unregister(w);
+                registry.unregister(w.getId());
                 break;
             default:
                 WebhookError error = new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + w.getStatus());
-                return Response
-                        .status(error.getCode().getStatus())
-                        .entity(error)
-                        .build();
+                throw new WebhookException(error);
         }
         return Response.ok(webhook).build();
     }
 
-    private Webhook find(final Webhook webhook) {
+    private Webhook findAndMerge(final Webhook webhook) {
         return registry.find(webhook.getId())
                 .orElseThrow(() -> throwNotFound(webhook.getId().toString()))
                 .status(webhook.getStatus())

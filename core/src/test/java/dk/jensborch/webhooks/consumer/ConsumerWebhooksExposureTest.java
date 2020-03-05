@@ -36,6 +36,9 @@ public class ConsumerWebhooksExposureTest {
     private WebhookRegistry registry;
 
     @Mock
+    private WebhookEventConsumer consumer;
+
+    @Mock
     private UriInfo uriInfo;
 
     @InjectMocks
@@ -56,6 +59,32 @@ public class ConsumerWebhooksExposureTest {
         Response result = exposure.create(webhook, uriInfo);
         assertNotNull(result);
         verify(registry).register(webhook);
+    }
+
+    @Test
+    public void testUpdateToInative() throws Exception {
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
+        when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
+        Response result = exposure.update(webhook.status(Webhook.Status.INACTIVE), uriInfo);
+        assertNotNull(result);
+        verify(registry).unregister(webhook.getId());
+    }
+
+    @Test
+    public void testUpdateToSync() throws Exception {
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
+        when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
+        Response result = exposure.update(webhook.status(Webhook.Status.SYNCHRONIZING), uriInfo);
+        assertNotNull(result);
+        verify(consumer).sync(webhook);
+    }
+
+    @Test
+    public void testUpdateToInvalid() throws Exception {
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
+        when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.status(Webhook.Status.FAILED), uriInfo));
+        assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
     }
 
     @Test
