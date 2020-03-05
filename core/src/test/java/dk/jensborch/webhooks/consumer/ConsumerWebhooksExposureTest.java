@@ -51,6 +51,14 @@ public class ConsumerWebhooksExposureTest {
     }
 
     @Test
+    public void testCreate() throws Exception {
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
+        Response result = exposure.create(webhook, uriInfo);
+        assertNotNull(result);
+        verify(registry).register(webhook);
+    }
+
+    @Test
     public void testList() {
         Response result = exposure.list("test_topic");
         assertNotNull(result);
