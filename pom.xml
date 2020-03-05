@@ -36,8 +36,8 @@
         <sortpom.version>2.8.0</sortpom.version>
         <spotbugs-plugin.version>3.1.12.2</spotbugs-plugin.version>
         <surefire-plugin.version>2.22.1</surefire-plugin.version>
-        <swagger-plugin.version>3.1.7</swagger-plugin.version>
-        <swagger.version>1.5.20</swagger.version>
+        <swagger-plugin.version>2.1.2</swagger-plugin.version>
+        <swagger.version>2.1.1</swagger.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
     </properties>
     <dependencyManagement>
