@@ -50,7 +50,7 @@ public class PublisherEventExposureTest {
 
     @BeforeEach
     public void setUp() {
-        registry.register(webhook);
+        registry.register(webhook.status(Webhook.Status.REGISTER));
         publisher.publish(event);
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)

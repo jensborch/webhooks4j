@@ -62,19 +62,19 @@ public class ConsumerWebhooksExposureTest {
     }
 
     @Test
-    public void testUpdateToInative() throws Exception {
+    public void testUnreg() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
         when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        Response result = exposure.update(webhook.status(Webhook.Status.INACTIVE), uriInfo);
+        Response result = exposure.update(webhook.status(Webhook.Status.UNREGISTER), uriInfo);
         assertNotNull(result);
         verify(registry).unregister(webhook.getId());
     }
 
     @Test
-    public void testUpdateToSync() throws Exception {
+    public void testSync() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
         when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        Response result = exposure.update(webhook.status(Webhook.Status.SYNCHRONIZING), uriInfo);
+        Response result = exposure.update(webhook.status(Webhook.Status.SYNCHRONIZE), uriInfo);
         assertNotNull(result);
         verify(consumer).sync(webhook);
     }

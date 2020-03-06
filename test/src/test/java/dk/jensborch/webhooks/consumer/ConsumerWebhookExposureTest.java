@@ -41,7 +41,7 @@ public class ConsumerWebhookExposureTest {
 
     @BeforeEach
     public void setUp() {
-        registry.register(webhook);
+        registry.register(webhook.status(Webhook.Status.REGISTER));
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)

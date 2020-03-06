@@ -16,12 +16,12 @@ import javax.ws.rs.core.Response;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
+import dk.jensborch.webhooks.WebhookEventStatus;
 import dk.jensborch.webhooks.WebhookEventTopic;
 import dk.jensborch.webhooks.WebhookException;
-import dk.jensborch.webhooks.WebhookEventStatus;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Webhook event consumer.
@@ -61,7 +61,7 @@ public class WebhookEventConsumer {
                         .select(WebhookEvent.class, new EventTopicLiteral(callbackEvent.getTopic()))
                         .fire(callbackEvent);
                 repo.save(status.done(true));
-                registry.save(webhook.updated());
+                registry.touch(webhook.getId());
                 LOG.debug("Done processing event {}", callbackEvent);
             } catch (ObserverException e) {
                 LOG.warn("Error processing event {}", callbackEvent, e);

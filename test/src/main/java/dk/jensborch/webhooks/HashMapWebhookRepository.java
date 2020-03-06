@@ -43,4 +43,9 @@ public abstract class HashMapWebhookRepository implements WebhookRepository {
         return Optional.ofNullable(map.get(id));
     }
 
+    @Override
+    public void touch(final UUID id) {
+        map.get(id).updated();
+    }
+
 }
