@@ -22,4 +22,6 @@ public interface WebhookRepository {
 
     Set<Webhook> list(@NotNull String... topic);
 
+    void touch(UUID id);
+
 }

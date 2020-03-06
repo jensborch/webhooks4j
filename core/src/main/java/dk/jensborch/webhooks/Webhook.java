@@ -91,7 +91,7 @@ public class Webhook {
      * Webhook status.
      */
     public enum Status {
-        ACTIVE, INACTIVE, SYNCHRONIZING, FAILED
+        ACTIVE, INACTIVE, REGISTER, REGISTERING, SYNCHRONIZE, SYNCHRONIZING, UNREGISTER, UNREGISTERING, FAILED
     }
 
 }

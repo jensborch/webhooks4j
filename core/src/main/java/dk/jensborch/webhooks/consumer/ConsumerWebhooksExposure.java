@@ -64,10 +64,10 @@ public class ConsumerWebhooksExposure {
             @Context final UriInfo uriInfo) {
         Webhook w = findAndMerge(webhook);
         switch (w.getStatus()) {
-            case SYNCHRONIZING:
+            case SYNCHRONIZE:
                 consumer.sync(w);
                 break;
-            case INACTIVE:
+            case UNREGISTER:
                 registry.unregister(w.getId());
                 break;
             default:

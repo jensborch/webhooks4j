@@ -20,12 +20,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import dk.jensborch.webhooks.validation.ValidUUID;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEventTopics;
 import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.repositories.WebhookRepository;
+import dk.jensborch.webhooks.validation.ValidUUID;
 
 /**
  * Exposure for registration of webhooks.
@@ -45,7 +45,10 @@ public class PublisherWebhookExposure {
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
-        repo.save(webhook);
+        if (webhook.getStatus() != Webhook.Status.REGISTER) {
+            throw new WebhookException(new WebhookError(WebhookError.Code.REGISTER_ERROR, "Illegal webhook status for " + webhook.getId()));
+        }
+        repo.save(webhook.status(Webhook.Status.ACTIVE));
         return Response.created(uriInfo
                 .getBaseUriBuilder()
                 .path(PublisherWebhookExposure.class)
