@@ -4,12 +4,12 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import dk.jensborch.webhooks.ResponseHandler;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
@@ -53,26 +53,29 @@ public class WebhookPublisher {
                 .forEach(w -> call(w, event));
     }
 
+    @SuppressWarnings("PMD.InvalidSlf4jMessageFormat")
     private void call(final Webhook webhook, final WebhookEvent event) {
         LOG.debug("Publishing to {}", webhook);
         WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event, webhook.getId()));
-        try {
-            Response response = client.target(webhook.getSubscriber())
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.json(event));
-            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-                LOG.debug("Done publishing to {}", webhook);
-                statusRepo.save(status.done(true));
-            } else {
-                LOG.warn("Error publishing event {} to {} got HTTP error response {}", event, webhook, response.getStatus());
-                String error = WebhookError.parseErrorResponseToString(response);
-                LOG.warn("Error response is {}", error);
-                statusRepo.save(status.done(false));
-            }
-        } catch (ProcessingException e) {
-            LOG.warn("Error publishing to {} got error processing response", webhook, e);
-            statusRepo.save(status.done(false));
-        }
+        ResponseHandler
+                .type(Response.class)
+                .invocation(client.target(webhook.getSubscriber())
+                        .request(MediaType.APPLICATION_JSON))
+                .success(r -> {
+                    LOG.debug("Done publishing to {}", webhook);
+                    statusRepo.save(status.done(true));
+                })
+                .error(r -> {
+                    LOG.warn("Error publishing event {} to {} got HTTP error response {}", event, webhook, r.getStatus());
+                    String error = WebhookError.parseErrorResponseToString(r);
+                    LOG.warn("Error response is {}", error);
+                    statusRepo.save(status.done(false));
+                })
+                .exception(e -> {
+                    LOG.warn("Error publishing to {} got error processing response", webhook, e);
+                    statusRepo.save(status.done(false));
+                })
+                .invokePost(Entity.json(event));
     }
 
 }
