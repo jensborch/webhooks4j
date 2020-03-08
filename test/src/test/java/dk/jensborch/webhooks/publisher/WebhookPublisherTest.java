@@ -32,7 +32,7 @@ public class WebhookPublisherTest {
 
     @Test
     public void testRegister() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TestEventListener.TOPIC);
+        Webhook webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         Map<String, Object> data = new HashMap<>();
         publisher.publish(new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, data));

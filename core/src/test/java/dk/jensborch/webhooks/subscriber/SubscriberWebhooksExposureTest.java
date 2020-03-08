@@ -27,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test for {@link WebhookEventConsumer}.
+ * Test for {@link SubscriberWebhooksExposure}.
  */
 @ExtendWith(MockitoExtension.class)
 public class SubscriberWebhooksExposureTest {

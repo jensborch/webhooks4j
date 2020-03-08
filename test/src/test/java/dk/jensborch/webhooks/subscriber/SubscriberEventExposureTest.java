@@ -41,7 +41,7 @@ public class SubscriberEventExposureTest {
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TEST_TOPIC);
+        webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), TEST_TOPIC);
     }
 
     @BeforeEach
@@ -63,7 +63,7 @@ public class SubscriberEventExposureTest {
                 .auth().basic("publisher", "pubpub")
                 .when()
                 .body(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()))
-                .post("consumer-events")
+                .post("subscriber-events")
                 .then()
                 .statusCode(201);
     }
@@ -76,7 +76,7 @@ public class SubscriberEventExposureTest {
                 .auth().basic("subscriber", "concon")
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
-                .get("consumer-events")
+                .get("subscriber-events")
                 .then()
                 .statusCode(200)
                 .body("size()", greaterThan(0));
@@ -90,7 +90,7 @@ public class SubscriberEventExposureTest {
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
                 .queryParam("topics", "unknown")
-                .get("consumer-events")
+                .get("subscriber-events")
                 .then()
                 .statusCode(200)
                 .body("size()", equalTo(0));
@@ -103,7 +103,7 @@ public class SubscriberEventExposureTest {
                 .auth().basic("publisher", "pubpub")
                 .when()
                 .body("{}")
-                .post("consumer-events")
+                .post("subscriber-events")
                 .then()
                 .statusCode(400)
                 .body("code", equalTo(WebhookError.Code.VALIDATION_ERROR.toString()));
@@ -116,7 +116,7 @@ public class SubscriberEventExposureTest {
                 .auth().basic("publisher", "pubpub")
                 .when()
                 .body(new WebhookEvent(UUID.randomUUID(), TEST_TOPIC, new HashMap<>()))
-                .post("consumer-events")
+                .post("subscriber-events")
                 .then()
                 .statusCode(400)
                 .body("code", equalTo(WebhookError.Code.UNKNOWN_PUBLISHER.toString()));
@@ -129,7 +129,7 @@ public class SubscriberEventExposureTest {
                 .auth().basic("publisher", "pubpub")
                 .when()
                 .body(new WebhookEvent(webhook.getId(), "unknown", new HashMap<>()))
-                .post("consumer-events")
+                .post("subscriber-events")
                 .then()
                 .statusCode(400)
                 .body("code", equalTo(WebhookError.Code.UNKNOWN_PUBLISHER.toString()));
