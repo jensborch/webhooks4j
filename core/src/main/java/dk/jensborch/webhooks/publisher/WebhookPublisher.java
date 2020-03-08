@@ -13,11 +13,11 @@ import javax.ws.rs.core.Response;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
-import dk.jensborch.webhooks.repositories.WebhookRepository;
 import dk.jensborch.webhooks.WebhookEventStatus;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
+import dk.jensborch.webhooks.repositories.WebhookRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Webhook publisher.
@@ -57,7 +57,7 @@ public class WebhookPublisher {
         LOG.debug("Publishing to {}", webhook);
         WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event, webhook.getId()));
         try {
-            Response response = client.target(webhook.getConsumer())
+            Response response = client.target(webhook.getSubscriber())
                     .request(MediaType.APPLICATION_JSON)
                     .post(Entity.json(event));
             if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {

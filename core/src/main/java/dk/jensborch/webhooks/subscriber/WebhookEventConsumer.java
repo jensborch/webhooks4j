@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import java.util.SortedSet;
 
@@ -35,14 +35,14 @@ public class WebhookEventConsumer {
     Event<WebhookEvent> event;
 
     @Inject
-    @Consumer
+    @Subscriber
     WebhookEventStatusRepository repo;
 
     @Inject
-    WebhookRegistry registry;
+    WebhookSubscriptions subscriptions;
 
     @Inject
-    @Consumer
+    @Subscriber
     Client client;
 
     /**
@@ -61,7 +61,7 @@ public class WebhookEventConsumer {
                         .select(WebhookEvent.class, new EventTopicLiteral(callbackEvent.getTopic()))
                         .fire(callbackEvent);
                 repo.save(status.done(true));
-                registry.touch(webhook.getId());
+                subscriptions.touch(webhook.getId());
                 LOG.debug("Done processing event {}", callbackEvent);
             } catch (ObserverException e) {
                 LOG.warn("Error processing event {}", callbackEvent, e);
@@ -102,7 +102,7 @@ public class WebhookEventConsumer {
     }
 
     private Webhook findPublisher(final WebhookEvent callbackEvent) {
-        return registry
+        return subscriptions
                 .find(callbackEvent.getPublisher())
                 .filter(w -> w.getTopics().contains(callbackEvent.getTopic()))
                 .filter(Webhook::isActive)

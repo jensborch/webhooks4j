@@ -31,7 +31,7 @@ import dk.jensborch.webhooks.validation.ValidUUID;
  * Exposure for registration of webhooks.
  */
 @Path("/publisher-webhooks")
-@DeclareRoles({"consumer", "publisher"})
+@DeclareRoles({"subscriber", "publisher"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PublisherWebhookExposure {
@@ -41,11 +41,11 @@ public class PublisherWebhookExposure {
     WebhookRepository repo;
 
     @POST
-    @RolesAllowed("consumer")
+    @RolesAllowed({"subscriber"})
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
-        if (webhook.getStatus() != Webhook.State.REGISTER) {
+        if (webhook.getStatus() != Webhook.State.SUBSCRIBE) {
             throw new WebhookException(new WebhookError(WebhookError.Code.REGISTER_ERROR, "Illegal webhook status for " + webhook.getId()));
         }
         repo.save(webhook.state(Webhook.State.ACTIVE));
@@ -58,13 +58,13 @@ public class PublisherWebhookExposure {
     }
 
     @GET
-    @RolesAllowed({"consumer", "publisher"})
+    @RolesAllowed({"subscriber", "publisher"})
     public Response list(@QueryParam("topics") final String topics) {
         return Response.ok(repo.list(WebhookEventTopics.parse(topics).getTopics())).build();
     }
 
     @GET
-    @RolesAllowed({"consumer", "publisher"})
+    @RolesAllowed({"subscriber", "publisher"})
     @Path("{id}")
     public Response get(@NotNull @ValidUUID @PathParam("id") final String id) {
         return repo.find(UUID.fromString(id))
@@ -74,7 +74,7 @@ public class PublisherWebhookExposure {
     }
 
     @DELETE
-    @RolesAllowed("consumer")
+    @RolesAllowed({"subscriber"})
     @Path("{id}")
     public Response delete(@NotNull @ValidUUID @PathParam("id") final String id) {
         repo.delete(UUID.fromString(id));

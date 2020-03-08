@@ -44,22 +44,22 @@ public class Webhook {
     private final URI publisher;
 
     @NotNull
-    private final URI consumer;
+    private final URI subscriber;
 
     @NotNull
     private final ZonedDateTime created;
 
-    public Webhook(final URI publisher, final URI consumer, final Set<String> topics) {
+    public Webhook(final URI publisher, final URI subscriber, final Set<String> topics) {
         this.status = State.ACTIVE;
         this.id = UUID.randomUUID();
-        this.consumer = consumer;
+        this.subscriber = subscriber;
         this.publisher = publisher;
         this.topics = new HashSet<>(topics);
         this.created = ZonedDateTime.now();
     }
 
-    public Webhook(final URI publisher, final URI consumer, final String... topics) {
-        this(publisher, consumer, Arrays.stream(topics).collect(Collectors.toSet()));
+    public Webhook(final URI publisher, final URI subscriber, final String... topics) {
+        this(publisher, subscriber, Arrays.stream(topics).collect(Collectors.toSet()));
     }
 
     public Webhook state(final State status) {
@@ -91,7 +91,7 @@ public class Webhook {
      * Webhook status.
      */
     public enum State {
-        ACTIVE, INACTIVE, REGISTER, REGISTERING, SYNCHRONIZE, SYNCHRONIZING, UNREGISTER, UNREGISTERING, FAILED
+        ACTIVE, INACTIVE, SUBSCRIBE, SUBSCRIBING, SYNCHRONIZE, SYNCHRONIZING, UNSUBSCRIBE, UNSUBSCRIBING, FAILED
     }
 
 }

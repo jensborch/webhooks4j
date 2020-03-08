@@ -1,4 +1,6 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
+
+import dk.jensborch.webhooks.subscriber.WebhookSubscriptions;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -25,12 +27,12 @@ import org.junit.jupiter.api.Test;
  * Integration test for {@link PublisherWebhookExposure}.
  */
 @QuarkusTest
-public class ConsumerWebhookExposureTest {
+public class SubscriberWebhookExposureTest {
 
     @Inject
-    WebhookRegistry registry;
+    WebhookSubscriptions subscriptions;
 
-    private static final String TEST_TOPIC = ConsumerWebhookExposureTest.class.getName();
+    private static final String TEST_TOPIC = SubscriberWebhookExposureTest.class.getName();
     private static Webhook webhook;
     private RequestSpecification spec;
 
@@ -41,7 +43,7 @@ public class ConsumerWebhookExposureTest {
 
     @BeforeEach
     public void setUp() {
-        registry.register(webhook.state(Webhook.State.REGISTER));
+        subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
@@ -54,7 +56,7 @@ public class ConsumerWebhookExposureTest {
     public void testGetWebhook() {
         given()
                 .spec(spec)
-                .auth().basic("consumer", "concon")
+                .auth().basic("subscriber", "concon")
                 .when()
                 .pathParam("id", webhook.getId())
                 .get("consumer-webhooks/{id}")
@@ -67,7 +69,7 @@ public class ConsumerWebhookExposureTest {
     public void testListWebhooksWithTopics() {
         given()
                 .spec(spec)
-                .auth().basic("consumer", "concon")
+                .auth().basic("subscriber", "concon")
                 .when()
                 .queryParam("topics", TEST_TOPIC + ",testtest")
                 .get("consumer-webhooks")
@@ -80,7 +82,7 @@ public class ConsumerWebhookExposureTest {
     public void testListWebhooksUnknownTopic() {
         given()
                 .spec(spec)
-                .auth().basic("consumer", "concon")
+                .auth().basic("subscriber", "concon")
                 .when()
                 .queryParam("topics", "unknown")
                 .get("consumer-webhooks")
@@ -93,7 +95,7 @@ public class ConsumerWebhookExposureTest {
     public void testListWebhooks() {
         given()
                 .spec(spec)
-                .auth().basic("consumer", "concon")
+                .auth().basic("subscriber", "concon")
                 .when()
                 .get("consumer-webhooks")
                 .then()

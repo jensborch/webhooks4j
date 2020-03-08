@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,10 +34,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test for {@link WebhookRegistry}.
+ * Test for {@link WebhookSubscriptions}.
  */
 @ExtendWith(MockitoExtension.class)
-public class WebhookRegistryTest {
+public class WebhookSubscriptionsTest {
 
     @Mock
     private Client client;
@@ -52,7 +52,7 @@ public class WebhookRegistryTest {
     private WebhookRepository repo;
 
     @InjectMocks
-    private WebhookRegistry registry;
+    private WebhookSubscriptions subscriptions;
 
     @BeforeEach
     public void setUp() {
@@ -70,15 +70,15 @@ public class WebhookRegistryTest {
 
     @Test
     public void testRegister() throws Exception {
-        registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .state(Webhook.State.REGISTER));
+        subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE));
         verify(repo, times(2)).save(any());
     }
 
     @Test
     public void testUnregister() throws Exception {
-        registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .state(Webhook.State.REGISTER));
+        subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE));
         verify(repo, times(2)).save(any());
     }
 
@@ -86,8 +86,8 @@ public class WebhookRegistryTest {
     public void testUnregister404() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
         when(response.readEntity(any(Class.class))).thenReturn(new WebhookError(WebhookError.Code.NOT_FOUND, "test"));
-        registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .state(Webhook.State.REGISTER));
+        subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE));
         verify(repo, times(2)).save(any());
     }
 
@@ -97,8 +97,8 @@ public class WebhookRegistryTest {
         HashMap<String, Object> map = new HashMap<>();
         map.put("code", WebhookError.Code.REGISTER_ERROR);
         when(response.readEntity(any(GenericType.class))).thenReturn(map);
-        WebhookException e = assertThrows(WebhookException.class, () -> registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .state(Webhook.State.REGISTER)));
+        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE)));
         verify(repo, times(2)).save(any());
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
     }
@@ -106,16 +106,16 @@ public class WebhookRegistryTest {
     @Test
     public void testUnregisterProcessingException() {
         when(builder.delete()).thenThrow(new ProcessingException("test"));
-        WebhookException e = assertThrows(WebhookException.class, () -> registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")));
+        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
     }
 
     @Test
     public void testRegisterProcessingException() {
         when(builder.post(any(Entity.class))).thenThrow(new ProcessingException("test"));
-        WebhookException e = assertThrows(WebhookException.class, () -> registry
-                .register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                        .state(Webhook.State.REGISTER))
+        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions
+                .subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                        .state(Webhook.State.SUBSCRIBE))
         );
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
     }
@@ -127,8 +127,8 @@ public class WebhookRegistryTest {
         HashMap<String, Object> map = new HashMap<>();
         map.put("code", WebhookError.Code.REGISTER_ERROR);
         when(response.readEntity(any(GenericType.class))).thenReturn(map);
-        WebhookException e = assertThrows(WebhookException.class, () -> registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .state(Webhook.State.REGISTER)));
+        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
         assertEquals("Failed to register, got HTTP status code 404 and error: {code=REGISTER_ERROR}", e.getError().getMsg());
     }
@@ -137,10 +137,10 @@ public class WebhookRegistryTest {
     public void testRegisterHttp500() {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
         when(response.readEntity(any(GenericType.class))).thenThrow(new ProcessingException("test"));
-        WebhookException e = assertThrows(WebhookException.class, () -> registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .state(Webhook.State.REGISTER)));
+        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
-        assertEquals("Failed to register, error processing response", e.getError().getMsg());
+        assertEquals("Failed to register, got HTTP status code 0 and error: {msg=test}", e.getError().getMsg());
     }
 
 }

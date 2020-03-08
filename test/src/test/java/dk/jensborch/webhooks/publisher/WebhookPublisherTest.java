@@ -10,8 +10,8 @@ import javax.inject.Inject;
 
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookEvent;
-import dk.jensborch.webhooks.consumer.TestEventListener;
-import dk.jensborch.webhooks.consumer.WebhookRegistry;
+import dk.jensborch.webhooks.subscriber.TestEventListener;
+import dk.jensborch.webhooks.subscriber.WebhookSubscriptions;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 public class WebhookPublisherTest {
 
     @Inject
-    WebhookRegistry registry;
+    WebhookSubscriptions subscriptions;
 
     @Inject
     TestEventListener listener;
@@ -33,7 +33,7 @@ public class WebhookPublisherTest {
     @Test
     public void testRegister() throws Exception {
         Webhook webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TestEventListener.TOPIC);
-        registry.register(webhook.state(Webhook.State.REGISTER));
+        subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         Map<String, Object> data = new HashMap<>();
         publisher.publish(new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, data));
         assertEquals(1, listener.getCount());

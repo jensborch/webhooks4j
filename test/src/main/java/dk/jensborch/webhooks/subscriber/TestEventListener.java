@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;

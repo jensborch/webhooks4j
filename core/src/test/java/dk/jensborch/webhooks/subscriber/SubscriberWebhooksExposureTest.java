@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,10 +30,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link WebhookEventConsumer}.
  */
 @ExtendWith(MockitoExtension.class)
-public class ConsumerWebhooksExposureTest {
+public class SubscriberWebhooksExposureTest {
 
     @Mock
-    private WebhookRegistry registry;
+    private WebhookSubscriptions subscriptions;
 
     @Mock
     private WebhookEventConsumer consumer;
@@ -42,7 +42,7 @@ public class ConsumerWebhooksExposureTest {
     private UriInfo uriInfo;
 
     @InjectMocks
-    private ConsumerWebhooksExposure exposure;
+    private SubscriberWebhooksExposure exposure;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -55,25 +55,25 @@ public class ConsumerWebhooksExposureTest {
 
     @Test
     public void testCreate() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         Response result = exposure.create(webhook, uriInfo);
         assertNotNull(result);
-        verify(registry).register(webhook);
+        verify(subscriptions).subscribe(webhook);
     }
 
     @Test
     public void testUnreg() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
-        when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        Response result = exposure.update(webhook.state(Webhook.State.UNREGISTER), uriInfo);
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
+        when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
+        Response result = exposure.update(webhook.state(Webhook.State.UNSUBSCRIBE), uriInfo);
         assertNotNull(result);
-        verify(registry).unregister(webhook.getId());
+        verify(subscriptions).unsubscribe(webhook.getId());
     }
 
     @Test
     public void testSync() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
-        when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
+        when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
         Response result = exposure.update(webhook.state(Webhook.State.SYNCHRONIZE), uriInfo);
         assertNotNull(result);
         verify(consumer).sync(webhook);
@@ -81,8 +81,8 @@ public class ConsumerWebhooksExposureTest {
 
     @Test
     public void testUpdateToInvalid() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
-        when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
+        when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
         WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.state(Webhook.State.FAILED), uriInfo));
         assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
     }
@@ -91,7 +91,7 @@ public class ConsumerWebhooksExposureTest {
     public void testList() {
         Response result = exposure.list("test_topic");
         assertNotNull(result);
-        verify(registry).list("test_topic");
+        verify(subscriptions).list("test_topic");
     }
 
     @Test
@@ -102,8 +102,8 @@ public class ConsumerWebhooksExposureTest {
 
     @Test
     public void testGet() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
-        when(registry.find(any())).thenReturn(Optional.of(webhook));
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
+        when(subscriptions.find(any())).thenReturn(Optional.of(webhook));
         Response result = exposure.get(UUID.randomUUID().toString());
         assertNotNull(result);
         assertEquals(200, result.getStatus());
