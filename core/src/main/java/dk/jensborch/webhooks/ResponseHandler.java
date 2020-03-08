@@ -96,4 +96,8 @@ public final class ResponseHandler<T> {
     public <E> void invokePost(final Entity<E> entity) {
         invoke(e -> invocation.post(e), entity);
     }
+
+    public void invokeDelete() {
+        invoke(e -> invocation.delete(), null);
+    }
 }
