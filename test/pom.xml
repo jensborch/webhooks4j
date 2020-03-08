@@ -6,11 +6,11 @@
         <artifactId>webhooks4j</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>test</artifactId>
+    <artifactId>webhook4j-test</artifactId>
     <dependencies>
         <dependency>
             <groupId>dk.jensborch.webhooks4j</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>webhook4j-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
