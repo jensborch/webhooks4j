@@ -14,6 +14,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import dk.jensborch.webhooks.ResponseHandler;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookException;
@@ -83,25 +84,25 @@ public class WebhookSubscriptions {
 
     public void unsubscribe(@NotNull @Valid final Webhook webhook) {
         repo.save(webhook.state(Webhook.State.UNSUBSCRIBING));
-        try {
-            Response response = client.target(webhook.getPublisher())
-                    .path("{id}")
-                    .resolveTemplate("id", webhook.getId())
-                    .request()
-                    .delete();
-            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-                repo.save(webhook.state(Webhook.State.INACTIVE));
-            } else if (response.getStatusInfo() == Response.Status.NOT_FOUND) {
-                handleNotFound(response, webhook);
-            } else {
-                repo.save(webhook.state(Webhook.State.FAILED));
-                String error = WebhookError.parseErrorResponseToString(response);
-                throwWebhookException("Failed to unregister, got HTTP status code " + response.getStatus() + " and error: " + error);
-            }
-        } catch (ProcessingException e) {
-            repo.save(webhook.state(Webhook.State.FAILED));
-            throwWebhookException("Failed to unregister, error processing response", e);
-        }
+        ResponseHandler
+                .type(Response.class)
+                .invocation(client
+                        .target(webhook.getPublisher())
+                        .path("{id}")
+                        .resolveTemplate("id", webhook.getId())
+                        .request())
+                .success(r -> repo.save(webhook.state(Webhook.State.INACTIVE)))
+                .notFound(r -> handleNotFound(r, webhook))
+                .error(r -> {
+                    repo.save(webhook.state(Webhook.State.FAILED));
+                    String error = WebhookError.parseErrorResponseToString(r);
+                    throwWebhookException("Failed to unregister, got HTTP status code " + r.getStatus() + " and error: " + error);
+                })
+                .exception(e -> {
+                    repo.save(webhook.state(Webhook.State.FAILED));
+                    throwWebhookException("Failed to unregister, error processing response", e);
+                })
+                .invokeDelete();
     }
 
     private void handleNotFound(final Response response, final Webhook webhook) {

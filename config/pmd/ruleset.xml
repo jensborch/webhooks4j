@@ -31,11 +31,16 @@
         <exclude name="AbstractNaming"/>
         <exclude name="CommentDefaultAccessModifier"/>
         <exclude name="AtLeastOneConstructor"/>
-        <exclude name="LocalVariableCouldBeFinal"/>
+        <exclude name="LocalVariableCouldBeFinal"/>                
     </rule>
     <rule ref="category/java/design.xml">
         <exclude name="LawOfDemeter"/>
         <exclude name="LoosePackageCoupling"/>
+    </rule>
+    <rule ref="category/java/design.xml/TooManyMethods">
+        <properties>
+            <property name="maxmethods" value="15"/>
+        </properties>
     </rule>
     <rule ref="category/java/security.xml"/>
     <rule ref="category/java/performance.xml"/>
