@@ -9,7 +9,8 @@
     <rule ref="category/java/errorprone.xml">
         <exclude name="BeanMembersShouldSerialize"/>
         <exclude name="AvoidFieldNameMatchingMethodName"/>   
-        <exclude name="AvoidDuplicateLiterals"/>             
+        <exclude name="AvoidDuplicateLiterals"/>
+        <exclude name="DataflowAnomalyAnalysis"/>          
     </rule>
     <rule ref="category/java/bestpractices.xml">
         <exclude name="JUnitTestsShouldIncludeAssert"/>

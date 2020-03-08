@@ -13,6 +13,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import dk.jensborch.webhooks.ResponseHandler;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
@@ -77,28 +78,30 @@ public class WebhookEventConsumer {
      * @param webhook to synchronize.
      */
     public void sync(final Webhook webhook) {
-        try {
-            Response response = client.target(webhook.getPublisher())
-                    .queryParam("from", webhook.getUpdated())
-                    .queryParam("webhook", webhook.getId())
-                    .request(MediaType.APPLICATION_JSON)
-                    .get();
-            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-                response
-                        .readEntity(new GenericType<SortedSet<WebhookEventStatus>>() {
-                        })
-                        .stream()
-                        .map(WebhookEventStatus::getEvent).forEach(this::consume);
-            } else {
-                String msg = "Error synchronizing old events, got HTTP status code " + response.getStatus() + " for webhook: " + webhook;
-                LOG.warn(msg);
-                throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg));
-            }
-        } catch (ProcessingException e) {
-            String msg = "Processing error synchronizing old events for webhook: " + webhook;
-            LOG.warn(msg, e);
-            throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg), e);
-        }
+        ResponseHandler
+                .type(new GenericType<SortedSet<WebhookEventStatus>>() {
+                })
+                .invocation(client
+                        .target(webhook.getPublisher())
+                        .queryParam("from", webhook.getUpdated())
+                        .queryParam("webhook", webhook.getId())
+                        .request(MediaType.APPLICATION_JSON))
+                .success(events -> events.stream().map(WebhookEventStatus::getEvent).forEach(this::consume))
+                .error(this::handleError)
+                .exception(this::handleException)
+                .invokeGet();
+    }
+
+    private void handleError(final Response res) {
+        String msg = "Error synchronizing old events, got HTTP status code " + res.getStatus();
+        LOG.warn(msg);
+        throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg));
+    }
+
+    private void handleException(final ProcessingException e) {
+        String msg = "Processing error when synchronizing old events";
+        LOG.warn(msg, e);
+        throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg), e);
     }
 
     private Webhook findPublisher(final WebhookEvent callbackEvent) {
