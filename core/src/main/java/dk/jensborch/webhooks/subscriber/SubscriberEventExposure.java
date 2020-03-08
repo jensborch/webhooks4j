@@ -31,7 +31,7 @@ import dk.jensborch.webhooks.validation.ValidZonedDateTime;
 /**
  * Exposure for receiving callback events.
  */
-@Path("/consumer-events")
+@Path("/subscriber-events")
 @DeclareRoles({"subscriber", "publisher"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

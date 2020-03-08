@@ -47,7 +47,7 @@ public class PublisherWebhookExposureTest {
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
                 .when()
-                .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TEST_TOPIC)
+                .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), TEST_TOPIC)
                         .state(Webhook.State.SUBSCRIBE))
                 .post("publisher-webhooks")
                 .then()

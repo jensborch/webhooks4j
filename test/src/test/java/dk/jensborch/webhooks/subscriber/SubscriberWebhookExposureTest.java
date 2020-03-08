@@ -38,7 +38,7 @@ public class SubscriberWebhookExposureTest {
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TEST_TOPIC);
+        webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), TEST_TOPIC);
     }
 
     @BeforeEach
