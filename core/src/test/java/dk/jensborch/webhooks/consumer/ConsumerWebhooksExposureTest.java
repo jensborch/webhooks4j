@@ -65,7 +65,7 @@ public class ConsumerWebhooksExposureTest {
     public void testUnreg() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
         when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        Response result = exposure.update(webhook.status(Webhook.Status.UNREGISTER), uriInfo);
+        Response result = exposure.update(webhook.state(Webhook.State.UNREGISTER), uriInfo);
         assertNotNull(result);
         verify(registry).unregister(webhook.getId());
     }
@@ -74,7 +74,7 @@ public class ConsumerWebhooksExposureTest {
     public void testSync() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
         when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        Response result = exposure.update(webhook.status(Webhook.Status.SYNCHRONIZE), uriInfo);
+        Response result = exposure.update(webhook.state(Webhook.State.SYNCHRONIZE), uriInfo);
         assertNotNull(result);
         verify(consumer).sync(webhook);
     }
@@ -83,7 +83,7 @@ public class ConsumerWebhooksExposureTest {
     public void testUpdateToInvalid() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
         when(registry.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.status(Webhook.Status.FAILED), uriInfo));
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.state(Webhook.State.FAILED), uriInfo));
         assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
     }
 

@@ -48,7 +48,7 @@ public class PublisherWebhookExposureTest {
                 .auth().basic("consumer", "concon")
                 .when()
                 .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TEST_TOPIC)
-                        .status(Webhook.Status.REGISTER))
+                        .state(Webhook.State.REGISTER))
                 .post("publisher-webhooks")
                 .then()
                 .statusCode(201)

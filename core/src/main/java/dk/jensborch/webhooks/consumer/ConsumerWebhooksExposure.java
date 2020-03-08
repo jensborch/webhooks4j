@@ -80,7 +80,7 @@ public class ConsumerWebhooksExposure {
     private Webhook findAndMerge(final Webhook webhook) {
         return registry.find(webhook.getId())
                 .orElseThrow(() -> throwNotFound(webhook.getId().toString()))
-                .status(webhook.getStatus())
+                .state(webhook.getStatus())
                 .topics(webhook.getTopics())
                 .updated(webhook.getUpdated());
     }
