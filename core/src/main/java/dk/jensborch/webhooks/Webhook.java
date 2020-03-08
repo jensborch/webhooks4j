@@ -27,7 +27,7 @@ public class Webhook {
 
     @NotNull
     @Setter(AccessLevel.NONE)
-    private Status status;
+    private State status;
 
     @Setter(AccessLevel.NONE)
     private ZonedDateTime updated;
@@ -50,7 +50,7 @@ public class Webhook {
     private final ZonedDateTime created;
 
     public Webhook(final URI publisher, final URI consumer, final Set<String> topics) {
-        this.status = Status.ACTIVE;
+        this.status = State.ACTIVE;
         this.id = UUID.randomUUID();
         this.consumer = consumer;
         this.publisher = publisher;
@@ -62,7 +62,7 @@ public class Webhook {
         this(publisher, consumer, Arrays.stream(topics).collect(Collectors.toSet()));
     }
 
-    public Webhook status(final Status status) {
+    public Webhook state(final State status) {
         this.status = status;
         return this;
     }
@@ -84,13 +84,13 @@ public class Webhook {
 
     @JsonIgnore
     public boolean isActive() {
-        return status == Status.ACTIVE || status == Status.FAILED;
+        return status == State.ACTIVE || status == State.FAILED;
     }
 
     /**
      * Webhook status.
      */
-    public enum Status {
+    public enum State {
         ACTIVE, INACTIVE, REGISTER, REGISTERING, SYNCHRONIZE, SYNCHRONIZING, UNREGISTER, UNREGISTERING, FAILED
     }
 

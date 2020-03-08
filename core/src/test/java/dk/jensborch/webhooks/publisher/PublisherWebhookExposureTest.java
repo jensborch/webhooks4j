@@ -55,7 +55,7 @@ public class PublisherWebhookExposureTest {
     @Test
     public void testCreate() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .status(Webhook.Status.REGISTER);
+                .state(Webhook.State.REGISTER);
         Response result = exposure.create(webhook, uriInfo);
         assertNotNull(result);
         verify(repo).save(webhook);

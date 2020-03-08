@@ -71,14 +71,14 @@ public class WebhookRegistryTest {
     @Test
     public void testRegister() throws Exception {
         registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .status(Webhook.Status.REGISTER));
+                .state(Webhook.State.REGISTER));
         verify(repo, times(2)).save(any());
     }
 
     @Test
     public void testUnregister() throws Exception {
         registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .status(Webhook.Status.REGISTER));
+                .state(Webhook.State.REGISTER));
         verify(repo, times(2)).save(any());
     }
 
@@ -87,7 +87,7 @@ public class WebhookRegistryTest {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
         when(response.readEntity(any(Class.class))).thenReturn(new WebhookError(WebhookError.Code.NOT_FOUND, "test"));
         registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .status(Webhook.Status.REGISTER));
+                .state(Webhook.State.REGISTER));
         verify(repo, times(2)).save(any());
     }
 
@@ -98,7 +98,7 @@ public class WebhookRegistryTest {
         map.put("code", WebhookError.Code.REGISTER_ERROR);
         when(response.readEntity(any(GenericType.class))).thenReturn(map);
         WebhookException e = assertThrows(WebhookException.class, () -> registry.unregister(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .status(Webhook.Status.REGISTER)));
+                .state(Webhook.State.REGISTER)));
         verify(repo, times(2)).save(any());
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
     }
@@ -115,7 +115,7 @@ public class WebhookRegistryTest {
         when(builder.post(any(Entity.class))).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> registry
                 .register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                        .status(Webhook.Status.REGISTER))
+                        .state(Webhook.State.REGISTER))
         );
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
     }
@@ -128,7 +128,7 @@ public class WebhookRegistryTest {
         map.put("code", WebhookError.Code.REGISTER_ERROR);
         when(response.readEntity(any(GenericType.class))).thenReturn(map);
         WebhookException e = assertThrows(WebhookException.class, () -> registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .status(Webhook.Status.REGISTER)));
+                .state(Webhook.State.REGISTER)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
         assertEquals("Failed to register, got HTTP status code 404 and error: {code=REGISTER_ERROR}", e.getError().getMsg());
     }
@@ -138,7 +138,7 @@ public class WebhookRegistryTest {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
         when(response.readEntity(any(GenericType.class))).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> registry.register(new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .status(Webhook.Status.REGISTER)));
+                .state(Webhook.State.REGISTER)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
         assertEquals("Failed to register, error processing response", e.getError().getMsg());
     }
