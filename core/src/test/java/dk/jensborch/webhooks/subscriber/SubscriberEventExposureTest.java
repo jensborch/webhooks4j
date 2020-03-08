@@ -1,4 +1,7 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
+
+import dk.jensborch.webhooks.subscriber.SubscriberEventExposure;
+import dk.jensborch.webhooks.subscriber.WebhookEventConsumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,10 +36,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
- * Test for {@link ConsumerEventExposure}.
+ * Test for {@link SubscriberEventExposure}.
  */
 @ExtendWith(MockitoExtension.class)
-public class ConsumerEventExposureTest {
+public class SubscriberEventExposureTest {
 
     @Mock
     private WebhookEventConsumer consumer;
@@ -48,7 +51,7 @@ public class ConsumerEventExposureTest {
     private UriInfo uriInfo;
 
     @InjectMocks
-    private ConsumerEventExposure exposure;
+    private SubscriberEventExposure exposure;
 
     @BeforeEach
     public void setUp() throws Exception {

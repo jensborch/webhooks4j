@@ -1,10 +1,12 @@
 package dk.jensborch.webhooks;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
@@ -24,14 +26,22 @@ public class WebhookError implements Serializable {
     String msg;
 
     public static WebhookError parseErrorResponse(final Response response) {
-        return response.readEntity(WebhookError.class);
+        try {
+            return response.readEntity(WebhookError.class);
+        } catch (ProcessingException e) {
+            return new WebhookError(Code.UNKNOWN_ERROR, e.getMessage());
+        }
     }
 
     public static Map<String, Object> parseErrorResponseToMap(final Response response) {
-        return response.hasEntity()
-                ? response.readEntity(new GenericType<HashMap<String, Object>>() {
-                })
-                : new HashMap<>(0);
+        try {
+            return response.hasEntity()
+                    ? response.readEntity(new GenericType<HashMap<String, Object>>() {
+                    })
+                    : new HashMap<>(0);
+        } catch (ProcessingException e) {
+            return Collections.singletonMap("msg", e.getMessage());
+        }
     }
 
     public static String parseErrorResponseToString(final Response response) {

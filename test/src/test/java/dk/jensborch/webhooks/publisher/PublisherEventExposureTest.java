@@ -13,7 +13,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import dk.jensborch.webhooks.*;
-import dk.jensborch.webhooks.consumer.WebhookRegistry;
+import dk.jensborch.webhooks.subscriber.WebhookSubscriptions;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public class PublisherEventExposureTest {
 
     @Inject
-    WebhookRegistry registry;
+    WebhookSubscriptions subscriptions;
 
     @Inject
     WebhookPublisher publisher;
@@ -50,7 +50,7 @@ public class PublisherEventExposureTest {
 
     @BeforeEach
     public void setUp() {
-        registry.register(webhook.state(Webhook.State.REGISTER));
+        subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         publisher.publish(event);
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)

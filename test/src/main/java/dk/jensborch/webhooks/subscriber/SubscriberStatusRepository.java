@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -7,7 +7,7 @@ import dk.jensborch.webhooks.HashMapStatusRepository;
 /**
  *
  */
-@Consumer
+@Subscriber
 @ApplicationScoped
-public class ConsumerStatusRepository extends HashMapStatusRepository {
+public class SubscriberStatusRepository extends HashMapStatusRepository {
 }

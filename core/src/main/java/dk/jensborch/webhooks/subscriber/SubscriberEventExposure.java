@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -32,16 +32,16 @@ import dk.jensborch.webhooks.validation.ValidZonedDateTime;
  * Exposure for receiving callback events.
  */
 @Path("/consumer-events")
-@DeclareRoles({"consumer", "publisher"})
+@DeclareRoles({"subscriber", "publisher"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class ConsumerEventExposure {
+public class SubscriberEventExposure {
 
     @Inject
     WebhookEventConsumer consumer;
 
     @Inject
-    @Consumer
+    @Subscriber
     WebhookEventStatusRepository repo;
 
     @POST
@@ -52,14 +52,14 @@ public class ConsumerEventExposure {
         consumer.consume(callbackEvent);
         return Response.created(uriInfo
                 .getBaseUriBuilder()
-                .path(ConsumerEventExposure.class)
-                .path(ConsumerEventExposure.class, "get")
+                .path(SubscriberEventExposure.class)
+                .path(SubscriberEventExposure.class, "get")
                 .build(callbackEvent.getId()))
                 .build();
     }
 
     @GET
-    @RolesAllowed({"consumer", "publisher"})
+    @RolesAllowed({"subscriber", "publisher"})
     public Response list(
             @QueryParam("topics") final String topics,
             @ValidUUID @QueryParam("webhook") final String webhook,
@@ -78,7 +78,7 @@ public class ConsumerEventExposure {
 
     @GET
     @Path("{id}")
-    @RolesAllowed({"consumer", "publisher"})
+    @RolesAllowed({"subscriber", "publisher"})
     public Response get(
             @NotNull @ValidUUID @PathParam("id") final String id) {
         return repo.find(UUID.fromString(id))

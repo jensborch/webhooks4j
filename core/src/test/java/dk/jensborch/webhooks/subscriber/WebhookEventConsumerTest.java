@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,9 +33,10 @@ import javax.ws.rs.core.Response;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
-import dk.jensborch.webhooks.WebhookException;
-import dk.jensborch.webhooks.consumer.WebhookEventConsumer.EventTopicLiteral;
 import dk.jensborch.webhooks.WebhookEventStatus;
+import dk.jensborch.webhooks.WebhookException;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
+import dk.jensborch.webhooks.subscriber.WebhookEventConsumer.EventTopicLiteral;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +44,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Test for {@link CallbackExposure].
@@ -60,7 +60,7 @@ public class WebhookEventConsumerTest {
     private Event<WebhookEvent> event;
 
     @Mock
-    private WebhookRegistry registry;
+    private WebhookSubscriptions subscriptions;
 
     @Mock
     private WebhookEventStatusRepository repo;
@@ -69,19 +69,19 @@ public class WebhookEventConsumerTest {
     private WebhookEventConsumer consumer;
 
     private URI publisherUri;
-    private URI consumerUri;
+    private URI subscriberUri;
     private Webhook webhook;
 
     @BeforeEach
     public void setUp() throws Exception {
         publisherUri = new URI("http://publisher.dk");
-        consumerUri = new URI("http://consumer.dk");
-        webhook = new Webhook(publisherUri, consumerUri, TEST_TOPIC);
-        lenient().when(registry.find(any())).thenReturn(Optional.of(webhook));
+        subscriberUri = new URI("http://subscriber.dk");
+        webhook = new Webhook(publisherUri, subscriberUri, TEST_TOPIC);
+        lenient().when(subscriptions.find(any())).thenReturn(Optional.of(webhook));
         lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
         lenient().when(repo.save(any())).then(returnsFirstArg());
         Optional<Webhook> publishers = Optional.of(webhook);
-        lenient().when(registry.find(any())).thenReturn(publishers);
+        lenient().when(subscriptions.find(any())).thenReturn(publishers);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class WebhookEventConsumerTest {
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         when(repo.find(any()))
                 .thenReturn(Optional.of(new WebhookEventStatus(callbackEvent, UUID.randomUUID())
-                                        .done(true))
+                        .done(true))
                 );
         consumer.consume(callbackEvent);
         verify(repo, times(0)).save(any());
@@ -108,7 +108,7 @@ public class WebhookEventConsumerTest {
     @Test
     public void testReceiveUnknownPublisher() {
         UUID publisher = UUID.randomUUID();
-        when(registry.find(any())).thenReturn(Optional.empty());
+        when(subscriptions.find(any())).thenReturn(Optional.empty());
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());

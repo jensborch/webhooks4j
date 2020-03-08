@@ -5,8 +5,8 @@ import javax.enterprise.inject.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 
-import dk.jensborch.webhooks.consumer.Consumer;
 import dk.jensborch.webhooks.publisher.Publisher;
+import dk.jensborch.webhooks.subscriber.Subscriber;
 
 /**
  * CDI producer for getting a JAX-RS client.
@@ -24,12 +24,12 @@ public class ClientProducer {
     }
 
     @Produces
-    @Consumer
-    public Client getConsumerClient() {
+    @Subscriber
+    public Client getSubscriberClient() {
         return ClientBuilder
                 .newClient()
                 .register(ObjectMapperProvider.class)
-                .register(new BasicAuthClientRequestFilter("consumer", "concon"));
+                .register(new BasicAuthClientRequestFilter("subscriber", "concon"));
     }
 
 }

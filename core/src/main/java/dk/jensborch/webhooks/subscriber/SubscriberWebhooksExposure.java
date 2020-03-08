@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import java.util.UUID;
 
@@ -31,24 +31,24 @@ import dk.jensborch.webhooks.validation.ValidUUID;
  * Exposure for registration of webhooks.
  */
 @Path("/consumer-webhooks")
-@DeclareRoles("consumer")
-@RolesAllowed("consumer")
+@DeclareRoles("subscriber")
+@RolesAllowed({"subscriber"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class ConsumerWebhooksExposure {
+public class SubscriberWebhooksExposure {
 
     @Inject
-    WebhookRegistry registry;
+    WebhookSubscriptions subscriper;
 
     @Inject
     WebhookEventConsumer consumer;
 
     @POST
-    @RolesAllowed("consumer")
+    @RolesAllowed({"subscriber"})
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
-        registry.register(webhook);
+        subscriper.subscribe(webhook);
         return Response.created(uriInfo
                 .getBaseUriBuilder()
                 .path(PublisherWebhookExposure.class)
@@ -58,7 +58,7 @@ public class ConsumerWebhooksExposure {
     }
 
     @PUT
-    @RolesAllowed("consumer")
+    @RolesAllowed({"subscriber"})
     public Response update(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
@@ -67,8 +67,8 @@ public class ConsumerWebhooksExposure {
             case SYNCHRONIZE:
                 consumer.sync(w);
                 break;
-            case UNREGISTER:
-                registry.unregister(w.getId());
+            case UNSUBSCRIBE:
+                subscriper.unsubscribe(w.getId());
                 break;
             default:
                 WebhookError error = new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + w.getStatus());
@@ -78,7 +78,7 @@ public class ConsumerWebhooksExposure {
     }
 
     private Webhook findAndMerge(final Webhook webhook) {
-        return registry.find(webhook.getId())
+        return subscriper.find(webhook.getId())
                 .orElseThrow(() -> throwNotFound(webhook.getId().toString()))
                 .state(webhook.getStatus())
                 .topics(webhook.getTopics())
@@ -87,13 +87,13 @@ public class ConsumerWebhooksExposure {
 
     @GET
     public Response list(@QueryParam("topics") final String topics) {
-        return Response.ok(registry.list(WebhookEventTopics.parse(topics).getTopics())).build();
+        return Response.ok(subscriper.list(WebhookEventTopics.parse(topics).getTopics())).build();
     }
 
     @GET
     @Path("{id}")
     public Response get(@ValidUUID @NotNull @PathParam("id") final String id) {
-        return registry.find(UUID.fromString(id))
+        return subscriper.find(UUID.fromString(id))
                 .map(Response::ok)
                 .orElseThrow(() -> throwNotFound(id))
                 .build();

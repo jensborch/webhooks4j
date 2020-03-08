@@ -1,4 +1,4 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import java.util.Optional;
 import java.util.Set;
@@ -22,19 +22,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Consumer webhook registry to find and manipulate webhooks.
+ * Manage webhook subscriptions.
  */
 @ApplicationScoped
-public class WebhookRegistry {
+public class WebhookSubscriptions {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WebhookRegistry.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebhookSubscriptions.class);
 
     @Inject
-    @Consumer
+    @Subscriber
     Client client;
 
     @Inject
-    @Consumer
+    @Subscriber
     WebhookRepository repo;
 
     /**
@@ -43,15 +43,15 @@ public class WebhookRegistry {
      *
      * @param webhook to register.
      */
-    public void register(@NotNull @Valid final Webhook webhook) {
+    public void subscribe(@NotNull @Valid final Webhook webhook) {
         if (repo.find(webhook.getId()).filter(w -> w.equals(webhook)).isPresent()) {
             LOG.info("Webhook {} already exists", webhook);
-        } else if (webhook.getStatus() == Webhook.State.REGISTER) {
-            repo.save(webhook.state(Webhook.State.REGISTERING));
+        } else if (webhook.getStatus() == Webhook.State.SUBSCRIBE) {
+            repo.save(webhook.state(Webhook.State.SUBSCRIBING));
             try {
                 Response response = client.target(webhook.getPublisher())
                         .request(MediaType.APPLICATION_JSON)
-                        .post(Entity.json(webhook.state(Webhook.State.REGISTER)));
+                        .post(Entity.json(webhook.state(Webhook.State.SUBSCRIBE)));
                 if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
                     repo.save(webhook.state(Webhook.State.ACTIVE));
                 } else {
@@ -75,14 +75,14 @@ public class WebhookRegistry {
      *
      * @param id of webhook to unregister.
      */
-    public void unregister(@NotNull final UUID id) {
+    public void unsubscribe(@NotNull final UUID id) {
         Webhook w = find(id).orElseThrow(() -> new WebhookException(
                 new WebhookError(WebhookError.Code.REGISTER_ERROR, "Webhook with id " + id + " not found")));
-        unregister(w);
+        unsubscribe(w);
     }
 
-    public void unregister(@NotNull @Valid final Webhook webhook) {
-        repo.save(webhook.state(Webhook.State.UNREGISTERING));
+    public void unsubscribe(@NotNull @Valid final Webhook webhook) {
+        repo.save(webhook.state(Webhook.State.UNSUBSCRIBING));
         try {
             Response response = client.target(webhook.getPublisher())
                     .path("{id}")

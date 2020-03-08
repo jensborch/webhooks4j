@@ -1,7 +1,8 @@
-package dk.jensborch.webhooks.consumer;
+package dk.jensborch.webhooks.subscriber;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -29,12 +30,12 @@ import org.junit.jupiter.api.TestMethodOrder;
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ConsumerEventExposureTest {
+public class SubscriberEventExposureTest {
 
     @Inject
-    WebhookRegistry registry;
+    WebhookSubscriptions subscriptions;
 
-    private static final String TEST_TOPIC = ConsumerEventExposureTest.class.getName();
+    private static final String TEST_TOPIC = SubscriberEventExposureTest.class.getName();
     private static Webhook webhook;
     private RequestSpecification spec;
 
@@ -45,7 +46,7 @@ public class ConsumerEventExposureTest {
 
     @BeforeEach
     public void setUp() {
-        registry.register(webhook.state(Webhook.State.REGISTER));
+        subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
@@ -72,20 +73,20 @@ public class ConsumerEventExposureTest {
     public void testList() {
         given()
                 .spec(spec)
-                .auth().basic("consumer", "concon")
+                .auth().basic("subscriber", "concon")
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
                 .get("consumer-events")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(1));
+                .body("size()", greaterThan(0));
     }
 
     @Test
     public void testListUnknownTopic() {
         given()
                 .spec(spec)
-                .auth().basic("consumer", "concon")
+                .auth().basic("subscriber", "concon")
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
                 .queryParam("topics", "unknown")

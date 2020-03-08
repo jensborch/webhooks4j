@@ -54,8 +54,8 @@ public class PublisherWebhookExposureTest {
 
     @Test
     public void testCreate() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic")
-                .state(Webhook.State.REGISTER);
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE);
         Response result = exposure.create(webhook, uriInfo);
         assertNotNull(result);
         verify(repo).save(webhook);
@@ -76,7 +76,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     public void testGet() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://consumer.dk"), "test_topic");
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(repo.find(any())).thenReturn(Optional.of(webhook));
         Response result = exposure.get(UUID.randomUUID().toString());
         assertNotNull(result);

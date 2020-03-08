@@ -45,10 +45,10 @@ public class PublisherWebhookExposureTest {
     public void testCreateWebhook() throws Exception {
         String location = given()
                 .spec(spec)
-                .auth().basic("consumer", "concon")
+                .auth().basic("subscriber", "concon")
                 .when()
                 .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/consumer-events"), TEST_TOPIC)
-                        .state(Webhook.State.REGISTER))
+                        .state(Webhook.State.SUBSCRIBE))
                 .post("publisher-webhooks")
                 .then()
                 .statusCode(201)
@@ -57,7 +57,7 @@ public class PublisherWebhookExposureTest {
 
         given()
                 .spec(spec)
-                .auth().basic("consumer", "concon")
+                .auth().basic("subscriber", "concon")
                 .when()
                 .get(location)
                 .then()

@@ -11,7 +11,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test; 
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link WebhookEventStatus}.
@@ -24,8 +24,8 @@ public class WebhhookEventStatusTest {
     @BeforeEach
     public void setUp() throws Exception {
         URI publisherUri = new URI("http://publisher.dk");
-        URI consumerUri = new URI("http://consumer.dk");
-        webhook = new Webhook(publisherUri, consumerUri, "test");
+        URI subscriberUri = new URI("http://subscriber.dk");
+        webhook = new Webhook(publisherUri, subscriberUri, "test");
         status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
     }
 
