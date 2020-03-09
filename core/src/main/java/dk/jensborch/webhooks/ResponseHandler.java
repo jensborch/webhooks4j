@@ -81,9 +81,9 @@ public final class ResponseHandler<T> {
             Response response = supplier.apply(entity);
             if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
                 if (type instanceof GenericType) {
-                    successConsumer.accept((T) response.readEntity((GenericType<T>) type));
+                    successConsumer.accept(response.readEntity((GenericType<T>) type));
                 } else {
-                    successConsumer.accept((T) response.readEntity((Class<T>) type));
+                    successConsumer.accept(response.readEntity((Class<T>) type));
                 }
             } else if (response.getStatusInfo() == Response.Status.NOT_FOUND && notFoundConsumer != null) {
                 notFoundConsumer.accept(response);
