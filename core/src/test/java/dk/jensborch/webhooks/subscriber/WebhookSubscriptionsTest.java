@@ -94,9 +94,7 @@ public class WebhookSubscriptionsTest {
     @Test
     public void testUnregister500() {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("code", WebhookError.Code.REGISTER_ERROR);
-        when(response.readEntity(any(GenericType.class))).thenReturn(map);
+        when(response.readEntity(any(Class.class))).thenReturn(new WebhookError(WebhookError.Code.REGISTER_ERROR, "test"));
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE)));
         verify(repo, times(2)).save(any());

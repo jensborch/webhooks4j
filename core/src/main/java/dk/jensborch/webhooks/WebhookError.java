@@ -25,9 +25,11 @@ public class WebhookError implements Serializable {
     Code code;
     String msg;
 
-    public static WebhookError parseErrorResponse(final Response response) {
+    public static WebhookError parse(final Response response) {
         try {
-            return response.readEntity(WebhookError.class);
+            return response.hasEntity()
+                    ? response.readEntity(WebhookError.class)
+                    : new WebhookError(Code.UNKNOWN_ERROR, "No entity");
         } catch (ProcessingException e) {
             return new WebhookError(Code.UNKNOWN_ERROR, e.getMessage());
         }
