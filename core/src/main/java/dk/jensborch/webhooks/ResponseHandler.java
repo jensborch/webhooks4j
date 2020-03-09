@@ -1,6 +1,7 @@
 package dk.jensborch.webhooks;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -22,6 +23,7 @@ public final class ResponseHandler<T> {
     private Consumer<Response> notFoundConsumer;
     private Consumer<T> successConsumer;
     private Consumer<ProcessingException> processingErrorConsumer;
+    private BiConsumer<WebhookError, Response.StatusType> webhookErrorConsumer;
 
     private ResponseHandler(final Class<T> type) {
         Objects.requireNonNull(type, "Type must be defined");
@@ -66,6 +68,12 @@ public final class ResponseHandler<T> {
         return this;
     }
 
+    public ResponseHandler<T> webhookError(final BiConsumer<WebhookError, Response.StatusType> consumer) {
+        this.webhookErrorConsumer = consumer;
+        return this;
+    }
+
+    @SuppressWarnings("PMD.ConfusingTernary")
     private <E> void invoke(final Function<E, Response> supplier, final E entity) {
         Objects.requireNonNull(invocation, "Invocation handler must be defined");
         Objects.requireNonNull(successConsumer, "Success handler must be defined");
@@ -79,6 +87,8 @@ public final class ResponseHandler<T> {
                 }
             } else if (response.getStatusInfo() == Response.Status.NOT_FOUND && notFoundConsumer != null) {
                 notFoundConsumer.accept(response);
+            } else if (webhookErrorConsumer != null) {
+                webhookErrorConsumer.accept(WebhookError.parse(response), response.getStatusInfo());
             } else if (errorConsumer != null) {
                 errorConsumer.accept(response);
             }

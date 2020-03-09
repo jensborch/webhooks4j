@@ -92,28 +92,20 @@ public class WebhookSubscriptions {
                         .resolveTemplate("id", webhook.getId())
                         .request())
                 .success(r -> repo.save(webhook.state(Webhook.State.INACTIVE)))
-                .notFound(r -> handleNotFound(r, webhook))
-                .error(r -> {
-                    repo.save(webhook.state(Webhook.State.FAILED));
-                    String error = WebhookError.parseErrorResponseToString(r);
-                    throwWebhookException("Failed to unregister, got HTTP status code " + r.getStatus() + " and error: " + error);
+                .webhookError((error, status) -> {
+                    if (status == Response.Status.NOT_FOUND && error.getCode() == WebhookError.Code.NOT_FOUND) {
+                        LOG.info("Webhook {} not found at publisher", error);
+                        repo.save(webhook.state(Webhook.State.INACTIVE));
+                    } else {
+                        repo.save(webhook.state(Webhook.State.FAILED));
+                        throwWebhookException("Failed to unregister, got HTTP status code " + status.getStatusCode() + ", and error: " + error);
+                    }
                 })
                 .exception(e -> {
                     repo.save(webhook.state(Webhook.State.FAILED));
                     throwWebhookException("Failed to unregister, error processing response", e);
                 })
                 .invokeDelete();
-    }
-
-    private void handleNotFound(final Response response, final Webhook webhook) {
-        WebhookError error = WebhookError.parseErrorResponse(response);
-        if (error.getCode() == WebhookError.Code.NOT_FOUND) {
-            LOG.info("Webhook {} not found at publisher", error);
-            repo.save(webhook.state(Webhook.State.INACTIVE));
-        } else {
-            repo.save(webhook.state(Webhook.State.FAILED));
-            throwWebhookException("Failed to unregister, got HTTP status code 404, but unexpected error code: " + error);
-        }
     }
 
     private void throwWebhookException(final String msg) {
