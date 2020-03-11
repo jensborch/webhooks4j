@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -49,21 +48,24 @@ public class WebhookSubscriptions {
             LOG.info("Webhook {} already exists", webhook);
         } else if (webhook.getStatus() == Webhook.State.SUBSCRIBE) {
             repo.save(webhook.state(Webhook.State.SUBSCRIBING));
-            try {
-                Response response = client.target(webhook.getPublisher())
-                        .request(MediaType.APPLICATION_JSON)
-                        .post(Entity.json(webhook.state(Webhook.State.SUBSCRIBE)));
-                if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-                    repo.save(webhook.state(Webhook.State.ACTIVE));
-                } else {
-                    repo.save(webhook.state(Webhook.State.FAILED));
-                    String error = WebhookError.parseErrorResponseToString(response);
-                    throwWebhookException("Failed to register, got HTTP status code " + response.getStatus() + " and error: " + error);
-                }
-            } catch (ProcessingException e) {
-                repo.save(webhook.state(Webhook.State.FAILED));
-                throwWebhookException("Failed to register, error processing response", e);
-            }
+            ResponseHandler
+                    .type(Response.class)
+                    .invocation(client
+                            .target(webhook.getPublisher())
+                            .request(MediaType.APPLICATION_JSON)
+                            .buildPost(Entity.json(webhook.state(Webhook.State.SUBSCRIBE)))
+                    )
+                    .success(r -> repo.save(webhook.state(Webhook.State.ACTIVE)))
+                    .error(response -> {
+                        repo.save(webhook.state(Webhook.State.FAILED));
+                        WebhookError error = WebhookError.parse(response);
+                        throwWebhookException("Failed to register, got HTTP status code " + response.getStatus() + " and error: " + error);
+                    })
+                    .exception(e -> {
+                        repo.save(webhook.state(Webhook.State.FAILED));
+                        throwWebhookException("Failed to register, error processing response", e);
+                    })
+                    .invoke();
         } else {
             throwWebhookException("Status must be REGISTER to register webhook");
         }
@@ -90,7 +92,8 @@ public class WebhookSubscriptions {
                         .target(webhook.getPublisher())
                         .path("{id}")
                         .resolveTemplate("id", webhook.getId())
-                        .request())
+                        .request()
+                        .buildDelete())
                 .success(r -> repo.save(webhook.state(Webhook.State.INACTIVE)))
                 .webhookError((error, status) -> {
                     if (status == Response.Status.NOT_FOUND && error.getCode() == WebhookError.Code.NOT_FOUND) {
@@ -105,7 +108,7 @@ public class WebhookSubscriptions {
                     repo.save(webhook.state(Webhook.State.FAILED));
                     throwWebhookException("Failed to unregister, error processing response", e);
                 })
-                .invokeDelete();
+                .invoke();
     }
 
     private void throwWebhookException(final String msg) {

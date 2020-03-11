@@ -3,10 +3,8 @@ package dk.jensborch.webhooks;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
@@ -18,12 +16,12 @@ import javax.ws.rs.core.Response;
 public final class ResponseHandler<T> {
 
     private final Object type;
-    private Invocation.Builder invocation;
     private Consumer<Response> errorConsumer;
     private Consumer<Response> notFoundConsumer;
     private Consumer<T> successConsumer;
     private Consumer<ProcessingException> processingErrorConsumer;
     private BiConsumer<WebhookError, Response.StatusType> webhookErrorConsumer;
+    private Invocation invocation;
 
     private ResponseHandler(final Class<T> type) {
         Objects.requireNonNull(type, "Type must be defined");
@@ -43,7 +41,7 @@ public final class ResponseHandler<T> {
         return new ResponseHandler<>(type);
     }
 
-    public ResponseHandler<T> invocation(final Invocation.Builder invocation) {
+    public ResponseHandler<T> invocation(final Invocation invocation) {
         this.invocation = invocation;
         return this;
     }
@@ -73,15 +71,17 @@ public final class ResponseHandler<T> {
         return this;
     }
 
-    @SuppressWarnings("PMD.ConfusingTernary")
-    private <E> void invoke(final Function<E, Response> supplier, final E entity) {
+    @SuppressWarnings("PMD")
+    public <E> void invoke() {
         Objects.requireNonNull(invocation, "Invocation handler must be defined");
         Objects.requireNonNull(successConsumer, "Success handler must be defined");
         try {
-            Response response = supplier.apply(entity);
+            Response response = invocation.invoke();
             if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
                 if (type instanceof GenericType) {
                     successConsumer.accept(response.readEntity((GenericType<T>) type));
+                } else if (type.equals(Response.class)) {
+                    successConsumer.accept((T) response);
                 } else {
                     successConsumer.accept(response.readEntity((Class<T>) type));
                 }
@@ -97,17 +97,5 @@ public final class ResponseHandler<T> {
                 processingErrorConsumer.accept(e);
             }
         }
-    }
-
-    public void invokeGet() {
-        invoke(e -> invocation.get(), null);
-    }
-
-    public <E> void invokePost(final Entity<E> entity) {
-        invoke(e -> invocation.post(e), entity);
-    }
-
-    public void invokeDelete() {
-        invoke(e -> invocation.delete(), null);
     }
 }

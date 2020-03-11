@@ -85,11 +85,12 @@ public class WebhookEventConsumer {
                         .target(webhook.getPublisher())
                         .queryParam("from", webhook.getUpdated())
                         .queryParam("webhook", webhook.getId())
-                        .request(MediaType.APPLICATION_JSON))
+                        .request(MediaType.APPLICATION_JSON)
+                        .buildGet())
                 .success(events -> events.stream().map(WebhookEventStatus::getEvent).forEach(this::consume))
                 .error(this::handleError)
                 .exception(this::handleException)
-                .invokeGet();
+                .invoke();
     }
 
     private void handleError(final Response res) {

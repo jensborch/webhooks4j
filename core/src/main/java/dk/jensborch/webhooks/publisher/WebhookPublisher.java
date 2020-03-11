@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.ResponseHandler;
 import dk.jensborch.webhooks.Webhook;
-import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventStatus;
 import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
@@ -60,22 +59,21 @@ public class WebhookPublisher {
         ResponseHandler
                 .type(Response.class)
                 .invocation(client.target(webhook.getSubscriber())
-                        .request(MediaType.APPLICATION_JSON))
+                        .request(MediaType.APPLICATION_JSON)
+                        .buildPost(Entity.json(event)))
                 .success(r -> {
                     LOG.debug("Done publishing to {}", webhook);
                     statusRepo.save(status.done(true));
                 })
-                .error(r -> {
-                    LOG.warn("Error publishing event {} to {} got HTTP error response {}", event, webhook, r.getStatus());
-                    String error = WebhookError.parseErrorResponseToString(r);
-                    LOG.warn("Error response is {}", error);
+                .webhookError((e, s) -> {
+                    LOG.warn("Error publishing event {} to {} got HTTP error code {} and response {}", event, webhook, s, e);
                     statusRepo.save(status.done(false));
                 })
                 .exception(e -> {
                     LOG.warn("Error publishing to {} got error processing response", webhook, e);
                     statusRepo.save(status.done(false));
                 })
-                .invokePost(Entity.json(event));
+                .invoke();
     }
 
 }
