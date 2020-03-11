@@ -4,10 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,25 +21,16 @@ public class WebhookErrorTest {
     @Mock
     private Response response;
 
-    private HashMap<String, Object> map;
-
     @BeforeEach
     public void setUp() {
-        map = new HashMap<>();
         when(response.hasEntity()).thenReturn(true);
-        when(response.readEntity(any(GenericType.class))).thenReturn(map);
+        when(response.readEntity(any(Class.class))).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
     }
 
     @Test
-    public void testParseErrorResponse() {
-        Map<String, Object> result = WebhookError.parseErrorResponseToMap(response);
-        assertEquals(map, result);
-    }
-
-    @Test
-    public void testParseErrorResponseToString() {
-        String result = WebhookError.parseErrorResponseToString(response);
-        assertEquals("{}", result);
+    public void testParse() {
+        WebhookError result = WebhookError.parse(response);
+        assertEquals(new WebhookError(WebhookError.Code.NOT_FOUND, "test"), result);
     }
 
 }

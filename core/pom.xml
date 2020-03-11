@@ -22,6 +22,10 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.json</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
             <version>${javax.annotation-api.version}</version>

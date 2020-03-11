@@ -134,7 +134,7 @@ public class WebhookEventConsumerTest {
         verify(repo, times(2)).save(any());
     }
 
-    public void setupSyncResponse(WebhookEventStatus... status) {
+    public void setupSyncResponse(final WebhookEventStatus... status) {
         WebTarget target = mock(WebTarget.class);
         when(client.target(any(URI.class))).thenReturn(target);
         when(target.queryParam(any(String.class), any())).thenReturn(target);
@@ -142,7 +142,11 @@ public class WebhookEventConsumerTest {
         when(target.request(eq(MediaType.APPLICATION_JSON))).thenReturn(builder);
         Response response = mock(Response.class);
         when(response.getStatusInfo()).thenReturn(Response.Status.OK);
-        when(builder.get()).thenReturn(response);
+        Invocation invocation = mock(Invocation.class);
+        when(builder.buildGet()).thenReturn(invocation);
+        when(invocation.invoke()).thenReturn(response);
+
+        //when(builder.get()).thenReturn(response);
         SortedSet<WebhookEventStatus> statusSet = new TreeSet<>();
         if (status != null && status.length > 0) {
             Event cdiEvent = mock(Event.class);
