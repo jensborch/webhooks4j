@@ -65,8 +65,8 @@ public class WebhookPublisher {
                     LOG.debug("Done publishing to {}", webhook);
                     statusRepo.save(status.done(true));
                 })
-                .webhookError((e, s) -> {
-                    LOG.warn("Error publishing event {} to {} got HTTP error code {} and response {}", event, webhook, s, e);
+                .error(e -> {
+                    LOG.warn("Error publishing event {} to {} got error response {}", event, webhook, e);
                     statusRepo.save(status.done(false));
                 })
                 .exception(e -> {

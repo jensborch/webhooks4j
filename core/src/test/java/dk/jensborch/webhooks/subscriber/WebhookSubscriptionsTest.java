@@ -123,12 +123,11 @@ public class WebhookSubscriptionsTest {
     @Test
     public void testRegisterHttp400() {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
-        when(response.getStatus()).thenReturn(404);
         when(response.readEntity(any(Class.class))).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
-        assertEquals("Failed to register, got HTTP status code 404 and error: WebhookError(status=404, code=NOT_FOUND, msg=test)", e.getError().getMsg());
+        assertEquals("Failed to register, got error response: WebhookError(status=404, code=NOT_FOUND, msg=test)", e.getError().getMsg());
     }
 
     @Test
@@ -138,7 +137,7 @@ public class WebhookSubscriptionsTest {
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
-        assertEquals("Failed to register, got HTTP status code 0 and error: WebhookError(status=0, code=UNKNOWN_ERROR, msg=test)", e.getError().getMsg());
+        assertEquals("Failed to register, got error response: WebhookError(status=0, code=UNKNOWN_ERROR, msg=test)", e.getError().getMsg());
     }
 
 }

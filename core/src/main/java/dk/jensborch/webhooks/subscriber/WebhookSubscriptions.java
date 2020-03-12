@@ -56,10 +56,9 @@ public class WebhookSubscriptions {
                             .buildPost(Entity.json(webhook.state(Webhook.State.SUBSCRIBE)))
                     )
                     .success(r -> repo.save(webhook.state(Webhook.State.ACTIVE)))
-                    .error(response -> {
+                    .error(e -> {
                         repo.save(webhook.state(Webhook.State.FAILED));
-                        WebhookError error = WebhookError.parse(response);
-                        throwWebhookException("Failed to register, got HTTP status code " + response.getStatus() + " and error: " + error);
+                        throwWebhookException("Failed to register, got error response: " + e);
                     })
                     .exception(e -> {
                         repo.save(webhook.state(Webhook.State.FAILED));
@@ -95,13 +94,13 @@ public class WebhookSubscriptions {
                         .request()
                         .buildDelete())
                 .success(r -> repo.save(webhook.state(Webhook.State.INACTIVE)))
-                .webhookError((error, status) -> {
-                    if (status == Response.Status.NOT_FOUND && error.getCode() == WebhookError.Code.NOT_FOUND) {
-                        LOG.info("Webhook {} not found at publisher", error);
+                .error(error -> {
+                    if (error.getStatus() == Response.Status.NOT_FOUND.getStatusCode() && error.getCode() == WebhookError.Code.NOT_FOUND) {
+                        LOG.info("Webhook {} not found in publisher", error);
                         repo.save(webhook.state(Webhook.State.INACTIVE));
                     } else {
                         repo.save(webhook.state(Webhook.State.FAILED));
-                        throwWebhookException("Failed to unregister, got HTTP status code " + status.getStatusCode() + ", and error: " + error);
+                        throwWebhookException("Failed to unregister, got error response: " + error);
                     }
                 })
                 .exception(e -> {

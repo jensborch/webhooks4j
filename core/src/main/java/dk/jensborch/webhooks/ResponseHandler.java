@@ -1,7 +1,6 @@
 package dk.jensborch.webhooks;
 
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.ws.rs.ProcessingException;
@@ -9,18 +8,23 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
+ * Wrapper around the JAX-RS client API to handle responses more easily.
  *
- * @param <T>
+ * @param <T> the response type to handle
  */
 public final class ResponseHandler<T> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ResponseHandler.class);
+
     private final Object type;
-    private Consumer<Response> errorConsumer;
     private Consumer<Response> notFoundConsumer;
     private Consumer<T> successConsumer;
     private Consumer<ProcessingException> processingErrorConsumer;
-    private BiConsumer<WebhookError, Response.StatusType> webhookErrorConsumer;
+    private Consumer<WebhookError> webhookErrorConsumer;
     private Invocation invocation;
 
     private ResponseHandler(final Class<T> type) {
@@ -61,12 +65,7 @@ public final class ResponseHandler<T> {
         return this;
     }
 
-    public ResponseHandler<T> error(final Consumer<Response> consumer) {
-        this.errorConsumer = consumer;
-        return this;
-    }
-
-    public ResponseHandler<T> webhookError(final BiConsumer<WebhookError, Response.StatusType> consumer) {
+    public ResponseHandler<T> error(final Consumer<WebhookError> consumer) {
         this.webhookErrorConsumer = consumer;
         return this;
     }
@@ -88,9 +87,9 @@ public final class ResponseHandler<T> {
             } else if (response.getStatusInfo() == Response.Status.NOT_FOUND && notFoundConsumer != null) {
                 notFoundConsumer.accept(response);
             } else if (webhookErrorConsumer != null) {
-                webhookErrorConsumer.accept(WebhookError.parse(response), response.getStatusInfo());
-            } else if (errorConsumer != null) {
-                errorConsumer.accept(response);
+                webhookErrorConsumer.accept(WebhookError.parse(response));
+            } else {
+                LOG.info("Error processing response, got HTTP status code {}", response.getStatus());
             }
         } catch (ProcessingException e) {
             if (processingErrorConsumer != null) {
