@@ -21,10 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Representation of an error message returned by the API.
- *
- * https://tools.ietf.org/html/rfc7807
- *
+ * Representation of an error message returned by the API compatible with
+ * <a href="https://tools.ietf.org/html/rfc7807">RFC7807</a>
  */
 @Value
 public class WebhookError implements Serializable {
@@ -43,24 +41,22 @@ public class WebhookError implements Serializable {
 
     Integer status;
     Code code;
-    String msg;
+    String title;
+    String detail;
 
     public WebhookError(final int status, final Code code, final String msg) {
         this.status = status;
         this.code = code;
-        this.msg = msg;
+        this.title = code.getTitle();
+        this.detail = msg;
     }
 
     public WebhookError(final Code code, final String msg) {
-        this.status = code.getStatus().getStatusCode();
-        this.code = code;
-        this.msg = msg;
+        this(code.getStatus().getStatusCode(), code, msg);
     }
 
     public WebhookError(final Integer status, final String msg) {
-        this.status = status;
-        this.code = HTTP_STATUS_MAP.getOrDefault(Response.Status.fromStatusCode(status), Code.UNKNOWN_ERROR);
-        this.msg = msg;
+        this(status, HTTP_STATUS_MAP.getOrDefault(Response.Status.fromStatusCode(status), Code.UNKNOWN_ERROR), msg);
     }
 
     @SuppressWarnings("PMD")
@@ -82,7 +78,7 @@ public class WebhookError implements Serializable {
             } catch (ProcessingException e) {
                 LOG.warn("Unable to parse error response as string", e);
                 return new WebhookError(response.getStatus(), e.getMessage());
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 LOG.warn("Unexpected error", e);
                 return new WebhookError(response.getStatus(), e.getMessage());
             }
@@ -97,18 +93,21 @@ public class WebhookError implements Serializable {
      */
     @AllArgsConstructor
     public enum Code {
-        AUTHORIZATION_ERROR(Response.Status.UNAUTHORIZED),
-        AUTHENTICATION_ERROR(Response.Status.FORBIDDEN),
-        VALIDATION_ERROR(Response.Status.BAD_REQUEST),
-        UNKNOWN_PUBLISHER(Response.Status.BAD_REQUEST),
-        UNKNOWN_ERROR(Response.Status.INTERNAL_SERVER_ERROR),
-        REGISTER_ERROR(Response.Status.SERVICE_UNAVAILABLE),
-        NOT_FOUND(Response.Status.NOT_FOUND),
-        SYNC_ERROR(Response.Status.SERVICE_UNAVAILABLE),
-        ILLEGAL_STATUS(Response.Status.BAD_REQUEST);
+        AUTHORIZATION_ERROR(Response.Status.UNAUTHORIZED, "User not authorization"),
+        AUTHENTICATION_ERROR(Response.Status.FORBIDDEN, "User not authenticated"),
+        VALIDATION_ERROR(Response.Status.BAD_REQUEST, "Validation error"),
+        UNKNOWN_PUBLISHER(Response.Status.BAD_REQUEST, "Unknown publisher"),
+        UNKNOWN_ERROR(Response.Status.INTERNAL_SERVER_ERROR, "Unknown error"),
+        REGISTER_ERROR(Response.Status.SERVICE_UNAVAILABLE, "Webhook resgistration error"),
+        NOT_FOUND(Response.Status.NOT_FOUND, "Not found"),
+        SYNC_ERROR(Response.Status.SERVICE_UNAVAILABLE, "Event synchronisation error"),
+        ILLEGAL_STATUS(Response.Status.BAD_REQUEST, "Illegal webhook state");
 
         @Getter
         private final Response.Status status;
+
+        @Getter
+        private final String title;
 
         public static Code fromString(final String value) {
             return value == null || value.isEmpty()

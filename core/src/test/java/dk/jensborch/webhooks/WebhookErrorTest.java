@@ -55,4 +55,40 @@ public class WebhookErrorTest {
         assertEquals(new WebhookError(400, "test"), result);
     }
 
+    @Test
+    public void testParseJsonParsingException() {
+        when(response.hasEntity()).thenReturn(true);
+        when(response.getStatus()).thenReturn(400);
+        when(response.readEntity(any(Class.class))).thenReturn("invalid");
+        WebhookError result = WebhookError.parse(response);
+        assertEquals(new WebhookError(400, WebhookError.Code.UNKNOWN_ERROR, "invalid"), result);
+    }
+
+    @Test
+    public void testParseRuntimeException() {
+        when(response.hasEntity()).thenReturn(true);
+        when(response.getStatus()).thenReturn(500);
+        when(response.readEntity(any(Class.class))).thenThrow(new RuntimeException("test"));
+        WebhookError result = WebhookError.parse(response);
+        assertEquals(new WebhookError(500, WebhookError.Code.UNKNOWN_ERROR, "test"), result);
+    }
+
+    @Test
+    public void testParse401() {
+        when(response.hasEntity()).thenReturn(true);
+        when(response.getStatus()).thenReturn(401);
+        when(response.readEntity(any(Class.class))).thenReturn("");
+        WebhookError result = WebhookError.parse(response);
+        assertEquals(new WebhookError(401, WebhookError.Code.AUTHENTICATION_ERROR, ""), result);
+    }
+
+    @Test
+    public void testParse403() {
+        when(response.hasEntity()).thenReturn(true);
+        when(response.getStatus()).thenReturn(403);
+        when(response.readEntity(any(Class.class))).thenReturn("");
+        WebhookError result = WebhookError.parse(response);
+        assertEquals(new WebhookError(403, WebhookError.Code.AUTHORIZATION_ERROR, ""), result);
+    }
+
 }

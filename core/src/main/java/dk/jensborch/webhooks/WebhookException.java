@@ -13,12 +13,12 @@ public class WebhookException extends RuntimeException {
     private final WebhookError error;
 
     public WebhookException(final WebhookError error, final Throwable cause) {
-        super(error.getMsg(), cause);
+        super(error.getDetail(), cause);
         this.error = error;
     }
 
     public WebhookException(final WebhookError error) {
-        super(error.getMsg());
+        super(error.getDetail());
         this.error = error;
     }
 

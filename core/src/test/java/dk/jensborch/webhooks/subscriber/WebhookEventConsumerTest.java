@@ -112,7 +112,7 @@ public class WebhookEventConsumerTest {
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
-        assertEquals("Unknown/inactive publisher " + publisher + " for topic test_topic", e.getError().getMsg());
+        assertEquals("Unknown/inactive publisher " + publisher + " for topic test_topic", e.getError().getDetail());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class WebhookEventConsumerTest {
         WebhookEvent callbackEvent = new WebhookEvent(publisher, "unknown_topic", new HashMap<>());
         WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
-        assertEquals("Unknown/inactive publisher " + publisher + " for topic unknown_topic", e.getError().getMsg());
+        assertEquals("Unknown/inactive publisher " + publisher + " for topic unknown_topic", e.getError().getDetail());
     }
 
     @Test
