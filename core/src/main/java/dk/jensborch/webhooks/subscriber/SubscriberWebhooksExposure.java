@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -63,18 +64,20 @@ public class SubscriberWebhooksExposure {
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
         Webhook w = findAndMerge(webhook);
-        switch (w.getState()) {
-            case SYNCHRONIZE:
-                consumer.sync(w);
-                break;
-            case UNSUBSCRIBE:
-                subscriper.unsubscribe(w.getId());
-                break;
-            default:
-                WebhookError error = new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + w.getState());
-                throw new WebhookException(error);
+        if (w.getState() == Webhook.State.SYNCHRONIZE) {
+            consumer.sync(w);
+        } else {
+            WebhookError error = new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + w.getState());
+            throw new WebhookException(error);
         }
         return Response.ok(webhook).build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response delete(@ValidUUID @NotNull @PathParam("id") final String id) {
+        subscriper.unsubscribe(UUID.fromString(id));
+        return Response.noContent().build();
     }
 
     private Webhook findAndMerge(final Webhook webhook) {

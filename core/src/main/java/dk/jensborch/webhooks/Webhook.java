@@ -62,8 +62,8 @@ public class Webhook {
         this(publisher, subscriber, Arrays.stream(topics).collect(Collectors.toSet()));
     }
 
-    public Webhook state(final State status) {
-        this.state = status;
+    public Webhook state(final State state) {
+        this.state = state;
         return this;
     }
 
