@@ -71,7 +71,7 @@ public final class ResponseHandler<T> {
     }
 
     @SuppressWarnings("PMD")
-    public <E> void invoke() {
+    public void invoke() {
         Objects.requireNonNull(invocation, "Invocation handler must be defined");
         Objects.requireNonNull(successConsumer, "Success handler must be defined");
         try {
