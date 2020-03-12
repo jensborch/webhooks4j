@@ -45,7 +45,7 @@ public class PublisherWebhookExposure {
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
-        if (webhook.getStatus() != Webhook.State.SUBSCRIBE) {
+        if (webhook.getState() != Webhook.State.SUBSCRIBE) {
             throw new WebhookException(new WebhookError(WebhookError.Code.REGISTER_ERROR, "Illegal webhook status for " + webhook.getId()));
         }
         repo.save(webhook.state(Webhook.State.ACTIVE));

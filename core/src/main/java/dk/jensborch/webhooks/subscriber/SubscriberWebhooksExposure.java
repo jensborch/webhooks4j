@@ -63,7 +63,7 @@ public class SubscriberWebhooksExposure {
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
         Webhook w = findAndMerge(webhook);
-        switch (w.getStatus()) {
+        switch (w.getState()) {
             case SYNCHRONIZE:
                 consumer.sync(w);
                 break;
@@ -71,7 +71,7 @@ public class SubscriberWebhooksExposure {
                 subscriper.unsubscribe(w.getId());
                 break;
             default:
-                WebhookError error = new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + w.getStatus());
+                WebhookError error = new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + w.getState());
                 throw new WebhookException(error);
         }
         return Response.ok(webhook).build();
@@ -80,7 +80,7 @@ public class SubscriberWebhooksExposure {
     private Webhook findAndMerge(final Webhook webhook) {
         return subscriper.find(webhook.getId())
                 .orElseThrow(() -> throwNotFound(webhook.getId().toString()))
-                .state(webhook.getStatus())
+                .state(webhook.getState())
                 .topics(webhook.getTopics())
                 .updated(webhook.getUpdated());
     }

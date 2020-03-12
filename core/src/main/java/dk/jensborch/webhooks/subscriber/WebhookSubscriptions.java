@@ -46,7 +46,7 @@ public class WebhookSubscriptions {
     public void subscribe(@NotNull @Valid final Webhook webhook) {
         if (repo.find(webhook.getId()).filter(w -> w.equals(webhook)).isPresent()) {
             LOG.info("Webhook {} already exists", webhook);
-        } else if (webhook.getStatus() == Webhook.State.SUBSCRIBE) {
+        } else if (webhook.getState() == Webhook.State.SUBSCRIBE) {
             repo.save(webhook.state(Webhook.State.SUBSCRIBING));
             ResponseHandler
                     .type(Response.class)

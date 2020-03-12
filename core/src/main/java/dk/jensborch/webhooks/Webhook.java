@@ -27,7 +27,7 @@ public class Webhook {
 
     @NotNull
     @Setter(AccessLevel.NONE)
-    private State status;
+    private State state;
 
     @Setter(AccessLevel.NONE)
     private ZonedDateTime updated;
@@ -50,7 +50,7 @@ public class Webhook {
     private final ZonedDateTime created;
 
     public Webhook(final URI publisher, final URI subscriber, final Set<String> topics) {
-        this.status = State.ACTIVE;
+        this.state = State.ACTIVE;
         this.id = UUID.randomUUID();
         this.subscriber = subscriber;
         this.publisher = publisher;
@@ -63,7 +63,7 @@ public class Webhook {
     }
 
     public Webhook state(final State status) {
-        this.status = status;
+        this.state = status;
         return this;
     }
 
@@ -84,7 +84,7 @@ public class Webhook {
 
     @JsonIgnore
     public boolean isActive() {
-        return status == State.ACTIVE || status == State.FAILED;
+        return state == State.ACTIVE || state == State.FAILED;
     }
 
     /**

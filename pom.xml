@@ -112,7 +112,7 @@
                 <version>${pitest-plugin.version}</version>
                 <configuration>
                     <targetModules>
-                        <param>core</param>
+                        <param>webhook4j-core</param>
                     </targetModules>
                 </configuration>
                 <dependencies>

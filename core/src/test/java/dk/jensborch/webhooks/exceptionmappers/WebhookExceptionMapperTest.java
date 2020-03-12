@@ -1,14 +1,12 @@
 package dk.jensborch.webhooks.exceptionmappers;
 
-import dk.jensborch.webhooks.WebhookError;
-import dk.jensborch.webhooks.WebhookException;
-import dk.jensborch.webhooks.exceptionmappers.WebhookExceptionMapper;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.ws.rs.core.Response;
 
+import dk.jensborch.webhooks.WebhookError;
+import dk.jensborch.webhooks.WebhookException;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -23,7 +21,7 @@ public class WebhookExceptionMapperTest {
         Response response = mapper.toResponse(e);
         assertNotNull(response);
         WebhookError entity = (WebhookError) response.getEntity();
-        assertEquals("test", entity.getMsg());
+        assertEquals("test", entity.getDetail());
     }
 
 }
