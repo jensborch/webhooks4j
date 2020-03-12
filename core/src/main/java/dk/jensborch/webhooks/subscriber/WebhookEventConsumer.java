@@ -11,7 +11,6 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import dk.jensborch.webhooks.ResponseHandler;
 import dk.jensborch.webhooks.Webhook;
@@ -93,8 +92,8 @@ public class WebhookEventConsumer {
                 .invoke();
     }
 
-    private void handleError(final Response res) {
-        String msg = "Error synchronizing old events, got HTTP status code " + res.getStatus();
+    private void handleError(final WebhookError error) {
+        String msg = "Error synchronizing old events, got error response: " + error.toString();
         LOG.warn(msg);
         throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg));
     }

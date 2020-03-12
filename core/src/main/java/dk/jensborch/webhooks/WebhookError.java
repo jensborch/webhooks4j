@@ -30,10 +30,10 @@ public class WebhookError implements Serializable {
     private static final Map<Response.Status, Code> HTTP_STATUS_MAP = new EnumMap<>(Response.Status.class);
 
     static {
-        HTTP_STATUS_MAP.put(Response.Status.BAD_REQUEST, Code.VALIDATION_ERROR);
+        HTTP_STATUS_MAP.put(Response.Status.BAD_REQUEST, Code.UNKNOWN_ERROR);
         HTTP_STATUS_MAP.put(Response.Status.UNAUTHORIZED, Code.AUTHENTICATION_ERROR);
         HTTP_STATUS_MAP.put(Response.Status.FORBIDDEN, Code.AUTHORIZATION_ERROR);
-        HTTP_STATUS_MAP.put(Response.Status.NOT_FOUND, Code.NOT_FOUND);
+        HTTP_STATUS_MAP.put(Response.Status.NOT_FOUND, Code.UNKNOWN_ERROR);
     }
 
     Integer status;
