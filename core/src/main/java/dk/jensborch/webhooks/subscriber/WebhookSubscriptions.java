@@ -66,7 +66,7 @@ public class WebhookSubscriptions {
                     })
                     .invoke();
         } else {
-            throwWebhookException("Status must be REGISTER to register webhook");
+            throwWebhookException("Status must be " + Webhook.State.SUBSCRIBE + " to register webhook");
         }
     }
 
@@ -79,7 +79,7 @@ public class WebhookSubscriptions {
      */
     public void unsubscribe(@NotNull final UUID id) {
         Webhook w = find(id).orElseThrow(() -> new WebhookException(
-                new WebhookError(WebhookError.Code.REGISTER_ERROR, "Webhook with id " + id + " not found")));
+                new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook with id " + id + " not found")));
         unsubscribe(w);
     }
 

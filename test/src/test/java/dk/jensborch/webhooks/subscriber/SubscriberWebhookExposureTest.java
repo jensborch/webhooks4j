@@ -1,7 +1,5 @@
 package dk.jensborch.webhooks.subscriber;
 
-import dk.jensborch.webhooks.subscriber.WebhookSubscriptions;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
@@ -101,6 +99,27 @@ public class SubscriberWebhookExposureTest {
                 .then()
                 .statusCode(200)
                 .body("size()", greaterThan(0));
+    }
+
+    @Test
+    public void testDeleteWebhooks() throws Exception {
+        Webhook toDelete = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), "delete");
+        given()
+                .spec(spec)
+                .auth().basic("subscriber", "concon")
+                .when()
+                .body(toDelete.state(Webhook.State.SUBSCRIBE))
+                .post("consumer-webhooks")
+                .then()
+                .statusCode(201);
+        given()
+                .spec(spec)
+                .auth().basic("subscriber", "concon")
+                .when()
+                .pathParam("id", toDelete.getId())
+                .delete("consumer-webhooks/{id}")
+                .then()
+                .statusCode(204);
     }
 
 }

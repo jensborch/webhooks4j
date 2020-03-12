@@ -62,15 +62,6 @@ public class SubscriberWebhooksExposureTest {
     }
 
     @Test
-    public void testUnreg() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
-        when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        Response result = exposure.update(webhook.state(Webhook.State.UNSUBSCRIBE), uriInfo);
-        assertNotNull(result);
-        verify(subscriptions).unsubscribe(webhook.getId());
-    }
-
-    @Test
     public void testSync() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
