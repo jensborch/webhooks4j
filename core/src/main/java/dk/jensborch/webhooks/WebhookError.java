@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Representation of an error message returned by the API.
@@ -26,6 +28,7 @@ import lombok.Value;
 public class WebhookError implements Serializable {
 
     private static final long serialVersionUID = 8387757018701335705L;
+    private static final Logger LOG = LoggerFactory.getLogger(WebhookError.class);
 
     private static final Map<Response.Status, Code> HTTP_STATUS_MAP = new EnumMap<>(Response.Status.class);
 
@@ -39,6 +42,12 @@ public class WebhookError implements Serializable {
     Integer status;
     Code code;
     String msg;
+
+    public WebhookError(final int status, final Code code, final String msg) {
+        this.status = status;
+        this.code = code;
+        this.msg = msg;
+    }
 
     public WebhookError(final Code code, final String msg) {
         this.status = code.getStatus().getStatusCode();
@@ -59,15 +68,19 @@ public class WebhookError implements Serializable {
                 try {
                     JsonObject json = Json.createReader(new StringReader(data)).readObject();
                     return new WebhookError(
+                            response.getStatus(),
                             Code.fromString(json.getString("code")),
-                            json.getString("msg", "Messages is undefined"));
+                            json.getString("msg", "Message is undefined"));
                 } catch (JsonParsingException e) {
+                    LOG.warn("Unable to parse error response as JSON", e);
                     return new WebhookError(response.getStatus(), data);
                 }
             } catch (ProcessingException e) {
+                LOG.warn("Unable to parse error response as string", e);
                 return new WebhookError(response.getStatus(), e.getMessage());
             }
         } else {
+            LOG.info("No entity in response for HTTP status code {}", response.getStatus());
             return new WebhookError(response.getStatus(), "No entity");
         }
     }

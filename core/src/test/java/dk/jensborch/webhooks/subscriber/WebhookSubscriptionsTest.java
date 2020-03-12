@@ -87,6 +87,7 @@ public class WebhookSubscriptionsTest {
     @Test
     public void testUnregister404() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
+        when(response.getStatus()).thenReturn(404);
         when(response.readEntity(any(Class.class))).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
         subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE));
@@ -123,6 +124,7 @@ public class WebhookSubscriptionsTest {
     @Test
     public void testRegisterHttp400() {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
+        when(response.getStatus()).thenReturn(404);
         when(response.readEntity(any(Class.class))).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE)));
