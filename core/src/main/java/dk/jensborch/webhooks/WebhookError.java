@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.json.stream.JsonParsingException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
@@ -61,12 +62,14 @@ public class WebhookError implements Serializable {
         this.msg = msg;
     }
 
+    @SuppressWarnings("PMD")
     public static WebhookError parse(final Response response) {
         if (response.hasEntity()) {
             try {
                 String data = response.readEntity(String.class);
+                JsonReader reader = Json.createReader(new StringReader(data));
                 try {
-                    JsonObject json = Json.createReader(new StringReader(data)).readObject();
+                    JsonObject json = reader.readObject();
                     return new WebhookError(
                             response.getStatus(),
                             Code.fromString(json.getString("code")),
@@ -74,9 +77,14 @@ public class WebhookError implements Serializable {
                 } catch (JsonParsingException e) {
                     LOG.warn("Unable to parse error response as JSON", e);
                     return new WebhookError(response.getStatus(), data);
+                } finally {
+                    reader.close();
                 }
             } catch (ProcessingException e) {
                 LOG.warn("Unable to parse error response as string", e);
+                return new WebhookError(response.getStatus(), e.getMessage());
+            } catch (Exception e) {
+                LOG.warn("Unexpected error", e);
                 return new WebhookError(response.getStatus(), e.getMessage());
             }
         } else {
