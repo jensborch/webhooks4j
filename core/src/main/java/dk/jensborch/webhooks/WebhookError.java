@@ -13,6 +13,7 @@ import javax.json.stream.JsonParsingException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
@@ -63,12 +64,12 @@ public class WebhookError implements Serializable {
     }
 
     @SuppressWarnings("PMD")
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE")
     public static WebhookError parse(final Response response) {
         if (response.hasEntity()) {
             try {
                 String data = response.readEntity(String.class);
-                JsonReader reader = Json.createReader(new StringReader(data));
-                try {
+                try (JsonReader reader = Json.createReader(new StringReader(data))) {
                     JsonObject json = reader.readObject();
                     return new WebhookError(
                             response.getStatus(),
@@ -77,8 +78,6 @@ public class WebhookError implements Serializable {
                 } catch (JsonParsingException e) {
                     LOG.warn("Unable to parse error response as JSON", e);
                     return new WebhookError(response.getStatus(), data);
-                } finally {
-                    reader.close();
                 }
             } catch (ProcessingException e) {
                 LOG.warn("Unable to parse error response as string", e);
