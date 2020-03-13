@@ -34,7 +34,7 @@ public class WebhookResponseBuilderTest {
     @Test
     public void testBuild() {
         Response response = WebhookResponseBuilder
-                .request(request, String.class)
+                .create(request, String.class)
                 .entity("test")
                 .fulfilled(e -> Response.ok(e))
                 .tag(e -> e)
@@ -50,7 +50,7 @@ public class WebhookResponseBuilderTest {
         when(responseBuilder.tag(eq(new EntityTag("test")))).thenReturn(responseBuilder);
         when(responseBuilder.header(eq(HttpHeaders.VARY), eq(HttpHeaders.AUTHORIZATION))).thenReturn(responseBuilder);
         Response response = WebhookResponseBuilder
-                .request(request, String.class)
+                .create(request, String.class)
                 .entity("test")
                 .fulfilled(e -> Response.ok(e))
                 .tag(e -> e)

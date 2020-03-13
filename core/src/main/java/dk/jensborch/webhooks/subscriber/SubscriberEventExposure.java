@@ -17,13 +17,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
+import dk.jensborch.webhooks.WebhookEventStatus;
 import dk.jensborch.webhooks.WebhookEventTopics;
 import dk.jensborch.webhooks.WebhookException;
+import dk.jensborch.webhooks.WebhookResponseBuilder;
 import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import dk.jensborch.webhooks.validation.ValidUUID;
 import dk.jensborch.webhooks.validation.ValidZonedDateTime;
@@ -66,12 +69,14 @@ public class SubscriberEventExposure {
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
             @Context final UriInfo uriInfo) {
         if (webhook == null) {
-            return Response
-                    .ok(repo.list(ZonedDateTime.parse(from), WebhookEventTopics.parse(topics).getTopics()))
+            return WebhookResponseBuilder
+                    .create()
+                    .entity(repo.list(ZonedDateTime.parse(from), WebhookEventTopics.parse(topics).getTopics()))
                     .build();
         } else {
-            return Response
-                    .ok(repo.list(ZonedDateTime.parse(from), UUID.fromString(webhook)))
+            return WebhookResponseBuilder
+                    .create()
+                    .entity(repo.list(ZonedDateTime.parse(from), UUID.fromString(webhook)))
                     .build();
         }
     }
@@ -80,10 +85,14 @@ public class SubscriberEventExposure {
     @Path("{id}")
     @RolesAllowed({"subscriber", "publisher"})
     public Response get(
-            @NotNull @ValidUUID @PathParam("id") final String id) {
-        return repo.find(UUID.fromString(id))
-                .map(Response::ok)
-                .orElseThrow(() -> notFound(id))
+            @NotNull @ValidUUID @PathParam("id") final String id,
+            @Context final Request request) {
+        return WebhookResponseBuilder
+                .create(request, WebhookEventStatus.class)
+                .tag(e -> String.valueOf(e.getStart().toEpochSecond()))
+                .entity(repo
+                        .find(UUID.fromString(id))
+                        .orElseThrow(() -> notFound(id)))
                 .build();
     }
 

@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -24,6 +25,7 @@ import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEventTopics;
 import dk.jensborch.webhooks.WebhookException;
+import dk.jensborch.webhooks.WebhookResponseBuilder;
 import dk.jensborch.webhooks.repositories.WebhookRepository;
 import dk.jensborch.webhooks.validation.ValidUUID;
 
@@ -57,28 +59,34 @@ public class PublisherWebhookExposure {
                 .build();
     }
 
-    @GET
-    @RolesAllowed({"subscriber", "publisher"})
-    public Response list(@QueryParam("topics") final String topics) {
-        return Response.ok(repo.list(WebhookEventTopics.parse(topics).getTopics())).build();
-    }
-
-    @GET
-    @RolesAllowed({"subscriber", "publisher"})
-    @Path("{id}")
-    public Response get(@NotNull @ValidUUID @PathParam("id") final String id) {
-        return repo.find(UUID.fromString(id))
-                .map(Response::ok)
-                .orElseThrow(() -> notFound(id))
-                .build();
-    }
-
     @DELETE
     @RolesAllowed({"subscriber"})
     @Path("{id}")
     public Response delete(@NotNull @ValidUUID @PathParam("id") final String id) {
         repo.delete(UUID.fromString(id));
         return Response.noContent().build();
+    }
+
+    @GET
+    @RolesAllowed({"subscriber", "publisher"})
+    public Response list(@QueryParam("topics") final String topics) {
+        return WebhookResponseBuilder
+                .create()
+                .entity(repo.list(WebhookEventTopics.parse(topics).getTopics()))
+                .build();
+    }
+
+    @GET
+    @RolesAllowed({"subscriber", "publisher"})
+    @Path("{id}")
+    public Response get(@NotNull @ValidUUID @PathParam("id") final String id, @Context final Request request) {
+        return WebhookResponseBuilder
+                .create(request, Webhook.class)
+                .entity(repo
+                        .find(UUID.fromString(id))
+                        .orElseThrow(() -> notFound(id)))
+                .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
+                .build();
     }
 
     private WebhookException notFound(final String id) {
