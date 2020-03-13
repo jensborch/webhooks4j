@@ -16,10 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
@@ -51,7 +48,6 @@ public class SubscriberWebhooksExposure {
     WebhookEventConsumer consumer;
 
     @POST
-    @RolesAllowed({"subscriber"})
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
@@ -65,7 +61,6 @@ public class SubscriberWebhooksExposure {
     }
 
     @PUT
-    @RolesAllowed({"subscriber"})
     public Response update(
             @NotNull @Valid final Webhook updated,
             @Context final UriInfo uriInfo,
@@ -100,20 +95,13 @@ public class SubscriberWebhooksExposure {
     @GET
     @Path("{id}")
     public Response get(@ValidUUID @NotNull @PathParam("id") final String id, @Context final Request request) {
-        CacheControl caching = new CacheControl();
-        caching.setMustRevalidate(true);
         Webhook webhook = subscriper.find(UUID.fromString(id)).orElseThrow(() -> throwNotFound(id));
-        EntityTag etag = new EntityTag(String.valueOf(webhook.getUpdated().toEpochSecond()));
-        Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
-        if (builder == null) {
-            builder = Response.ok(webhook);
-        }
-        return builder
-                .cacheControl(caching)
-                .tag(etag)
-                .header(HttpHeaders.VARY, HttpHeaders.AUTHORIZATION)
+        return WebhookResponseBuilder
+                .request(request, Webhook.class)
+                .entity(webhook)
+                .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
+                .fulfilled(Response::ok)
                 .build();
-
     }
 
     private WebhookException throwNotFound(final String id) {
