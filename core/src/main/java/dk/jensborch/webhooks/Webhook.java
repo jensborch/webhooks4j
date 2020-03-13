@@ -29,6 +29,7 @@ public class Webhook {
     @Setter(AccessLevel.NONE)
     private State state;
 
+    @NotNull
     @Setter(AccessLevel.NONE)
     private ZonedDateTime updated;
 
@@ -56,6 +57,7 @@ public class Webhook {
         this.publisher = publisher;
         this.topics = new HashSet<>(topics);
         this.created = ZonedDateTime.now();
+        this.updated = this.created;
     }
 
     public Webhook(final URI publisher, final URI subscriber, final String... topics) {
@@ -67,13 +69,13 @@ public class Webhook {
         return this;
     }
 
-    public Webhook updated() {
-        this.updated = ZonedDateTime.now();
+    public Webhook updated(final ZonedDateTime updated) {
+        this.updated = updated;
         return this;
     }
 
-    public Webhook updated(final ZonedDateTime updated) {
-        this.updated = updated;
+    public Webhook touch() {
+        this.updated = ZonedDateTime.now();
         return this;
     }
 
