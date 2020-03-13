@@ -12,7 +12,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
-import dk.jensborch.webhooks.ResponseHandler;
+import dk.jensborch.webhooks.WebhookResponseHandler;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
@@ -77,7 +77,7 @@ public class WebhookEventConsumer {
      * @param webhook to synchronize.
      */
     public void sync(final Webhook webhook) {
-        ResponseHandler
+        WebhookResponseHandler
                 .type(new GenericType<SortedSet<WebhookEventStatus>>() {
                 })
                 .invocation(client
