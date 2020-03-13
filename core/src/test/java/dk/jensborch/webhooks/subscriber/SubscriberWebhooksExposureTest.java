@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -37,6 +38,9 @@ public class SubscriberWebhooksExposureTest {
 
     @Mock
     private WebhookEventConsumer consumer;
+
+    @Mock
+    private Request request;
 
     @Mock
     private UriInfo uriInfo;
@@ -65,7 +69,7 @@ public class SubscriberWebhooksExposureTest {
     public void testSync() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        Response result = exposure.update(webhook.state(Webhook.State.SYNCHRONIZE), uriInfo);
+        Response result = exposure.update(webhook.state(Webhook.State.SYNCHRONIZE), uriInfo, request);
         assertNotNull(result);
         verify(consumer).sync(webhook);
     }
@@ -74,7 +78,7 @@ public class SubscriberWebhooksExposureTest {
     public void testUpdateToInvalid() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.state(Webhook.State.FAILED), uriInfo));
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.state(Webhook.State.FAILED), uriInfo, request));
         assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
     }
 
@@ -87,7 +91,7 @@ public class SubscriberWebhooksExposureTest {
 
     @Test
     public void testGet404() {
-        WebhookException e = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString()));
+        WebhookException e = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString(), request));
         assertEquals(Response.Status.NOT_FOUND, e.getError().getCode().getStatus());
     }
 
@@ -95,7 +99,7 @@ public class SubscriberWebhooksExposureTest {
     public void testGet() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(any())).thenReturn(Optional.of(webhook));
-        Response result = exposure.get(UUID.randomUUID().toString());
+        Response result = exposure.get(UUID.randomUUID().toString(), request);
         assertNotNull(result);
         assertEquals(200, result.getStatus());
     }

@@ -45,7 +45,7 @@ public abstract class HashMapWebhookRepository implements WebhookRepository {
 
     @Override
     public void touch(final UUID id) {
-        map.get(id).updated();
+        map.get(id).touch();
     }
 
 }
