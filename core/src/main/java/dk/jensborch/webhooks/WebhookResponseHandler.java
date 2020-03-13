@@ -14,20 +14,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Wrapper around the JAX-RS client API to handle responses more easily.
  *
- * Use it a follows:
- *
- * <pre>{@code
- *  WebhookResponseBuilder
- *               .request(request, Webhook.class)
- *               .entity(webhook)
- *               .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
- *               .fulfilled(w -> {
- *                   // If preconditions have been fulfilled use this to e.g. update
- *                   return Response.ok(w);
- *               })
- *               .build();
- * }</pre>
- *
  * @param <T> the response type to handle
  */
 public final class WebhookResponseHandler<T> {

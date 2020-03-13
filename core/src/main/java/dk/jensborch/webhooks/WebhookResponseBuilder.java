@@ -11,7 +11,19 @@ import javax.ws.rs.core.Response;
 
 /**
  * Utility class for creating conditional PUT and GET responses, with correct
- * cache headers.
+ * cache headers. Use it a follows:
+ *
+ * <pre>{@code
+ *  WebhookResponseBuilder
+ *               .request(request, Webhook.class)
+ *               .entity(webhook)
+ *               .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
+ *               .fulfilled(w -> {
+ *                   // If preconditions have been fulfilled use this to e.g. update
+ *                   return Response.ok(w);
+ *               })
+ *               .build();
+ * }</pre>
  *
  * @param <E> entity to return in response.
  */
