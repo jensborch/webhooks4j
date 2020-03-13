@@ -10,8 +10,10 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 /**
+ * Utility class for creating conditional PUT and GET responses, with correct
+ * cache headers.
  *
- * @param <E>
+ * @param <E> entity to return in response.
  */
 public final class WebhookResponseBuilder<E> {
 

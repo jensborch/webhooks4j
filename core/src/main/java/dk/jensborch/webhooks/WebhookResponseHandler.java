@@ -14,11 +14,25 @@ import org.slf4j.LoggerFactory;
 /**
  * Wrapper around the JAX-RS client API to handle responses more easily.
  *
+ * Use it a follows:
+ *
+ * <pre>{@code
+ *  WebhookResponseBuilder
+ *               .request(request, Webhook.class)
+ *               .entity(webhook)
+ *               .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
+ *               .fulfilled(w -> {
+ *                   // If preconditions have been fulfilled use this to e.g. update
+ *                   return Response.ok(w);
+ *               })
+ *               .build();
+ * }</pre>
+ *
  * @param <T> the response type to handle
  */
-public final class ResponseHandler<T> {
+public final class WebhookResponseHandler<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ResponseHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebhookResponseHandler.class);
 
     private final Object type;
     private Consumer<Response> notFoundConsumer;
@@ -27,45 +41,45 @@ public final class ResponseHandler<T> {
     private Consumer<WebhookError> webhookErrorConsumer;
     private Invocation invocation;
 
-    private ResponseHandler(final Class<T> type) {
+    private WebhookResponseHandler(final Class<T> type) {
         Objects.requireNonNull(type, "Type must be defined");
         this.type = type;
     }
 
-    private ResponseHandler(final GenericType<T> type) {
+    private WebhookResponseHandler(final GenericType<T> type) {
         Objects.requireNonNull(type, "Type must be defined");
         this.type = type;
     }
 
-    public static <T> ResponseHandler<T> type(final GenericType<T> type) {
-        return new ResponseHandler<>(type);
+    public static <T> WebhookResponseHandler<T> type(final GenericType<T> type) {
+        return new WebhookResponseHandler<>(type);
     }
 
-    public static <T> ResponseHandler<T> type(final Class<T> type) {
-        return new ResponseHandler<>(type);
+    public static <T> WebhookResponseHandler<T> type(final Class<T> type) {
+        return new WebhookResponseHandler<>(type);
     }
 
-    public ResponseHandler<T> invocation(final Invocation invocation) {
+    public WebhookResponseHandler<T> invocation(final Invocation invocation) {
         this.invocation = invocation;
         return this;
     }
 
-    public ResponseHandler<T> success(final Consumer<T> consumer) {
+    public WebhookResponseHandler<T> success(final Consumer<T> consumer) {
         this.successConsumer = consumer;
         return this;
     }
 
-    public ResponseHandler<T> notFound(final Consumer<Response> consumer) {
+    public WebhookResponseHandler<T> notFound(final Consumer<Response> consumer) {
         this.notFoundConsumer = consumer;
         return this;
     }
 
-    public ResponseHandler<T> exception(final Consumer<ProcessingException> consumer) {
+    public WebhookResponseHandler<T> exception(final Consumer<ProcessingException> consumer) {
         this.processingErrorConsumer = consumer;
         return this;
     }
 
-    public ResponseHandler<T> error(final Consumer<WebhookError> consumer) {
+    public WebhookResponseHandler<T> error(final Consumer<WebhookError> consumer) {
         this.webhookErrorConsumer = consumer;
         return this;
     }

@@ -9,7 +9,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import dk.jensborch.webhooks.ResponseHandler;
+import dk.jensborch.webhooks.WebhookResponseHandler;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventStatus;
@@ -56,7 +56,7 @@ public class WebhookPublisher {
     private void call(final Webhook webhook, final WebhookEvent event) {
         LOG.debug("Publishing to {}", webhook);
         WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event, webhook.getId()));
-        ResponseHandler
+        WebhookResponseHandler
                 .type(Response.class)
                 .invocation(client.target(webhook.getSubscriber())
                         .request(MediaType.APPLICATION_JSON)

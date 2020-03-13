@@ -13,7 +13,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import dk.jensborch.webhooks.ResponseHandler;
+import dk.jensborch.webhooks.WebhookResponseHandler;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookException;
@@ -48,7 +48,7 @@ public class WebhookSubscriptions {
             LOG.info("Webhook {} already exists", webhook);
         } else if (webhook.getState() == Webhook.State.SUBSCRIBE) {
             repo.save(webhook.state(Webhook.State.SUBSCRIBING));
-            ResponseHandler
+            WebhookResponseHandler
                     .type(Response.class)
                     .invocation(client
                             .target(webhook.getPublisher())
@@ -85,7 +85,7 @@ public class WebhookSubscriptions {
 
     public void unsubscribe(@NotNull @Valid final Webhook webhook) {
         repo.save(webhook.state(Webhook.State.UNSUBSCRIBING));
-        ResponseHandler
+        WebhookResponseHandler
                 .type(Response.class)
                 .invocation(client
                         .target(webhook.getPublisher())
