@@ -46,10 +46,6 @@ public final class WebhookResponseBuilder<E> {
         return new WebhookResponseBuilder<>(request);
     }
 
-    public static <E> WebhookResponseBuilder<E> create(final Class<E> clazz) {
-        return new WebhookResponseBuilder<>();
-    }
-
     public static WebhookResponseBuilder<Object> create() {
         return new WebhookResponseBuilder<>();
     }
