@@ -67,7 +67,7 @@ public class SubscriberWebhooksExposure {
             @Context final Request request) {
         Webhook webhook = subscriper.find(updated.getId()).orElseThrow(() -> throwNotFound(updated.getId().toString()));
         return WebhookResponseBuilder
-                .request(request, Webhook.class)
+                .create(request, Webhook.class)
                 .entity(webhook)
                 .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
                 .fulfilled(w -> {
@@ -89,18 +89,21 @@ public class SubscriberWebhooksExposure {
 
     @GET
     public Response list(@QueryParam("topics") final String topics) {
-        return Response.ok(subscriper.list(WebhookEventTopics.parse(topics).getTopics())).build();
+        return WebhookResponseBuilder
+                .create()
+                .entity(subscriper.list(WebhookEventTopics.parse(topics).getTopics()))
+                .build();
     }
 
     @GET
     @Path("{id}")
     public Response get(@ValidUUID @NotNull @PathParam("id") final String id, @Context final Request request) {
-        Webhook webhook = subscriper.find(UUID.fromString(id)).orElseThrow(() -> throwNotFound(id));
         return WebhookResponseBuilder
-                .request(request, Webhook.class)
-                .entity(webhook)
+                .create(request, Webhook.class)
+                .entity(subscriper
+                        .find(UUID.fromString(id))
+                        .orElseThrow(() -> throwNotFound(id)))
                 .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
-                .fulfilled(Response::ok)
                 .build();
     }
 

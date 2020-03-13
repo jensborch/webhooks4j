@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
  *
  * <pre>{@code
  *  WebhookResponseBuilder
- *               .request(request, Webhook.class)
+ *               .create(request, Webhook.class)
  *               .entity(webhook)
  *               .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
  *               .fulfilled(w -> {
@@ -29,23 +29,29 @@ import javax.ws.rs.core.Response;
  */
 public final class WebhookResponseBuilder<E> {
 
-    private static final CacheControl CACHING = new CacheControl();
     private final Request request;
     private E entity;
     private Function<E, String> tagFunc;
-    private Function<E, Response.ResponseBuilder> fulfilledFunc;
-
-    static {
-        CACHING.setMustRevalidate(true);
-    }
+    private Function<E, Response.ResponseBuilder> fulfilledFunc = Response::ok;
 
     private WebhookResponseBuilder(final Request request) {
         this.request = request;
     }
 
-    public static <E> WebhookResponseBuilder<E> request(final Request request, final Class<E> clazz) {
-        Objects.requireNonNull(request, "Request must not be null");
+    private WebhookResponseBuilder() {
+        this(null);
+    }
+
+    public static <E> WebhookResponseBuilder<E> create(final Request request, final Class<E> clazz) {
         return new WebhookResponseBuilder<>(request);
+    }
+
+    public static <E> WebhookResponseBuilder<E> create(final Class<E> clazz) {
+        return new WebhookResponseBuilder<>();
+    }
+
+    public static WebhookResponseBuilder<Object> create() {
+        return new WebhookResponseBuilder<>();
     }
 
     public WebhookResponseBuilder<E> entity(final E entity) {
@@ -64,18 +70,37 @@ public final class WebhookResponseBuilder<E> {
     }
 
     public Response build() {
-        Objects.requireNonNull(tagFunc, "eTag function is required");
         Objects.requireNonNull(entity, "Enitity must not be null");
-        Objects.requireNonNull(fulfilledFunc, "Fulfilled functions is required");
-        EntityTag etag = new EntityTag(tagFunc.apply(entity));
-        Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
-        if (builder == null) {
+        Response.ResponseBuilder builder;
+        CacheControl cache;
+        if (tagFunc == null) {
             builder = fulfilledFunc.apply(entity);
+            cache = noStore();
+        } else {
+            Objects.requireNonNull(request, "Request must not be null");
+            EntityTag etag = new EntityTag(tagFunc.apply(entity));
+            builder = request.evaluatePreconditions(etag);
+            if (builder == null) {
+                builder = fulfilledFunc.apply(entity);
+            }
+            builder.tag(etag);
+            cache = mustRevalidate();
         }
         return builder
-                .cacheControl(CACHING)
-                .tag(etag)
+                .cacheControl(cache)
                 .header(HttpHeaders.VARY, HttpHeaders.AUTHORIZATION)
                 .build();
+    }
+
+    private CacheControl mustRevalidate() {
+        CacheControl cache = new CacheControl();
+        cache.setMustRevalidate(true);
+        return cache;
+    }
+
+    private CacheControl noStore() {
+        CacheControl cache = new CacheControl();
+        cache.setNoStore(true);
+        return cache;
     }
 }

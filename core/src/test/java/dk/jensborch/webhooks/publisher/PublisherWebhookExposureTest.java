@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -39,6 +40,9 @@ public class PublisherWebhookExposureTest {
 
     @Mock
     private UriInfo uriInfo;
+
+    @Mock
+    private Request request;
 
     @InjectMocks
     private PublisherWebhookExposure exposure;
@@ -70,7 +74,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     public void testGet404() {
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString()));
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString(), request));
         assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 
@@ -78,7 +82,7 @@ public class PublisherWebhookExposureTest {
     public void testGet() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(repo.find(any())).thenReturn(Optional.of(webhook));
-        Response result = exposure.get(UUID.randomUUID().toString());
+        Response result = exposure.get(UUID.randomUUID().toString(), request);
         assertNotNull(result);
         assertEquals(200, result.getStatus());
     }

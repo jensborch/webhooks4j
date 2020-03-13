@@ -1,8 +1,5 @@
 package dk.jensborch.webhooks.subscriber;
 
-import dk.jensborch.webhooks.subscriber.SubscriberEventExposure;
-import dk.jensborch.webhooks.subscriber.WebhookEventConsumer;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,20 +17,21 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import dk.jensborch.webhooks.WebhookEvent;
-import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.WebhookEventStatus;
+import dk.jensborch.webhooks.WebhookException;
+import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 
 /**
  * Test for {@link SubscriberEventExposure}.
@@ -46,6 +44,9 @@ public class SubscriberEventExposureTest {
 
     @Mock
     private WebhookEventStatusRepository repo;
+
+    @Mock
+    private Request request;
 
     @Mock
     private UriInfo uriInfo;
@@ -91,7 +92,7 @@ public class SubscriberEventExposureTest {
 
     @Test
     public void testGet404() {
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString()));
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString(), request));
         assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 
@@ -100,7 +101,7 @@ public class SubscriberEventExposureTest {
         UUID publisher = UUID.randomUUID();
         WebhookEvent event = new WebhookEvent(publisher, "test", new HashMap<>());
         when(repo.find(any())).thenReturn(Optional.of(new WebhookEventStatus(event, UUID.randomUUID())));
-        Response result = exposure.get(UUID.randomUUID().toString());
+        Response result = exposure.get(UUID.randomUUID().toString(), request);
         assertNotNull(result);
         assertEquals(200, result.getStatus());
     }
