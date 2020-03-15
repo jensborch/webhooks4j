@@ -27,7 +27,6 @@ import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEventTopics;
 import dk.jensborch.webhooks.WebhookException;
 import dk.jensborch.webhooks.WebhookResponseBuilder;
-import dk.jensborch.webhooks.publisher.PublisherWebhookExposure;
 import dk.jensborch.webhooks.validation.ValidUUID;
 
 /**
@@ -54,8 +53,8 @@ public class SubscriberWebhooksExposure {
         subscriper.subscribe(webhook);
         return Response.created(uriInfo
                 .getBaseUriBuilder()
-                .path(PublisherWebhookExposure.class)
-                .path(PublisherWebhookExposure.class, "get")
+                .path(SubscriberWebhooksExposure.class)
+                .path(SubscriberWebhooksExposure.class, "get")
                 .build(webhook.getId()))
                 .build();
     }
