@@ -32,7 +32,7 @@ import dk.jensborch.webhooks.validation.ValidUUID;
 /**
  * Exposure for registration of webhooks.
  */
-@Path("/publisher-webhooks")
+@Path(Webhook.PublisherEndpoints.WEBHOOKS_PATH)
 @DeclareRoles({"subscriber", "publisher"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

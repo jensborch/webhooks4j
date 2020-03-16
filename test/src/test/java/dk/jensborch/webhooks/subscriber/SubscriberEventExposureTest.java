@@ -26,7 +26,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 /**
  * Integration test for
- * {@link dk.jensborch.webhooks.consumer.ConsumerEventExposur}
+ * {@link dk.jensborch.webhooks.subscriber.SubscriberEventExposure}
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -41,7 +41,7 @@ public class SubscriberEventExposureTest {
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), TEST_TOPIC);
+        webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TEST_TOPIC);
     }
 
     @BeforeEach

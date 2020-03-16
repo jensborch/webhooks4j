@@ -9,10 +9,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import dk.jensborch.webhooks.WebhookResponseHandler;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventStatus;
+import dk.jensborch.webhooks.WebhookResponseHandler;
 import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import dk.jensborch.webhooks.repositories.WebhookRepository;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class WebhookPublisher {
         WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event, webhook.getId()));
         WebhookResponseHandler
                 .type(Response.class)
-                .invocation(client.target(webhook.getSubscriber())
+                .invocation(client.target(webhook.gePublisherEndpoints().getEvents())
                         .request(MediaType.APPLICATION_JSON)
                         .buildPost(Entity.json(event)))
                 .success(r -> {

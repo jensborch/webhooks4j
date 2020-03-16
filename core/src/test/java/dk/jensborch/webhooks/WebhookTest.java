@@ -18,14 +18,14 @@ public class WebhookTest {
 
     @Test
     public void testSubscribeEndpoints() throws Exception {
-        Webhook.SubscriberEndpoint sub = new Webhook.SubscriberEndpoint(new URI("http://test.dk"));
+        Webhook.SubscriberEndpoints sub = new Webhook.SubscriberEndpoints(new URI("http://test.dk"));
         assertEquals("http://test.dk/subscriber-events", sub.getEvents().toString());
         assertEquals("http://test.dk/subscriber-webhooks", sub.getWebhooks().toString());
     }
 
     @Test
     public void testPublisherEndpoints() throws Exception {
-        Webhook.PublisherEndpoint sub = new Webhook.PublisherEndpoint(new URI("http://test.dk/test"));
+        Webhook.PublisherEndpoints sub = new Webhook.PublisherEndpoints(new URI("http://test.dk/test"));
         assertEquals("http://test.dk/test/publisher-events", sub.getEvents().toString());
         assertEquals("http://test.dk/test/publisher-webhooks", sub.getWebhooks().toString());
     }

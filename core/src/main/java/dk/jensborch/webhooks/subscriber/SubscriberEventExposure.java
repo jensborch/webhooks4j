@@ -21,6 +21,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventStatus;
@@ -34,7 +35,7 @@ import dk.jensborch.webhooks.validation.ValidZonedDateTime;
 /**
  * Exposure for receiving callback events.
  */
-@Path("/subscriber-events")
+@Path(Webhook.SubscriberEndpoints.EVENTS_PATH)
 @DeclareRoles({"subscriber", "publisher"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

@@ -19,6 +19,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEventStatus;
 import dk.jensborch.webhooks.WebhookEventTopics;
@@ -31,7 +32,7 @@ import dk.jensborch.webhooks.validation.ValidZonedDateTime;
 /**
  * Exposure for listing events published.
  */
-@Path("/publisher-events")
+@Path(Webhook.PublisherEndpoints.EVENTS_PATH)
 @DeclareRoles("publisher")
 @RolesAllowed("publisher")
 @Produces(MediaType.APPLICATION_JSON)
