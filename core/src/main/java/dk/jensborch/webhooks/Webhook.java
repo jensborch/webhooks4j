@@ -25,7 +25,6 @@ import lombok.Setter;
  * This class defines a Webhook with a publisher and subscribe URI.
  */
 @Data
-//@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Webhook {
 
     @NotNull
