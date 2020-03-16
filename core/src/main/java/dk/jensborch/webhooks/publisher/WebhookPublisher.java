@@ -58,7 +58,7 @@ public class WebhookPublisher {
         WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event, webhook.getId()));
         WebhookResponseHandler
                 .type(Response.class)
-                .invocation(client.target(webhook.gePublisherEndpoints().getEvents())
+                .invocation(client.target(webhook.getSubscriberEndpoints().getEvents())
                         .request(MediaType.APPLICATION_JSON)
                         .buildPost(Entity.json(event)))
                 .success(r -> {
