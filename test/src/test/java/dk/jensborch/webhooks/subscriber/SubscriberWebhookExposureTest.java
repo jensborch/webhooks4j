@@ -122,4 +122,17 @@ public class SubscriberWebhookExposureTest {
                 .statusCode(204);
     }
 
+    @Test
+    public void testUpdateWebhook400() throws Exception {
+        given()
+                .spec(spec)
+                .auth().basic("subscriber", "concon")
+                .when()
+                .body(webhook.state(Webhook.State.UNSUBSCRIBE))
+                .pathParam("id", webhook.getId())
+                .put("consumer-webhooks/{id}")
+                .then()
+                .statusCode(400);
+    }
+
 }

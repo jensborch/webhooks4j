@@ -12,13 +12,13 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
-import dk.jensborch.webhooks.WebhookResponseHandler;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookEvent;
 import dk.jensborch.webhooks.WebhookEventStatus;
 import dk.jensborch.webhooks.WebhookEventTopic;
 import dk.jensborch.webhooks.WebhookException;
+import dk.jensborch.webhooks.WebhookResponseHandler;
 import dk.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public class WebhookEventConsumer {
                 .type(new GenericType<SortedSet<WebhookEventStatus>>() {
                 })
                 .invocation(client
-                        .target(webhook.getPublisher())
+                        .target(webhook.getPublisher() + "/../publisher-events")
                         .queryParam("from", webhook.getUpdated())
                         .queryParam("webhook", webhook.getId())
                         .request(MediaType.APPLICATION_JSON)
