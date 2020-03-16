@@ -4,12 +4,14 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
  * Processing status for a webhook event.
  */
 @Data
+@NoArgsConstructor(force = true)
 public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
 
     @Setter

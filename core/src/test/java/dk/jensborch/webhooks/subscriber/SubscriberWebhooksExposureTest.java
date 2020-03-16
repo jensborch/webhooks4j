@@ -69,7 +69,7 @@ public class SubscriberWebhooksExposureTest {
     public void testSync() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        Response result = exposure.update(webhook.state(Webhook.State.SYNCHRONIZE), uriInfo, request);
+        Response result = exposure.update(webhook.getId().toString(), webhook.state(Webhook.State.SYNCHRONIZE), uriInfo, request);
         assertNotNull(result);
         verify(consumer).sync(webhook);
     }
@@ -78,7 +78,7 @@ public class SubscriberWebhooksExposureTest {
     public void testUpdateToInvalid() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.state(Webhook.State.FAILED), uriInfo, request));
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.getId().toString(), webhook.state(Webhook.State.FAILED), uriInfo, request));
         assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
     }
 

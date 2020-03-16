@@ -60,10 +60,19 @@ public class SubscriberWebhooksExposure {
     }
 
     @PUT
+    @Path("{id}")
     public Response update(
+            @ValidUUID @NotNull @PathParam("id") final String id,
             @NotNull @Valid final Webhook updated,
             @Context final UriInfo uriInfo,
             @Context final Request request) {
+        if (!id.equals(updated.getId().toString())) {
+            throw new WebhookException(
+                    new WebhookError(
+                            WebhookError.Code.VALIDATION_ERROR,
+                            "Webhook " + id + " does not match id in payload " + updated.getId())
+            );
+        }
         Webhook webhook = subscriper.find(updated.getId()).orElseThrow(() -> throwNotFound(updated.getId().toString()));
         return WebhookResponseBuilder
                 .create(request, Webhook.class)
@@ -107,8 +116,7 @@ public class SubscriberWebhooksExposure {
     }
 
     private WebhookException throwNotFound(final String id) {
-        WebhookError error = new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + " not found");
-        return new WebhookException(error);
+        return new WebhookException(new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + " not found"));
     }
 
 }
