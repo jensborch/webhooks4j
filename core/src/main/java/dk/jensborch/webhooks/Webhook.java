@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.ws.rs.core.UriBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
@@ -94,6 +95,60 @@ public class Webhook {
      */
     public enum State {
         ACTIVE, INACTIVE, SUBSCRIBE, SUBSCRIBING, SYNCHRONIZE, SYNCHRONIZING, UNSUBSCRIBE, UNSUBSCRIBING, FAILED
+    }
+
+    /**
+     *
+     */
+    public interface Endpoints {
+
+        URI getEvents();
+
+        URI getWebhooks();
+
+    }
+
+    /**
+     *
+     */
+    @Data
+    public static class SubscriberEndpoint implements Endpoints {
+
+        private static final String WEBHOOKS_PATH = "subscriber-webhooks";
+        private static final String EVENTS_PATH = "subscriber-events";
+
+        @NotNull
+        private final URI webhooks;
+
+        @NotNull
+        private final URI events;
+
+        public SubscriberEndpoint(final URI contextRoot) {
+            webhooks = UriBuilder.fromUri(contextRoot).path(WEBHOOKS_PATH).build();
+            events = UriBuilder.fromUri(contextRoot).path(EVENTS_PATH).build();
+        }
+
+    }
+
+    /**
+     *
+     */
+    @Data
+    public static class PublisherEndpoint implements Endpoints {
+
+        private static final String WEBHOOKS_PATH = "publisher-webhooks";
+        private static final String EVENTS_PATH = "publisher-events";
+
+        @NotNull
+        private final URI webhooks;
+
+        @NotNull
+        private final URI events;
+
+        public PublisherEndpoint(final URI contextRoot) {
+            webhooks = UriBuilder.fromUri(contextRoot).path(WEBHOOKS_PATH).build();
+            events = UriBuilder.fromUri(contextRoot).path(EVENTS_PATH).build();
+        }
     }
 
 }
