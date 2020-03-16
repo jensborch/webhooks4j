@@ -1,5 +1,7 @@
 package dk.jensborch.webhooks.publisher;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +36,7 @@ public class WebhookPublisherTest {
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         Map<String, Object> data = new HashMap<>();
         publisher.publish(new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, data));
-        //TODO: fix
-        //assertEquals(1, listener.getCount());
+        assertEquals(1, listener.getCount());
     }
 
 }
