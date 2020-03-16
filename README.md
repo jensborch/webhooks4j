@@ -1,6 +1,6 @@
 # Webhooks4j
 
-Small, simple and extendable Java library for messaging using webhooks. 
+Small, simple and extendable Java library for messaging using webhooks.
 
 ## Status
 
@@ -18,4 +18,12 @@ To build the application run the following command:
 
 ```
 ./mvnw package
+```
+
+
+
+Start the test application using:
+
+```
+./mvnw compile -pl test quarkus:dev
 ```

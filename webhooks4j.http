@@ -1,6 +1,38 @@
 
-### Get event
-GET http://localhost:8080/consumer-events/e9b285cc-9c88-4618-99c9-88aa91f24e3e
+### Get publisher event
+GET http://localhost:8080/publisher-events/e9b285cc-9c88-4618-99c9-88aa91f24e3e
+Authorization: Basic cHVibGlzaGVyOnB1YnB1Yg==
 
-### List all events
-GET http://localhost:8080/consumer-events/?from=2007-12-03T10%3A15%3A30%2B01%3A00
+### List all publisher events
+GET http://localhost:8080/publisher-events/?from=2007-12-03T10%3A15%3A30%2B01%3A00
+Authorization: Basic cHVibGlzaGVyOnB1YnB1Yg==
+
+### Create publisher webhooks
+POST http://localhost:8080/publisher-webhooks/
+Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+Content-Type: application/json
+
+{
+    "state": "SUBSCRIBE",
+    "topics": [
+        "test"
+    ],
+    "publisher": "http://localhost:8081/",
+    "subscriber": "http://localhost:8081/"
+}
+
+### List all publisher webhooks
+GET http://localhost:8080/publisher-webhooks/
+Authorization: Basic cHVibGlzaGVyOnB1YnB1Yg==
+
+### Get subscriber event
+GET http://localhost:8080/subscriber-events/e9b285cc-9c88-4618-99c9-88aa91f24e3e
+Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+
+### List all subscriber events
+GET http://localhost:8080/subscriber-events/?from=2007-12-03T10%3A15%3A30%2B01%3A00
+Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+
+### List all subscriber webhooks
+GET http://localhost:8080/subscriber-webhooks/
+Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=

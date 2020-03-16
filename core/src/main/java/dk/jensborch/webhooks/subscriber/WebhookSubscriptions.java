@@ -13,10 +13,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import dk.jensborch.webhooks.WebhookResponseHandler;
 import dk.jensborch.webhooks.Webhook;
 import dk.jensborch.webhooks.WebhookError;
 import dk.jensborch.webhooks.WebhookException;
+import dk.jensborch.webhooks.WebhookResponseHandler;
 import dk.jensborch.webhooks.repositories.WebhookRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class WebhookSubscriptions {
             WebhookResponseHandler
                     .type(Response.class)
                     .invocation(client
-                            .target(webhook.getPublisher())
+                            .target(webhook.gePublisherEndpoints().getWebhooks())
                             .request(MediaType.APPLICATION_JSON)
                             .buildPost(Entity.json(webhook.state(Webhook.State.SUBSCRIBE)))
                     )
@@ -88,7 +88,7 @@ public class WebhookSubscriptions {
         WebhookResponseHandler
                 .type(Response.class)
                 .invocation(client
-                        .target(webhook.getPublisher())
+                        .target(webhook.gePublisherEndpoints().getWebhooks())
                         .path("{id}")
                         .resolveTemplate("id", webhook.getId())
                         .request()

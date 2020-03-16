@@ -33,7 +33,7 @@ public class PublisherWebhookExposureTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), TEST_TOPIC)
+        webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TEST_TOPIC)
                 .state(Webhook.State.SUBSCRIBE);
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)

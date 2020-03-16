@@ -36,7 +36,7 @@ public class SubscriberWebhookExposureTest {
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), TEST_TOPIC);
+        webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TEST_TOPIC);
     }
 
     @BeforeEach
@@ -57,7 +57,7 @@ public class SubscriberWebhookExposureTest {
                 .auth().basic("subscriber", "concon")
                 .when()
                 .pathParam("id", webhook.getId())
-                .get("consumer-webhooks/{id}")
+                .get("subscriber-webhooks/{id}")
                 .then()
                 .statusCode(200)
                 .body("topics[0]", is(TEST_TOPIC));
@@ -70,7 +70,7 @@ public class SubscriberWebhookExposureTest {
                 .auth().basic("subscriber", "concon")
                 .when()
                 .queryParam("topics", TEST_TOPIC + ",testtest")
-                .get("consumer-webhooks")
+                .get("subscriber-webhooks")
                 .then()
                 .statusCode(200)
                 .body("size()", equalTo(1));
@@ -83,7 +83,7 @@ public class SubscriberWebhookExposureTest {
                 .auth().basic("subscriber", "concon")
                 .when()
                 .queryParam("topics", "unknown")
-                .get("consumer-webhooks")
+                .get("subscriber-webhooks")
                 .then()
                 .statusCode(200)
                 .body("size()", equalTo(0));
@@ -95,7 +95,7 @@ public class SubscriberWebhookExposureTest {
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
                 .when()
-                .get("consumer-webhooks")
+                .get("subscriber-webhooks")
                 .then()
                 .statusCode(200)
                 .body("size()", greaterThan(0));
@@ -103,13 +103,13 @@ public class SubscriberWebhookExposureTest {
 
     @Test
     public void testDeleteWebhooks() throws Exception {
-        Webhook toDelete = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), "delete");
+        Webhook toDelete = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), "delete");
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
                 .when()
                 .body(toDelete.state(Webhook.State.SUBSCRIBE))
-                .post("consumer-webhooks")
+                .post("subscriber-webhooks")
                 .then()
                 .statusCode(201);
         given()
@@ -117,7 +117,7 @@ public class SubscriberWebhookExposureTest {
                 .auth().basic("subscriber", "concon")
                 .when()
                 .pathParam("id", toDelete.getId())
-                .delete("consumer-webhooks/{id}")
+                .delete("subscriber-webhooks/{id}")
                 .then()
                 .statusCode(204);
     }
@@ -130,7 +130,7 @@ public class SubscriberWebhookExposureTest {
                 .when()
                 .body(webhook.state(Webhook.State.UNSUBSCRIBE))
                 .pathParam("id", webhook.getId())
-                .put("consumer-webhooks/{id}")
+                .put("subscriber-webhooks/{id}")
                 .then()
                 .statusCode(400);
     }
