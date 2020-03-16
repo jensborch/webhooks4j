@@ -29,9 +29,12 @@ public class PublisherWebhookExposureTest {
 
     private static final String TEST_TOPIC = PublisherWebhookExposureTest.class.getName();
     private RequestSpecification spec;
+    private Webhook webhook;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
+        webhook = new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), TEST_TOPIC)
+                .state(Webhook.State.SUBSCRIBE);
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
@@ -42,19 +45,17 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(1)
-    public void testCreateWebhook() throws Exception {
+    public void testCreateWebhook() {
         String location = given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
                 .when()
-                .body(new Webhook(new URI("http://localhost:8081/publisher-webhooks"), new URI("http://localhost:8081/subscriber-events"), TEST_TOPIC)
-                        .state(Webhook.State.SUBSCRIBE))
+                .body(webhook)
                 .post("publisher-webhooks")
                 .then()
                 .statusCode(201)
                 .extract()
                 .header("location");
-
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -63,6 +64,19 @@ public class PublisherWebhookExposureTest {
                 .then()
                 .statusCode(200)
                 .body("topics[0]", is(TEST_TOPIC));
+    }
+
+    @Test
+    @Order(2)
+    public void testDeleteWebhook() throws Exception {
+        given()
+                .spec(spec)
+                .auth().basic("subscriber", "concon")
+                .when()
+                .pathParam("id", webhook.getId())
+                .delete("publisher-webhooks/{id}")
+                .then()
+                .statusCode(204);
     }
 
     @Test
