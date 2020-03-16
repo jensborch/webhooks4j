@@ -17,11 +17,11 @@
         <checkstyle-plugin.version>3.1.0</checkstyle-plugin.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <gpg-plugin.version>1.6</gpg-plugin.version>
+        <hamcrest.version>2.2</hamcrest.version>
         <jacoco-plugin.version>0.8.5</jacoco-plugin.version>
         <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
         <javax.annotation-api.version>1.2</javax.annotation-api.version>
         <jersey.version>2.30</jersey.version>
-        <hamcrest.version>2.2</hamcrest.version>
         <lombok.version>1.18.12</lombok.version>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.compiler.source>1.8</maven.compiler.source>
