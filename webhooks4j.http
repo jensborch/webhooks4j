@@ -33,6 +33,13 @@ Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
 GET http://localhost:8080/subscriber-events/?from=2007-12-03T10%3A15%3A30%2B01%3A00
 Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
 
+### Post invalid subscriber events
+POST http://localhost:8080/subscriber-events/
+Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+Content-Type: application/json
+
+{ }
+
 ### List all subscriber webhooks
 GET http://localhost:8080/subscriber-webhooks/
 Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=

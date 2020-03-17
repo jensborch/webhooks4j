@@ -129,7 +129,7 @@ public class WebhookSubscriptionsTest {
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
-        assertEquals("Failed to register, got error response: WebhookError(status=404, code=NOT_FOUND, title=Not found, detail=test)", e.getError().getDetail());
+        assertEquals("Failed to register, got error response: WebhookError{status=404, code=NOT_FOUND, title=Not found, detail=test}", e.getError().getDetail());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class WebhookSubscriptionsTest {
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
-        assertEquals("Failed to register, got error response: WebhookError(status=0, code=UNKNOWN_ERROR, title=Unknown error, detail=test)", e.getError().getDetail());
+        assertEquals("Failed to register, got error response: WebhookError{status=0, code=UNKNOWN_ERROR, title=Unknown error, detail=test}", e.getError().getDetail());
     }
 
 }

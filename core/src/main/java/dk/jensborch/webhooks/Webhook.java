@@ -1,5 +1,6 @@
 package dk.jensborch.webhooks;
 
+import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -14,30 +15,22 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.UriBuilder;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
 
 /**
  * This class defines a Webhook with a publisher and subscribe URI.
  */
-@Data
+@SuppressWarnings("PMD.DataClass")
 public class Webhook {
 
     @NotNull
-    @Setter(AccessLevel.NONE)
     private State state;
 
     @NotNull
-    @Setter(AccessLevel.NONE)
     private ZonedDateTime updated;
 
     @NotNull
     @Size(min = 1)
-    @Setter(AccessLevel.NONE)
     private Set<String> topics;
 
     @NotNull
@@ -52,19 +45,52 @@ public class Webhook {
     @NotNull
     private final ZonedDateTime created;
 
-    @JsonCreator
-    public Webhook(@JsonProperty("publisher") final URI publisher, @JsonProperty("subscriber") final URI subscriber, @JsonProperty("topics") final Set<String> topics) {
-        this.state = State.ACTIVE;
-        this.id = UUID.randomUUID();
-        this.subscriber = subscriber;
+    @ConstructorProperties({"id", "publisher", "subscriber", "state", "topics", "created", "updated"})
+    protected Webhook(final UUID id, final URI publisher, final URI subscriber, final State state,
+            final Set<String> topics, final ZonedDateTime created, final ZonedDateTime updated) {
+        this.state = state;
+        this.topics = topics == null ? new HashSet<>() : new HashSet<>(topics);
+        this.id = id;
         this.publisher = publisher;
-        this.topics = new HashSet<>(topics);
-        this.created = ZonedDateTime.now();
-        this.updated = this.created;
+        this.subscriber = subscriber;
+        this.created = created;
+        this.updated = updated == null ? created : updated;
+    }
+
+    public Webhook(final URI publisher, final URI subscriber, final Set<String> topics) {
+        this(UUID.randomUUID(), publisher, subscriber, State.ACTIVE, topics, ZonedDateTime.now(), null);
     }
 
     public Webhook(final URI publisher, final URI subscriber, final String... topics) {
         this(publisher, subscriber, Arrays.stream(topics).collect(Collectors.toSet()));
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public ZonedDateTime getUpdated() {
+        return updated;
+    }
+
+    public Set<String> getTopics() {
+        return topics;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public URI getPublisher() {
+        return publisher;
+    }
+
+    public URI getSubscriber() {
+        return subscriber;
+    }
+
+    public ZonedDateTime getCreated() {
+        return created;
     }
 
     @JsonIgnore
@@ -102,6 +128,40 @@ public class Webhook {
         return state == State.ACTIVE || state == State.FAILED;
     }
 
+    @Override
+    public String toString() {
+        return "Webhook{" + "state=" + state
+                + ", updated=" + updated
+                + ", topics=" + topics
+                + ", id=" + id
+                + ", publisher=" + publisher
+                + ", subscriber=" + subscriber
+                + ", created=" + created + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + Objects.hashCode(this.topics);
+        hash = 41 * hash + Objects.hashCode(this.publisher);
+        hash = 41 * hash + Objects.hashCode(this.subscriber);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final Webhook other = (Webhook) obj;
+        return Objects.equals(this.topics, other.topics)
+                && Objects.equals(this.publisher, other.publisher)
+                && Objects.equals(this.subscriber, other.subscriber);
+    }
+
     /**
      * Webhook status.
      */
@@ -112,30 +172,22 @@ public class Webhook {
     /**
      *
      */
-    public interface Endpoints {
-
-        URI getEvents();
-
-        URI getWebhooks();
-
-    }
-
-    /**
-     *
-     */
-    @Data
-    public static class SubscriberEndpoints implements Endpoints {
-
-        public static final String WEBHOOKS_PATH = "subscriber-webhooks";
-        public static final String EVENTS_PATH = "subscriber-events";
+    public abstract static class Endpoints {
 
         private final URI webhooks;
         private final URI events;
 
-        public SubscriberEndpoints(final URI contextRoot) {
-            Objects.requireNonNull(contextRoot, "Context root must be defined");
-            webhooks = UriBuilder.fromUri(contextRoot).path(WEBHOOKS_PATH).build();
-            events = UriBuilder.fromUri(contextRoot).path(EVENTS_PATH).build();
+        public Endpoints(final URI webhooks, final URI events) {
+            this.webhooks = webhooks;
+            this.events = events;
+        }
+
+        public URI getEvents() {
+            return events;
+        }
+
+        public URI getWebhooks() {
+            return webhooks;
         }
 
     }
@@ -143,19 +195,33 @@ public class Webhook {
     /**
      *
      */
-    @Data
-    public static class PublisherEndpoints implements Endpoints {
+    public static class SubscriberEndpoints extends Endpoints {
+
+        public static final String WEBHOOKS_PATH = "subscriber-webhooks";
+        public static final String EVENTS_PATH = "subscriber-events";
+
+        public SubscriberEndpoints(final URI contextRoot) {
+            super(
+                    UriBuilder.fromUri(contextRoot).path(WEBHOOKS_PATH).build(),
+                    UriBuilder.fromUri(contextRoot).path(EVENTS_PATH).build()
+            );
+        }
+
+    }
+
+    /**
+     *
+     */
+    public static class PublisherEndpoints extends Endpoints {
 
         public static final String WEBHOOKS_PATH = "publisher-webhooks";
         public static final String EVENTS_PATH = "publisher-events";
 
-        private final URI webhooks;
-        private final URI events;
-
         public PublisherEndpoints(final URI contextRoot) {
-            Objects.requireNonNull(contextRoot, "Context root must be defined");
-            webhooks = UriBuilder.fromUri(contextRoot).path(WEBHOOKS_PATH).build();
-            events = UriBuilder.fromUri(contextRoot).path(EVENTS_PATH).build();
+            super(
+                    UriBuilder.fromUri(contextRoot).path(WEBHOOKS_PATH).build(),
+                    UriBuilder.fromUri(contextRoot).path(EVENTS_PATH).build()
+            );
         }
     }
 
