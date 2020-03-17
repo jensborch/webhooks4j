@@ -135,4 +135,17 @@ public class SubscriberWebhookExposureTest {
                 .statusCode(400);
     }
 
+    @Test
+    public void testUpdateWebhookSync() throws Exception {
+        given()
+                .spec(spec)
+                .auth().basic("subscriber", "concon")
+                .when()
+                .body(webhook.state(Webhook.State.SYNCHRONIZE))
+                .pathParam("id", webhook.getId())
+                .put("subscriber-webhooks/{id}")
+                .then()
+                .statusCode(200);
+    }
+
 }

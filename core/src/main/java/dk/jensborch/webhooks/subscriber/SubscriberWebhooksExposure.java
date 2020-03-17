@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -37,6 +38,7 @@ import dk.jensborch.webhooks.validation.ValidUUID;
 @RolesAllowed({"subscriber"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SubscriberWebhooksExposure {
 

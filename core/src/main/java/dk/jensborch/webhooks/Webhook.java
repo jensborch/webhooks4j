@@ -20,18 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * This class defines a Webhook with a publisher and subscribe URI.
  */
-@SuppressWarnings("PMD.DataClass")
 public class Webhook {
-
-    @NotNull
-    private State state;
-
-    @NotNull
-    private ZonedDateTime updated;
-
-    @NotNull
-    @Size(min = 1)
-    private Set<String> topics;
 
     @NotNull
     private final UUID id;
@@ -45,20 +34,30 @@ public class Webhook {
     @NotNull
     private final ZonedDateTime created;
 
+    @NotNull
+    private State state;
+
+    @NotNull
+    @Size(min = 1)
+    private Set<String> topics;
+
+    @NotNull
+    private ZonedDateTime updated;
+
     @ConstructorProperties({"id", "publisher", "subscriber", "state", "topics", "created", "updated"})
     protected Webhook(final UUID id, final URI publisher, final URI subscriber, final State state,
             final Set<String> topics, final ZonedDateTime created, final ZonedDateTime updated) {
         this.state = state;
         this.topics = topics == null ? new HashSet<>() : new HashSet<>(topics);
-        this.id = id;
+        this.id = id == null ? UUID.randomUUID() : id;
         this.publisher = publisher;
         this.subscriber = subscriber;
-        this.created = created;
-        this.updated = updated == null ? created : updated;
+        this.created = created == null ? ZonedDateTime.now() : created;
+        this.updated = updated == null ? this.created : updated;
     }
 
     public Webhook(final URI publisher, final URI subscriber, final Set<String> topics) {
-        this(UUID.randomUUID(), publisher, subscriber, State.ACTIVE, topics, ZonedDateTime.now(), null);
+        this(null, publisher, subscriber, State.ACTIVE, topics, null, null);
     }
 
     public Webhook(final URI publisher, final URI subscriber, final String... topics) {

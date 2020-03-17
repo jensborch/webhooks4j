@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 /**
  * A event emitted by a publisher on a given topic.
  */
-@SuppressWarnings("PMD.DataClass")
 public class WebhookEvent {
 
     @NotNull
