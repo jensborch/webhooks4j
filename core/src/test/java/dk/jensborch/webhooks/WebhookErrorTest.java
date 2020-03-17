@@ -1,6 +1,8 @@
 package dk.jensborch.webhooks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -89,6 +91,29 @@ public class WebhookErrorTest {
         when(response.readEntity(any(Class.class))).thenReturn("");
         WebhookError result = WebhookError.parse(response);
         assertEquals(new WebhookError(403, WebhookError.Code.AUTHORIZATION_ERROR, ""), result);
+    }
+
+    @Test
+    public void testToString() throws Exception {
+        WebhookError w = new WebhookError(WebhookError.Code.NOT_FOUND, "test");
+        assertEquals("WebhookError{status=404, code=NOT_FOUND, title=Not found, detail=test}", w.toString());
+    }
+
+    @Test
+    public void testEquals() throws Exception {
+        WebhookError w1 = new WebhookError(WebhookError.Code.AUTHENTICATION_ERROR, "test");
+        WebhookError w2 = new WebhookError(WebhookError.Code.AUTHENTICATION_ERROR, "test");
+        assertEquals(w1, w2);
+        assertEquals(w1.hashCode(), w2.hashCode());
+    }
+
+    @Test
+    public void testNotEquals() throws Exception {
+        WebhookError w1 = new WebhookError(WebhookError.Code.AUTHENTICATION_ERROR, "test");
+        WebhookError w2 = new WebhookError(WebhookError.Code.SYNC_ERROR, "test");
+        assertNotEquals(w1, w2);
+        assertFalse(w1.equals(null));
+        assertFalse(w1.equals(new Object()));
     }
 
 }
