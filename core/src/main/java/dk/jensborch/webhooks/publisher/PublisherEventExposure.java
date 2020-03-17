@@ -71,7 +71,7 @@ public class PublisherEventExposure {
             @Context final Request request) {
         return WebhookResponseBuilder
                 .create(request, WebhookEventStatus.class)
-                .tag(e -> String.valueOf(e.getStart().toEpochSecond()))
+                .tag(e -> String.valueOf(e.getStart().toInstant().toEpochMilli()))
                 .entity(repo
                         .find(UUID.fromString(id))
                         .orElseThrow(() -> notFound(id)))

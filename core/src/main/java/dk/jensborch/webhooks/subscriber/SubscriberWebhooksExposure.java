@@ -79,7 +79,7 @@ public class SubscriberWebhooksExposure {
         return WebhookResponseBuilder
                 .create(request, Webhook.class)
                 .entity(webhook)
-                .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
+                .tag(w -> String.valueOf(w.getUpdated().toInstant().toEpochMilli()))
                 .fulfilled(w -> {
                     if (updated.getState() != Webhook.State.SYNCHRONIZE) {
                         throw new WebhookException(new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + updated.getState()));
@@ -113,7 +113,7 @@ public class SubscriberWebhooksExposure {
                 .entity(subscriper
                         .find(UUID.fromString(id))
                         .orElseThrow(() -> throwNotFound(id)))
-                .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
+                .tag(w -> String.valueOf(w.getUpdated().toInstant().toEpochMilli()))
                 .build();
     }
 
