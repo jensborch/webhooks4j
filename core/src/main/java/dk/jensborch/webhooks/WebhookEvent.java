@@ -1,6 +1,7 @@
 package dk.jensborch.webhooks;
 
 import java.beans.ConstructorProperties;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -15,10 +16,13 @@ public class WebhookEvent {
 
     @NotNull
     private final UUID id;
+
     @NotNull
     private final UUID publisher;
+
     @NotNull
     private final String topic;
+
     @NotNull
     private final Map<String, Object> data;
 
@@ -47,7 +51,7 @@ public class WebhookEvent {
     }
 
     public Map<String, Object> getData() {
-        return data;
+        return Collections.unmodifiableMap(data);
     }
 
     @Override
@@ -69,10 +73,7 @@ public class WebhookEvent {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         final WebhookEvent other = (WebhookEvent) obj;
