@@ -87,7 +87,7 @@ public class PublisherWebhookExposure {
                 .entity(repo
                         .find(UUID.fromString(id))
                         .orElseThrow(() -> notFound(id)))
-                .tag(w -> String.valueOf(w.getUpdated().toEpochSecond()))
+                .tag(w -> String.valueOf(w.getUpdated().toInstant().toEpochMilli()))
                 .build();
     }
 
