@@ -136,7 +136,7 @@ public class WebhookEventConsumerTest {
 
     public void setupSyncResponse(final WebhookEventStatus... status) {
         WebTarget target = mock(WebTarget.class);
-        when(client.target(any(String.class))).thenReturn(target);
+        when(client.target(any(URI.class))).thenReturn(target);
         when(target.queryParam(any(String.class), any())).thenReturn(target);
         Invocation.Builder builder = mock(Invocation.Builder.class);
         when(target.request(eq(MediaType.APPLICATION_JSON))).thenReturn(builder);

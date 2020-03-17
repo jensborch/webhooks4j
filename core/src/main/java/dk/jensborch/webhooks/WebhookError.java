@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
  * Representation of an error message returned by the API compatible with
  * <a href="https://tools.ietf.org/html/rfc7807">RFC7807</a>
  */
-@SuppressWarnings("PMD.DataClass")
 public class WebhookError implements Serializable {
 
     private static final long serialVersionUID = 8387757018701335705L;

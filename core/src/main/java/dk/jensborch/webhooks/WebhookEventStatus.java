@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 /**
  * Processing status for a webhook event.
  */
-@SuppressWarnings("PMD.DataClass")
 public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
 
     private ZonedDateTime end;

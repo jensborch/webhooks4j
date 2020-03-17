@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -33,10 +34,11 @@ import dk.jensborch.webhooks.validation.ValidZonedDateTime;
  * Exposure for listing events published.
  */
 @Path(Webhook.PublisherEndpoints.EVENTS_PATH)
-@DeclareRoles("publisher")
-@RolesAllowed("publisher")
+@DeclareRoles({"subscriber", "publisher"})
+@RolesAllowed({"subscriber", "publisher"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class PublisherEventExposure {
 
     @Inject
