@@ -12,6 +12,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.stream.JsonParsingException;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
 
@@ -37,10 +38,17 @@ public class WebhookError implements Serializable {
         HTTP_STATUS_MAP.put(Response.Status.NOT_FOUND, Code.UNKNOWN_ERROR);
     }
 
-    Integer status;
-    Code code;
-    String title;
-    String detail;
+    @NotNull
+    private final Integer status;
+
+    @NotNull
+    private final Code code;
+
+    @NotNull
+    private final String title;
+
+    @NotNull
+    private final String detail;
 
     @ConstructorProperties({"status", "code", "title", "details"})
     protected WebhookError(final Integer status, final Code code, final String title, final String detail) {

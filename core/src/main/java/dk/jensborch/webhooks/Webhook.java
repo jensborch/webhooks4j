@@ -5,6 +5,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -73,7 +74,7 @@ public class Webhook {
     }
 
     public Set<String> getTopics() {
-        return topics;
+        return Collections.unmodifiableSet(topics);
     }
 
     public UUID getId() {
@@ -169,7 +170,7 @@ public class Webhook {
     }
 
     /**
-     *
+     * Subscriber/publisher endpoints
      */
     public abstract static class Endpoints {
 
@@ -192,7 +193,7 @@ public class Webhook {
     }
 
     /**
-     *
+     * Subscriber endpoints.
      */
     public static class SubscriberEndpoints extends Endpoints {
 
@@ -209,7 +210,7 @@ public class Webhook {
     }
 
     /**
-     *
+     * Publisher endpoints.
      */
     public static class PublisherEndpoints extends Endpoints {
 
