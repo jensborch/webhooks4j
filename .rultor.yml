@@ -1,0 +1,8 @@
+decrypt:
+  settings.xml: "repo/settings.xml.asc"
+  pubring.gpg: "repo/pubring.gpg.asc"
+  secring.gpg: "repo/secring.gpg.asc"
+release:
+  script: |
+    ./mvnw -pl core release:clean release:prepare -Prelease --settings /home/r/settings.xml
+    ./mvnw -pl core release:perform -Prelease --settings /home/r/settings.xml
