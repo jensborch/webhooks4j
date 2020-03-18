@@ -16,7 +16,7 @@
         <cdi-api.version>1.2</cdi-api.version>
         <checkstyle-plugin.version>3.1.0</checkstyle-plugin.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <gpg-plugin.version>1.5</gpg-plugin.version>
+        <gpg-plugin.version>1.6</gpg-plugin.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jacoco-plugin.version>0.8.5</jacoco-plugin.version>
         <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
