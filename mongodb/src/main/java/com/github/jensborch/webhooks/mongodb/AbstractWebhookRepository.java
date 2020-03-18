@@ -9,11 +9,16 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.github.jensborch.webhooks.Webhook;
+import com.github.jensborch.webhooks.WebhookError;
+import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.repositories.WebhookRepository;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DuplicateKeyException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.ReplaceOptions;
 
 /**
@@ -21,9 +26,18 @@ import com.mongodb.client.model.ReplaceOptions;
  */
 public abstract class AbstractWebhookRepository implements WebhookRepository {
 
+    public static void createIndex(MongoCollection collection) {
+        collection.createIndex(Indexes.ascending("publisher", "subscriber"), new IndexOptions().unique(true));
+    }
+
     @Override
     public void save(@NotNull @Valid final Webhook hook) {
-        collection().replaceOne(Filters.eq("_id", hook.getId()), hook, new ReplaceOptions().upsert(true));
+        try {
+            collection().replaceOne(Filters.eq("_id", hook.getId()), hook, new ReplaceOptions().upsert(true));
+        } catch (DuplicateKeyException e) {
+            throw new WebhookException(new WebhookError(WebhookError.Code.VALIDATION_ERROR, "A webhook with same publisher "
+                    + hook.getPublisher() + " and subscriber " + hook.getSubscriber() + " already exists"), e);
+        }
     }
 
     @Override
@@ -34,8 +48,8 @@ public abstract class AbstractWebhookRepository implements WebhookRepository {
     @Override
     public Optional<Webhook> find(@NotNull final UUID id) {
         return Optional.of(collection())
-            .map(hooks -> hooks.find(Filters.eq("_id", id)))
-            .map(MongoIterable::first);
+                .map(hooks -> hooks.find(Filters.eq("_id", id)))
+                .map(MongoIterable::first);
     }
 
     @Override
@@ -47,7 +61,7 @@ public abstract class AbstractWebhookRepository implements WebhookRepository {
 
     @Override
     public void touch(final UUID id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        find(id).ifPresent(w -> collection().replaceOne(Filters.eq("_id", w.getId()), w.touch()));
     }
 
     protected abstract MongoCollection<Webhook> collection();

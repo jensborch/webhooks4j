@@ -142,7 +142,6 @@ public class Webhook {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 41 * hash + Objects.hashCode(this.topics);
         hash = 41 * hash + Objects.hashCode(this.publisher);
         hash = 41 * hash + Objects.hashCode(this.subscriber);
         return hash;
@@ -157,8 +156,7 @@ public class Webhook {
             return false;
         }
         final Webhook other = (Webhook) obj;
-        return Objects.equals(this.topics, other.topics)
-                && Objects.equals(this.publisher, other.publisher)
+        return Objects.equals(this.publisher, other.publisher)
                 && Objects.equals(this.subscriber, other.subscriber);
     }
 
