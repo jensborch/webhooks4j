@@ -20,10 +20,14 @@ To build the application run the following command:
 ./mvnw package
 ```
 
-
-
 Start the test application using:
 
 ```
 ./mvnw compile -pl test quarkus:dev
 ```
+
+Release to Maven central:
+```
+./mvnw release:clean release:prepare -Prelease
+./mvnw -pl core release:perform -Prelease
+````
