@@ -169,7 +169,6 @@
                         <artifactId>maven-release-plugin</artifactId>
                         <version>${release-plugin.version}</version>
                         <configuration>
-							<releaseVersion>${project.version}</releaseVersion>
 							<autoVersionSubmodules>true</autoVersionSubmodules>
                             <tagNameFormat>v@{project.version}</tagNameFormat>
                             <useReleaseProfile>false</useReleaseProfile>

@@ -4,5 +4,5 @@ decrypt:
   secring.gpg: "repo/secring.gpg.asc"
 release:
   script: |
-    ./mvnw release:clean release:prepare -Prelease --settings /home/r/settings.xml
+    ./mvnw --batch-mode -Dtag=${tag} release:clean release:prepare -DreleaseVersion=${tag} -Prelease --settings /home/r/settings.xml
     ./mvnw -pl core release:perform -Prelease --settings /home/r/settings.xml
