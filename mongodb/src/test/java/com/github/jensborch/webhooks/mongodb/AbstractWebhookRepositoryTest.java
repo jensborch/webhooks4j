@@ -50,14 +50,14 @@ public class AbstractWebhookRepositoryTest {
         repository.list("a", "b", "c");
 
         verify(collection, times(1)).find(captor.capture());
-        assertEquals("{ \"topics\" : { \"$elemMatch\" : { \"$in\" : [\"a\", \"b\", \"c\"] } } }", captor.getValue().toString());
+        assertEquals("{\"topics\": {\"$elemMatch\": {\"$in\": [\"a\", \"b\", \"c\"]}}}", captor.getValue().toString());
     }
 
     @Test
     public void testListWithoutTopics() {
         repository.list();
         verify(collection, times(1)).find(captor.capture());
-        assertEquals("{ }", captor.getValue().toString());
+        assertEquals("{}", captor.getValue().toString());
     }
 
 }
