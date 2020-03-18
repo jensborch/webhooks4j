@@ -51,7 +51,7 @@ public class WebhookTest {
     @Test
     public void testNotEquals() throws Exception {
         Webhook w1 = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
-        Webhook w2 = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "different");
+        Webhook w2 = new Webhook(new URI("http://pub2.dk"), new URI("http://sub2.dk"), "different");
         assertNotEquals(w1, w2);
         assertFalse(w1.equals(null));
         assertFalse(w1.equals(new Object()));

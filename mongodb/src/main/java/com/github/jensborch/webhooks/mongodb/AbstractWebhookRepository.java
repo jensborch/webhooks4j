@@ -26,7 +26,7 @@ import com.mongodb.client.model.ReplaceOptions;
  */
 public abstract class AbstractWebhookRepository implements WebhookRepository {
 
-    public static void createIndex(MongoCollection collection) {
+    public static void createIndex(final MongoCollection collection) {
         collection.createIndex(Indexes.ascending("publisher", "subscriber"), new IndexOptions().unique(true));
     }
 
