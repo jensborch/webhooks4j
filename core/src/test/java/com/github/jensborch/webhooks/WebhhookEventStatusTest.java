@@ -33,7 +33,7 @@ public class WebhhookEventStatusTest {
         URI publisherUri = new URI("http://publisher.dk");
         URI subscriberUri = new URI("http://subscriber.dk");
         webhook = new Webhook(publisherUri, subscriberUri, "test");
-        status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
+        status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class WebhhookEventStatusTest {
     @Test
     public void testCompareTo() throws Exception {
         TimeUnit.SECONDS.sleep(1);
-        WebhookEventStatus status2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
+        WebhookEventStatus status2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
         assertTrue(status.compareTo(status2) > 0);
         SortedSet<WebhookEventStatus> list = new TreeSet<>();
         list.add(status);
@@ -65,8 +65,8 @@ public class WebhhookEventStatusTest {
 
     @Test
     public void testToString() throws Exception {
-        WebhookEventStatus s = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
-        assertThat(s.toString(), startsWith("WebhookEventStatus{end=null, status=STARTED, id=" + s.getId() + ", event=WebhookEvent{id=" + s.getId() + ", publisher=" + s.getEvent().getPublisher() + ", topic=test, data={}}"));
+        WebhookEventStatus s = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
+        assertThat(s.toString(), startsWith("WebhookEventStatus{end=null, status=STARTED, id=" + s.getId() + ", event=WebhookEvent{id=" + s.getId() + ", webhook=" + s.getEvent().getWebhook() + ", topic=test, data={}}"));
     }
 
     @Test
@@ -76,16 +76,16 @@ public class WebhhookEventStatusTest {
         WebhookEvent w1 = new WebhookEvent(id, publisher, "test", Collections.singletonMap("t1", "t2"));
         WebhookEvent w2 = new WebhookEvent(id, publisher, "test", Collections.singletonMap("t3", "t4"));
         ZonedDateTime start = ZonedDateTime.now();
-        WebhookEventStatus s1 = new WebhookEventStatus(w1.getId(), w1, webhook.getId(), start, null, WebhookEventStatus.Status.STARTED);
-        WebhookEventStatus s2 = new WebhookEventStatus(w2.getId(), w2, webhook.getId(), start, null, WebhookEventStatus.Status.STARTED);
+        WebhookEventStatus s1 = new WebhookEventStatus(w1.getId(), w1, start, null, WebhookEventStatus.Status.STARTED);
+        WebhookEventStatus s2 = new WebhookEventStatus(w2.getId(), w2, start, null, WebhookEventStatus.Status.STARTED);
         assertEquals(s1, s2);
         assertEquals(s1.hashCode(), s2.hashCode());
     }
 
     @Test
     public void testSet() throws Exception {
-        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
-        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
+        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
+        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
         SortedSet<WebhookEventStatus> set = new TreeSet<>();
         set.add(s1);
         set.add(s2);
@@ -94,8 +94,8 @@ public class WebhhookEventStatusTest {
 
     @Test
     public void testNotEquals() throws Exception {
-        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
-        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
+        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
+        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
         assertNotEquals(s1, s2);
         assertFalse(s1.equals(null));
         assertFalse(s1.equals(new Object()));

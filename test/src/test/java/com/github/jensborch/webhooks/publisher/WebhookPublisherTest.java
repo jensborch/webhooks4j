@@ -39,7 +39,7 @@ public class WebhookPublisherTest {
         Map<String, Object> data = new HashMap<>();
         WebhookEvent event = new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, data);
         publisher.publish(event);
-        assertThat(listener.getCount(), greaterThan(1));
+        assertThat(listener.getCount(), greaterThan(0));
         assertThat(listener.getEvents().keySet(), hasItems(event.getId()));
     }
 
