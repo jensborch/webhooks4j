@@ -2,9 +2,12 @@ package com.github.jensborch.webhooks.subscriber;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItems;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 
@@ -43,8 +46,11 @@ public class WebhookEventConsumerTest {
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, new HashMap<>()), webhook.getId());
         repo.save(s1);
         repo.save(s2);
+        SortedSet<WebhookEventStatus> events = repo.list(ZonedDateTime.now().minusMinutes(1), TestEventListener.TOPIC);
+        assertThat(events.size(), greaterThan(1));
+        assertThat(events, hasItems(s2, s1));
         consumer.sync(webhook);
-        assertThat(listener.getCount(), greaterThan(1));
+        assertThat(listener.getEvents().keySet(), hasItems(s2.getId(), s1.getId()));
     }
 
 }

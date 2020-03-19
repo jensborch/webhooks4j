@@ -81,6 +81,16 @@ public class WebhhookEventStatusTest {
     }
 
     @Test
+    public void testSet() throws Exception {
+        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
+        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
+        SortedSet<WebhookEventStatus> set = new TreeSet<>();
+        set.add(s1);
+        set.add(s2);
+        assertEquals(2, set.size());
+    }
+
+    @Test
     public void testNotEquals() throws Exception {
         WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()), webhook.getId());
