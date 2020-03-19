@@ -127,6 +127,7 @@
                 <configuration>
                     <targetModules>
                         <param>webhook4j-core</param>
+                        <param>webhook4j-mongodb</param>
                     </targetModules>
                 </configuration>
                 <dependencies>
