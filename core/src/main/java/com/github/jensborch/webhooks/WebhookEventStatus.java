@@ -2,6 +2,7 @@ package com.github.jensborch.webhooks;
 
 import java.beans.ConstructorProperties;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -130,7 +131,11 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
 
     @Override
     public int compareTo(final WebhookEventStatus other) {
-        return other.start.compareTo(this.start);
+        return Comparator
+                .comparing(WebhookEventStatus::getStart)
+                .reversed()
+                .thenComparing(WebhookEventStatus::getId)
+                .compare(this, other);
     }
 
     /**
