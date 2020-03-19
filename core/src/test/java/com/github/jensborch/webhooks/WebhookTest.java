@@ -1,14 +1,18 @@
 package com.github.jensborch.webhooks;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,8 +20,34 @@ import org.junit.jupiter.api.Test;
  */
 public class WebhookTest {
 
-    @BeforeEach
-    public void setUp() {
+    @Test
+    public void testCreate() throws Exception {
+        Webhook w = new Webhook(UUID.randomUUID(), new URI("http://pub.dk"), new URI("http://sub.dk"), Webhook.State.ACTIVE, null, null, null);
+        assertNotNull(w.getTopics());
+        assertNotNull(w.getCreated());
+        assertNotNull(w.getUpdated());
+        assertEquals(w.getUpdated(), w.getCreated());
+    }
+
+    @Test
+    public void testUpdate() throws Exception {
+        ZonedDateTime updated = ZonedDateTime.now();
+        Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test").updated(updated);
+        assertEquals(updated, w.getUpdated());
+    }
+
+    @Test
+    public void testTouch() throws Exception {
+        Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
+        ZonedDateTime old = w.getUpdated();
+        TimeUnit.SECONDS.sleep(1);
+        assertNotEquals(old, w.touch().getUpdated());
+    }
+
+    @Test
+    public void testTopics() throws Exception {
+        Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
+        assertThat(w.topics("1", "2").getTopics(), hasItems("1", "2"));
     }
 
     @Test
