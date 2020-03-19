@@ -26,6 +26,12 @@ Start the test application using:
 ./mvnw compile -pl test quarkus:dev
 ```
 
+Run mutation tests:
+
+```sh
+./mvnw eu.stamp-project:pitmp-maven-plugin:run
+```
+
 Release to Maven central:
 
 ```sh
