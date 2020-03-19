@@ -4,7 +4,6 @@ import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -118,8 +117,8 @@ public class Webhook {
         return this;
     }
 
-    public Webhook topics(final Collection<String> topics) {
-        this.topics = new HashSet<>(topics);
+    public Webhook topics(final String... topics) {
+        this.topics = Arrays.stream(topics).collect(Collectors.toCollection(HashSet::new));
         return this;
     }
 
