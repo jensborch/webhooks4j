@@ -39,7 +39,7 @@ public class Webhook {
 
     @NotNull
     @Size(min = 1)
-    private Set<String> topics;
+    private final Set<String> topics;
 
     @NotNull
     private ZonedDateTime updated;
@@ -117,14 +117,9 @@ public class Webhook {
         return this;
     }
 
-    public Webhook topics(final String... topics) {
-        this.topics = Arrays.stream(topics).collect(Collectors.toCollection(HashSet::new));
-        return this;
-    }
-
     @JsonIgnore
     public boolean isActive() {
-        return state == State.ACTIVE || state == State.FAILED;
+        return state != State.INACTIVE;
     }
 
     @Override

@@ -14,7 +14,12 @@ import com.github.jensborch.webhooks.Webhook;
  */
 public interface WebhookRepository {
 
-    void save(@NotNull @Valid Webhook hook);
+    /**
+     * Saves new or updates existing webhook in the repository.
+       *
+     * @param webhook saved to repository
+     */
+    void save(@NotNull @Valid Webhook webhook);
 
     void delete(@NotNull UUID id);
 

@@ -1,7 +1,6 @@
 package com.github.jensborch.webhooks;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -42,12 +41,6 @@ public class WebhookTest {
         ZonedDateTime old = w.getUpdated();
         TimeUnit.SECONDS.sleep(1);
         assertNotEquals(old, w.touch().getUpdated());
-    }
-
-    @Test
-    public void testTopics() throws Exception {
-        Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
-        assertThat(w.topics("1", "2").getTopics(), hasItems("1", "2"));
     }
 
     @Test

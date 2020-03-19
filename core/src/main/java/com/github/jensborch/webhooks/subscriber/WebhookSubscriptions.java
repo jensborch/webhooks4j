@@ -38,13 +38,13 @@ public class WebhookSubscriptions {
     WebhookRepository repo;
 
     /**
-     * Register a webhook to receive events from a publisher. This will throw a
+     * Register a webhook to receive events from a publisher. Will throw a
      * {@link WebhookError} runtime exception if registration fails.
      *
      * @param webhook to register.
      */
     public void subscribe(@NotNull @Valid final Webhook webhook) {
-        if (repo.find(webhook.getId()).filter(w -> w.equals(webhook)).isPresent()) {
+        if (repo.find(webhook.getId()).filter(w -> w.getState() != Webhook.State.FAILED).isPresent()) {
             LOG.info("Webhook {} already exists", webhook);
         } else if (webhook.getState() == Webhook.State.SUBSCRIBE) {
             repo.save(webhook.state(Webhook.State.SUBSCRIBING));
@@ -66,7 +66,7 @@ public class WebhookSubscriptions {
                     })
                     .invoke();
         } else {
-            throwWebhookException("Status must be " + Webhook.State.SUBSCRIBE + " to register webhook");
+            throwWebhookException("Webhook " + webhook.getId() + " status is not " + Webhook.State.SUBSCRIBE);
         }
     }
 
