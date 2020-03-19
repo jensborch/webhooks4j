@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.SortedSet;
@@ -74,8 +75,9 @@ public class WebhhookEventStatusTest {
         UUID id = UUID.randomUUID();
         WebhookEvent w1 = new WebhookEvent(id, publisher, "test", Collections.singletonMap("t1", "t2"));
         WebhookEvent w2 = new WebhookEvent(id, publisher, "test", Collections.singletonMap("t3", "t4"));
-        WebhookEventStatus s1 = new WebhookEventStatus(w1, webhook.getId());
-        WebhookEventStatus s2 = new WebhookEventStatus(w2, webhook.getId());
+        ZonedDateTime start = ZonedDateTime.now();
+        WebhookEventStatus s1 = new WebhookEventStatus(w1.getId(), w1, webhook.getId(), start, null, WebhookEventStatus.Status.STARTED);
+        WebhookEventStatus s2 = new WebhookEventStatus(w2.getId(), w2, webhook.getId(), start, null, WebhookEventStatus.Status.STARTED);
         assertEquals(s1, s2);
         assertEquals(s1.hashCode(), s2.hashCode());
     }
