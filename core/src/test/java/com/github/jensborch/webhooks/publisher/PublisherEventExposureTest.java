@@ -88,7 +88,7 @@ public class PublisherEventExposureTest {
     public void testGet() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent event = new WebhookEvent(publisher, "test", new HashMap<>());
-        when(repo.find(any())).thenReturn(Optional.of(new WebhookEventStatus(event, UUID.randomUUID())));
+        when(repo.find(any())).thenReturn(Optional.of(new WebhookEventStatus(event)));
         Response result = exposure.get(UUID.randomUUID().toString(), request);
         assertNotNull(result);
         assertEquals(200, result.getStatus());

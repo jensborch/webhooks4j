@@ -29,11 +29,8 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
     @NotNull
     private final ZonedDateTime start;
 
-    @NotNull
-    private final UUID webhook;
-
-    @ConstructorProperties({"id", "event", "webhook", "start", "end", "status"})
-    protected WebhookEventStatus(final UUID id, final WebhookEvent event, final UUID webhook, final ZonedDateTime start, final ZonedDateTime end, final Status status) {
+    @ConstructorProperties({"id", "event", "start", "end", "status"})
+    protected WebhookEventStatus(final UUID id, final WebhookEvent event, final ZonedDateTime start, final ZonedDateTime end, final Status status) {
         if (!id.equals(event.getId())) {
             throw new IllegalArgumentException("Status ID and event ID must be indetical");
         }
@@ -42,11 +39,10 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
         this.id = id;
         this.event = event;
         this.start = start;
-        this.webhook = webhook;
     }
 
-    public WebhookEventStatus(final WebhookEvent event, final UUID webhook) {
-        this(event.getId(), event, webhook, ZonedDateTime.now(), null, Status.STARTED);
+    public WebhookEventStatus(final WebhookEvent event) {
+        this(event.getId(), event, ZonedDateTime.now(), null, Status.STARTED);
     }
 
     public void setEnd(final ZonedDateTime end) {
@@ -77,13 +73,9 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
         return start;
     }
 
-    public UUID getWebhook() {
-        return webhook;
-    }
-
     @Override
     public String toString() {
-        return "WebhookEventStatus{" + "end=" + end + ", status=" + status + ", id=" + id + ", event=" + event + ", start=" + start + ", webhook=" + webhook + '}';
+        return "WebhookEventStatus{" + "end=" + end + ", status=" + status + ", id=" + id + ", event=" + event + ", start=" + start + '}';
     }
 
     @Override
@@ -94,7 +86,6 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
         hash = 89 * hash + Objects.hashCode(this.id);
         hash = 89 * hash + Objects.hashCode(this.event);
         hash = 89 * hash + Objects.hashCode(this.start);
-        hash = 89 * hash + Objects.hashCode(this.webhook);
         return hash;
     }
 
@@ -111,8 +102,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
                 && this.status == other.status
                 && Objects.equals(this.id, other.id)
                 && Objects.equals(this.event, other.event)
-                && Objects.equals(this.start, other.start)
-                && Objects.equals(this.webhook, other.webhook);
+                && Objects.equals(this.start, other.start);
     }
 
     public WebhookEventStatus done(final boolean success) {

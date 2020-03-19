@@ -54,7 +54,7 @@ public class WebhookEventConsumer {
     public WebhookEventStatus consume(final WebhookEvent callbackEvent) {
         LOG.debug("Receiving event {}", callbackEvent);
         Webhook webhook = findPublisher(callbackEvent);
-        WebhookEventStatus status = findOrCreate(callbackEvent, webhook);
+        WebhookEventStatus status = findOrCreate(callbackEvent);
         if (status.eligible()) {
             try {
                 event
@@ -106,20 +106,20 @@ public class WebhookEventConsumer {
 
     private Webhook findPublisher(final WebhookEvent callbackEvent) {
         return subscriptions
-                .find(callbackEvent.getPublisher())
+                .find(callbackEvent.getWebhook())
                 .filter(w -> w.getTopics().contains(callbackEvent.getTopic()))
                 .filter(Webhook::isActive)
                 .orElseThrow(() -> new WebhookException(
                 new WebhookError(
                         WebhookError.Code.UNKNOWN_PUBLISHER,
-                        "Unknown/inactive publisher " + callbackEvent.getPublisher() + " for topic " + callbackEvent.getTopic()))
+                        "Unknown/inactive publisher " + callbackEvent.getWebhook() + " for topic " + callbackEvent.getTopic()))
                 );
     }
 
-    private WebhookEventStatus findOrCreate(final WebhookEvent callbackEvent, final Webhook webhook) {
+    private WebhookEventStatus findOrCreate(final WebhookEvent callbackEvent) {
         return repo
                 .find(callbackEvent.getId())
-                .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent, webhook.getId())));
+                .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent)));
     }
 
     /**

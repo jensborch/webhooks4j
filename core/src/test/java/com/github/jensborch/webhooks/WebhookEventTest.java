@@ -21,7 +21,7 @@ public class WebhookEventTest {
     public void testToString() throws Exception {
         UUID id = UUID.randomUUID();
         WebhookEvent w = new WebhookEvent(id, "test", Collections.singletonMap("t1", "t2"));
-        assertEquals("WebhookEvent{id=" + w.getId() + ", publisher=" + id + ", topic=test, data={t1=t2}}", w.toString());
+        assertEquals("WebhookEvent{id=" + w.getId() + ", webhook=" + id + ", topic=test, data={t1=t2}}", w.toString());
     }
 
     @Test

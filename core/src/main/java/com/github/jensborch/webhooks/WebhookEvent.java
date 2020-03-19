@@ -18,7 +18,7 @@ public class WebhookEvent {
     private final UUID id;
 
     @NotNull
-    private final UUID publisher;
+    private final UUID webhook;
 
     @NotNull
     private final String topic;
@@ -26,24 +26,24 @@ public class WebhookEvent {
     @NotNull
     private final Map<String, Object> data;
 
-    @ConstructorProperties({"id", "publisher", "topic", "data"})
-    protected WebhookEvent(final UUID id, final UUID publisher, final String topic, final Map<String, Object> data) {
+    @ConstructorProperties({"id", "webhook", "topic", "data"})
+    protected WebhookEvent(final UUID id, final UUID webhook, final String topic, final Map<String, Object> data) {
         this.id = id;
-        this.publisher = publisher;
+        this.webhook = webhook;
         this.topic = topic;
         this.data = data == null ? new HashMap<>() : new HashMap<>(data);
     }
 
-    public WebhookEvent(final UUID publisher, final String topic, final Map<String, Object> data) {
-        this(UUID.randomUUID(), publisher, topic, data);
+    public WebhookEvent(final UUID webhook, final String topic, final Map<String, Object> data) {
+        this(UUID.randomUUID(), webhook, topic, data);
     }
 
     public UUID getId() {
         return id;
     }
 
-    public UUID getPublisher() {
-        return publisher;
+    public UUID getWebhook() {
+        return webhook;
     }
 
     public String getTopic() {
@@ -56,14 +56,14 @@ public class WebhookEvent {
 
     @Override
     public String toString() {
-        return "WebhookEvent{" + "id=" + id + ", publisher=" + publisher + ", topic=" + topic + ", data=" + data + '}';
+        return "WebhookEvent{" + "id=" + id + ", webhook=" + webhook + ", topic=" + topic + ", data=" + data + '}';
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
         hash = 23 * hash + Objects.hashCode(this.id);
-        hash = 23 * hash + Objects.hashCode(this.publisher);
+        hash = 23 * hash + Objects.hashCode(this.webhook);
         hash = 23 * hash + Objects.hashCode(this.topic);
         return hash;
     }
@@ -79,7 +79,7 @@ public class WebhookEvent {
         final WebhookEvent other = (WebhookEvent) obj;
         return Objects.equals(this.topic, other.topic)
                 && Objects.equals(this.id, other.id)
-                && Objects.equals(this.publisher, other.publisher);
+                && Objects.equals(this.webhook, other.webhook);
     }
 
 }

@@ -98,7 +98,7 @@ public class WebhookEventConsumerTest {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         when(repo.find(any()))
-                .thenReturn(Optional.of(new WebhookEventStatus(callbackEvent, UUID.randomUUID())
+                .thenReturn(Optional.of(new WebhookEventStatus(callbackEvent)
                         .done(true))
                 );
         consumer.consume(callbackEvent);
@@ -165,7 +165,7 @@ public class WebhookEventConsumerTest {
 
     @Test
     public void testSync() {
-        WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()), webhook.getId());
+        WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()));
         setupSyncResponse(status);
         consumer.sync(webhook);
         verify(event, times(1)).select(any(Class.class), any(EventTopicLiteral.class));
