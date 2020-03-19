@@ -1,5 +1,7 @@
 package com.github.jensborch.webhooks.publisher;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
@@ -35,8 +37,10 @@ public class WebhookPublisherTest {
         Webhook webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         Map<String, Object> data = new HashMap<>();
-        publisher.publish(new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, data));
+        WebhookEvent event = new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, data);
+        publisher.publish(event);
         assertEquals(1, listener.getCount());
+        assertThat(listener.getEvents().keySet(), hasItems(event.getId()));
     }
 
 }
