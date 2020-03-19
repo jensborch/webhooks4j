@@ -116,7 +116,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
     }
 
     public boolean eligible() {
-        return status == Status.FAILED || status == Status.STARTED;
+        return status != Status.SUCCESS;
     }
 
     @Override
