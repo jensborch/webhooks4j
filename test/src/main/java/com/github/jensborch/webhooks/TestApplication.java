@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.core.Application;
 
 import com.github.jensborch.webhooks.subscriber.SubscriberEventExposure;
-import com.github.jensborch.webhooks.subscriber.SubscriberWebhooksExposure;
+import com.github.jensborch.webhooks.subscriber.SubscriberWebhookExposure;
 import com.github.jensborch.webhooks.publisher.PublisherEventExposure;
 import com.github.jensborch.webhooks.publisher.PublisherWebhookExposure;
 
@@ -20,7 +20,7 @@ public class TestApplication extends Application {
     public Set<Class<?>> getClasses() {
         return Arrays.stream(new Class<?>[]{
             SubscriberEventExposure.class,
-            SubscriberWebhooksExposure.class,
+            SubscriberWebhookExposure.class,
             PublisherEventExposure.class,
             PublisherWebhookExposure.class})
                 .collect(Collectors.toSet());

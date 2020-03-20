@@ -66,7 +66,7 @@ public final class WebhookResponseBuilder<E> {
     }
 
     public Response build() {
-        Objects.requireNonNull(entity, "Enitity must not be null");
+        Objects.requireNonNull(entity, "Entity must not be null");
         Response.ResponseBuilder builder;
         CacheControl cache;
         if (tagFunc == null) {

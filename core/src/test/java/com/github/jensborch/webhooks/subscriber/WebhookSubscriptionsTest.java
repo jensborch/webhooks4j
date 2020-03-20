@@ -27,6 +27,7 @@ import com.github.jensborch.webhooks.repositories.WebhookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -88,7 +89,7 @@ public class WebhookSubscriptionsTest {
     public void testUnregister404() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
         when(response.getStatus()).thenReturn(404);
-        when(response.readEntity(any(Class.class))).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
         subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE));
         verify(repo, times(2)).save(any());
@@ -97,7 +98,7 @@ public class WebhookSubscriptionsTest {
     @Test
     public void testUnregister500() {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
-        when(response.readEntity(any(Class.class))).thenReturn("{ \"code\":\"REGISTER_ERROR\", \"status\":\"500\", \"msg\":\"test\" }");
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"REGISTER_ERROR\", \"status\":\"500\", \"msg\":\"test\" }");
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE)));
         verify(repo, times(2)).save(any());
@@ -125,7 +126,7 @@ public class WebhookSubscriptionsTest {
     public void testRegisterHttp400() {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
         when(response.getStatus()).thenReturn(404);
-        when(response.readEntity(any(Class.class))).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());
@@ -135,7 +136,7 @@ public class WebhookSubscriptionsTest {
     @Test
     public void testRegisterHttp500() {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
-        when(response.readEntity(any(Class.class))).thenThrow(new ProcessingException("test"));
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE)));
         assertEquals(WebhookError.Code.REGISTER_ERROR, e.getError().getCode());

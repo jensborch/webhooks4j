@@ -123,7 +123,7 @@ public class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testUpdateWebhook400() throws Exception {
+    public void testUpdateWebhook400() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -136,7 +136,7 @@ public class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testUpdateWebhookSync() throws Exception {
+    public void testUpdateWebhookSync() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")

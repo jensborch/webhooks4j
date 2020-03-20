@@ -68,7 +68,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(2)
-    public void testDeleteWebhook() throws Exception {
+    public void testDeleteWebhook() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")

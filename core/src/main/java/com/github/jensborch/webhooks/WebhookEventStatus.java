@@ -32,7 +32,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
     @ConstructorProperties({"id", "event", "start", "end", "status"})
     protected WebhookEventStatus(final UUID id, final WebhookEvent event, final ZonedDateTime start, final ZonedDateTime end, final Status status) {
         if (!id.equals(event.getId())) {
-            throw new IllegalArgumentException("Status ID and event ID must be indetical");
+            throw new IllegalArgumentException("Status ID and event ID must be identical");
         }
         this.end = end;
         this.status = status;
@@ -121,6 +121,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
 
     @Override
     public int compareTo(final WebhookEventStatus other) {
+        Objects.requireNonNull(other, "WebhookEventStatus can not be null");
         return Comparator
                 .comparing(WebhookEventStatus::getStart)
                 .reversed()

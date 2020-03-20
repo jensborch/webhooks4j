@@ -1,11 +1,7 @@
 package com.github.jensborch.webhooks.mongodb;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -44,9 +40,9 @@ public class AbstractStatusRepositoryTest {
 
     @BeforeEach
     public void setup() {
-        FindIterable iterable = mock(FindIterable.class);
-        when(iterable.into(any(TreeSet.class))).thenReturn(new TreeSet());
-        when(collection.find(any(Bson.class))).thenReturn(iterable);
+        FindIterable<?> iterable = mock(FindIterable.class);
+        when(iterable.into(anySet())).thenReturn(new TreeSet<>());
+        doReturn(iterable).when(collection).find(any(Bson.class));
     }
 
     @Test

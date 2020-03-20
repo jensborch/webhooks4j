@@ -3,7 +3,6 @@ package com.github.jensborch.webhooks;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,7 +22,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link WebhookEventStatus}.
  */
-public class WebhhookEventStatusTest {
+public class WebhookEventStatusTest {
 
     private Webhook webhook;
     private WebhookEventStatus status;
@@ -64,13 +63,13 @@ public class WebhhookEventStatusTest {
     }
 
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         WebhookEventStatus s = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
         assertThat(s.toString(), startsWith("WebhookEventStatus{end=null, status=STARTED, id=" + s.getId() + ", event=WebhookEvent{id=" + s.getId() + ", webhook=" + s.getEvent().getWebhook() + ", topic=test, data={}}"));
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals() {
         UUID publisher = UUID.randomUUID();
         UUID id = UUID.randomUUID();
         WebhookEvent w1 = new WebhookEvent(id, publisher, "test", Collections.singletonMap("t1", "t2"));
@@ -83,7 +82,7 @@ public class WebhhookEventStatusTest {
     }
 
     @Test
-    public void testSet() throws Exception {
+    public void testSet() {
         WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
         SortedSet<WebhookEventStatus> set = new TreeSet<>();
@@ -93,12 +92,12 @@ public class WebhhookEventStatusTest {
     }
 
     @Test
-    public void testNotEquals() throws Exception {
+    public void testNotEquals() {
         WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
         assertNotEquals(s1, s2);
-        assertFalse(s1.equals(null));
-        assertFalse(s1.equals(new Object()));
+        assertNotEquals(null, s1);
+        assertNotEquals(new Object(), s1);
     }
 
 }

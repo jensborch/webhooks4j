@@ -1,6 +1,5 @@
 package com.github.jensborch.webhooks;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -21,7 +20,7 @@ public class BasicAuthClientRequestFilter implements ClientRequestFilter {
     }
 
     @Override
-    public void filter(final ClientRequestContext crc) throws IOException {
+    public void filter(final ClientRequestContext crc) {
         crc.getHeaders().add(
                 "Authorization",
                 encodeCredentials(user, password)
