@@ -40,10 +40,10 @@ import com.github.jensborch.webhooks.validation.ValidUUID;
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
 @SuppressWarnings("PMD.ExcessiveImports")
-public class SubscriberWebhooksExposure {
+public class SubscriberWebhookExposure {
 
     @Inject
-    WebhookSubscriptions subscriper;
+    WebhookSubscriptions subscriptions;
 
     @Inject
     WebhookEventConsumer consumer;
@@ -52,11 +52,11 @@ public class SubscriberWebhooksExposure {
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
-        subscriper.subscribe(webhook);
+        subscriptions.subscribe(webhook);
         return Response.created(uriInfo
                 .getBaseUriBuilder()
-                .path(SubscriberWebhooksExposure.class)
-                .path(SubscriberWebhooksExposure.class, "get")
+                .path(SubscriberWebhookExposure.class)
+                .path(SubscriberWebhookExposure.class, "get")
                 .build(webhook.getId()))
                 .build();
     }
@@ -75,7 +75,7 @@ public class SubscriberWebhooksExposure {
                             "Webhook " + id + " does not match id in payload " + updated.getId())
             );
         }
-        Webhook webhook = subscriper.find(updated.getId()).orElseThrow(() -> throwNotFound(updated.getId().toString()));
+        Webhook webhook = subscriptions.find(updated.getId()).orElseThrow(() -> throwNotFound(updated.getId().toString()));
         return WebhookResponseBuilder
                 .create(request, Webhook.class)
                 .entity(webhook)
@@ -93,7 +93,7 @@ public class SubscriberWebhooksExposure {
     @DELETE
     @Path("{id}")
     public Response delete(@ValidUUID @NotNull @PathParam("id") final String id) {
-        subscriper.unsubscribe(UUID.fromString(id));
+        subscriptions.unsubscribe(UUID.fromString(id));
         return Response.noContent().build();
     }
 
@@ -101,7 +101,7 @@ public class SubscriberWebhooksExposure {
     public Response list(@QueryParam("topics") final String topics) {
         return WebhookResponseBuilder
                 .create()
-                .entity(subscriper.list(WebhookEventTopics.parse(topics).getTopics()))
+                .entity(subscriptions.list(WebhookEventTopics.parse(topics).getTopics()))
                 .build();
     }
 
@@ -110,7 +110,7 @@ public class SubscriberWebhooksExposure {
     public Response get(@ValidUUID @NotNull @PathParam("id") final String id, @Context final Request request) {
         return WebhookResponseBuilder
                 .create(request, Webhook.class)
-                .entity(subscriper
+                .entity(subscriptions
                         .find(UUID.fromString(id))
                         .orElseThrow(() -> throwNotFound(id)))
                 .tag(w -> String.valueOf(w.getUpdated().toInstant().toEpochMilli()))

@@ -16,7 +16,6 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -30,10 +29,6 @@ public class WebhookResponseBuilderTest {
 
     @Mock
     private Request request;
-
-    @BeforeEach
-    public void setUp() {
-    }
 
     @Test
     public void testBuildNoStore() {
@@ -56,7 +51,7 @@ public class WebhookResponseBuilderTest {
         WebhookResponseBuilder
                 .create(request, String.class)
                 .entity("test")
-                .fulfilled(e -> Response.ok(e))
+                .fulfilled(Response::ok)
                 .tag(e -> e)
                 .build();
         CacheControl cache = new CacheControl();
@@ -69,7 +64,7 @@ public class WebhookResponseBuilderTest {
         Response response = WebhookResponseBuilder
                 .create(request, String.class)
                 .entity("test")
-                .fulfilled(e -> Response.ok(e))
+                .fulfilled(Response::ok)
                 .tag(e -> e)
                 .build();
         assertNotNull(response);

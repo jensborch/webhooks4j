@@ -4,14 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -46,7 +39,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test for {@link CallbackExposure].
+ * Test for {@link com.github.jensborch.webhooks.subscriber.WebhookEventConsumer}.
  */
 @ExtendWith(MockitoExtension.class)
 public class WebhookEventConsumerTest {
@@ -68,15 +61,11 @@ public class WebhookEventConsumerTest {
     @InjectMocks
     private WebhookEventConsumer consumer;
 
-    private URI publisherUri;
-    private URI subscriberUri;
     private Webhook webhook;
 
     @BeforeEach
     public void setUp() throws Exception {
-        publisherUri = new URI("http://publisher.dk");
-        subscriberUri = new URI("http://subscriber.dk");
-        webhook = new Webhook(publisherUri, subscriberUri, TEST_TOPIC);
+        webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), TEST_TOPIC);
         lenient().when(subscriptions.find(any())).thenReturn(Optional.of(webhook));
         lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
         lenient().when(repo.save(any())).then(returnsFirstArg());
@@ -146,21 +135,20 @@ public class WebhookEventConsumerTest {
         when(builder.buildGet()).thenReturn(invocation);
         when(invocation.invoke()).thenReturn(response);
 
-        //when(builder.get()).thenReturn(response);
         SortedSet<WebhookEventStatus> statusSet = new TreeSet<>();
         if (status != null && status.length > 0) {
-            Event cdiEvent = mock(Event.class);
-            when(event.select(any(Class.class), any(EventTopicLiteral.class))).thenReturn(cdiEvent);
-            Arrays.stream(status).forEach(statusSet::add);
+            Event<?> cdiEvent = mock(Event.class);
+            doReturn(cdiEvent).when(event).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));
+            statusSet.addAll(Arrays.asList(status));
         }
-        when(response.readEntity(any(GenericType.class))).thenReturn(statusSet);
+        when(response.readEntity(ArgumentMatchers.<GenericType<SortedSet>>any())).thenReturn(statusSet);
     }
 
     @Test
     public void testSyncNoData() {
         setupSyncResponse();
         consumer.sync(webhook);
-        verify(event, times(0)).select(any(Class.class), any(EventTopicLiteral.class));
+        verify(event, times(0)).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));
     }
 
     @Test
@@ -168,7 +156,7 @@ public class WebhookEventConsumerTest {
         WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()));
         setupSyncResponse(status);
         consumer.sync(webhook);
-        verify(event, times(1)).select(any(Class.class), any(EventTopicLiteral.class));
+        verify(event, times(1)).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));
     }
 
 }

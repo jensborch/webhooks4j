@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for
- * {@link dk.jensborch.webhooks.publisher.PublisherEventExposur}
+ * {@link com.github.jensborch.webhooks.publisher.PublisherEventExposure}
  */
 @QuarkusTest
 public class PublisherEventExposureTest {

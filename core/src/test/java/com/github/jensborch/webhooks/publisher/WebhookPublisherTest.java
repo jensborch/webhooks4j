@@ -24,12 +24,13 @@ import com.github.jensborch.webhooks.repositories.WebhookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test for {@link CallbackExposure].
+ * Test for {@link com.github.jensborch.webhooks.publisher.WebhookPublisher}.
  */
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("PMD.UnusedPrivateField")
@@ -89,7 +90,7 @@ public class WebhookPublisherTest {
     @Test
     public void testPublishProcessingException() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.BAD_REQUEST);
-        when(response.readEntity(any(Class.class))).thenThrow(new ProcessingException("test"));
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenThrow(new ProcessingException("test"));
         Set<Webhook> hooks = new HashSet<>();
         hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), TOPIC));
         when(repo.list(TOPIC)).thenReturn(hooks);
@@ -101,7 +102,7 @@ public class WebhookPublisherTest {
     @Test
     public void testPublishFailure() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.BAD_REQUEST);
-        when(response.readEntity(any(Class.class))).thenReturn("{ \"code\":\"VALIDATION_ERROR\", \"status\":\"400\", \"msg\":\"test\" }");
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"VALIDATION_ERROR\", \"status\":\"400\", \"msg\":\"test\" }");
         Set<Webhook> hooks = new HashSet<>();
         hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), TOPIC));
         when(repo.list(TOPIC)).thenReturn(hooks);

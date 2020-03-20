@@ -1,9 +1,7 @@
 package com.github.jensborch.webhooks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import javax.ws.rs.ProcessingException;
@@ -11,6 +9,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -27,7 +26,7 @@ public class WebhookErrorTest {
     public void testParse() {
         when(response.hasEntity()).thenReturn(true);
         when(response.getStatus()).thenReturn(404);
-        when(response.readEntity(any(Class.class))).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
         WebhookError result = WebhookError.parse(response);
         assertEquals(new WebhookError(WebhookError.Code.NOT_FOUND, "test"), result);
     }
@@ -43,7 +42,7 @@ public class WebhookErrorTest {
     public void testParseAuthError() {
         when(response.hasEntity()).thenReturn(true);
         when(response.getStatus()).thenReturn(403);
-        when(response.readEntity(any(Class.class))).thenReturn("Not allowed");
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("Not allowed");
         WebhookError result = WebhookError.parse(response);
         assertEquals(new WebhookError(403, "Not allowed"), result);
     }
@@ -52,7 +51,7 @@ public class WebhookErrorTest {
     public void testParseProcessingException() {
         when(response.hasEntity()).thenReturn(true);
         when(response.getStatus()).thenReturn(400);
-        when(response.readEntity(any(Class.class))).thenThrow(new ProcessingException("test"));
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenThrow(new ProcessingException("test"));
         WebhookError result = WebhookError.parse(response);
         assertEquals(new WebhookError(400, "test"), result);
     }
@@ -61,7 +60,7 @@ public class WebhookErrorTest {
     public void testParseJsonParsingException() {
         when(response.hasEntity()).thenReturn(true);
         when(response.getStatus()).thenReturn(400);
-        when(response.readEntity(any(Class.class))).thenReturn("invalid");
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("invalid");
         WebhookError result = WebhookError.parse(response);
         assertEquals(new WebhookError(400, WebhookError.Code.UNKNOWN_ERROR, "invalid"), result);
     }
@@ -70,7 +69,7 @@ public class WebhookErrorTest {
     public void testParseRuntimeException() {
         when(response.hasEntity()).thenReturn(true);
         when(response.getStatus()).thenReturn(500);
-        when(response.readEntity(any(Class.class))).thenThrow(new RuntimeException("test"));
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenThrow(new RuntimeException("test"));
         WebhookError result = WebhookError.parse(response);
         assertEquals(new WebhookError(500, WebhookError.Code.UNKNOWN_ERROR, "test"), result);
     }
@@ -79,7 +78,7 @@ public class WebhookErrorTest {
     public void testParse401() {
         when(response.hasEntity()).thenReturn(true);
         when(response.getStatus()).thenReturn(401);
-        when(response.readEntity(any(Class.class))).thenReturn("");
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("");
         WebhookError result = WebhookError.parse(response);
         assertEquals(new WebhookError(401, WebhookError.Code.AUTHENTICATION_ERROR, ""), result);
     }
@@ -88,19 +87,19 @@ public class WebhookErrorTest {
     public void testParse403() {
         when(response.hasEntity()).thenReturn(true);
         when(response.getStatus()).thenReturn(403);
-        when(response.readEntity(any(Class.class))).thenReturn("");
+        when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("");
         WebhookError result = WebhookError.parse(response);
         assertEquals(new WebhookError(403, WebhookError.Code.AUTHORIZATION_ERROR, ""), result);
     }
 
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         WebhookError w = new WebhookError(WebhookError.Code.NOT_FOUND, "test");
         assertEquals("WebhookError{status=404, code=NOT_FOUND, title=Not found, detail=test}", w.toString());
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals()  {
         WebhookError w1 = new WebhookError(WebhookError.Code.AUTHENTICATION_ERROR, "test");
         WebhookError w2 = new WebhookError(WebhookError.Code.AUTHENTICATION_ERROR, "test");
         assertEquals(w1, w2);
@@ -108,12 +107,12 @@ public class WebhookErrorTest {
     }
 
     @Test
-    public void testNotEquals() throws Exception {
+    public void testNotEquals() {
         WebhookError w1 = new WebhookError(WebhookError.Code.AUTHENTICATION_ERROR, "test");
         WebhookError w2 = new WebhookError(WebhookError.Code.SYNC_ERROR, "test");
         assertNotEquals(w1, w2);
-        assertFalse(w1.equals(null));
-        assertFalse(w1.equals(new Object()));
+        assertNotEquals(null, w1);
+        assertNotEquals(new Object(), w1);
     }
 
 }

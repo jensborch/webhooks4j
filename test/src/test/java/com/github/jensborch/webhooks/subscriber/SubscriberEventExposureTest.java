@@ -28,7 +28,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 /**
  * Integration test for
- * {@link dk.jensborch.webhooks.subscriber.SubscriberEventExposure}
+ * {@link com.github.jensborch.webhooks.subscriber.SubscriberEventExposure}
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

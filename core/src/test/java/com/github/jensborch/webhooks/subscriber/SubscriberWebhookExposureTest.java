@@ -28,10 +28,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test for {@link SubscriberWebhooksExposure}.
+ * Test for {@link SubscriberWebhookExposure}.
  */
 @ExtendWith(MockitoExtension.class)
-public class SubscriberWebhooksExposureTest {
+public class SubscriberWebhookExposureTest {
 
     @Mock
     private WebhookSubscriptions subscriptions;
@@ -46,7 +46,7 @@ public class SubscriberWebhooksExposureTest {
     private UriInfo uriInfo;
 
     @InjectMocks
-    private SubscriberWebhooksExposure exposure;
+    private SubscriberWebhookExposure exposure;
 
     @BeforeEach
     public void setUp() throws Exception {

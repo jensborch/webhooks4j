@@ -70,7 +70,7 @@ public final class WebhookResponseHandler<T> {
         return this;
     }
 
-    @SuppressWarnings("PMD")
+    @SuppressWarnings({"PMD", "unchecked"})
     public void invoke() {
         Objects.requireNonNull(invocation, "Invocation handler must be defined");
         Objects.requireNonNull(successConsumer, "Success handler must be defined");
