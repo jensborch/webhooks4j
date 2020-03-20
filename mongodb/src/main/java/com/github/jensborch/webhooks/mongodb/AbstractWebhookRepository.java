@@ -5,9 +5,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.repositories.WebhookRepository;
 import com.mongodb.BasicDBObject;
@@ -22,17 +19,17 @@ import com.mongodb.client.model.ReplaceOptions;
 public abstract class AbstractWebhookRepository implements WebhookRepository {
 
     @Override
-    public void save(@NotNull @Valid final Webhook hook) {
+    public void save(final Webhook hook) {
         collection().replaceOne(Filters.eq("_id", hook.getId()), hook, new ReplaceOptions().upsert(true));
     }
 
     @Override
-    public void delete(@NotNull final UUID id) {
+    public void delete(final UUID id) {
         collection().deleteOne(Filters.eq("_id", id));
     }
 
     @Override
-    public Optional<Webhook> find(@NotNull final UUID id) {
+    public Optional<Webhook> find(final UUID id) {
         return Optional.of(collection())
                 .map(hooks -> hooks.find(Filters.eq("_id", id)))
                 .map(MongoIterable::first);

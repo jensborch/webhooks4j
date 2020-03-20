@@ -41,7 +41,7 @@ public class AbstractStatusRepositoryTest {
     @BeforeEach
     public void setup() {
         FindIterable<?> iterable = mock(FindIterable.class);
-        when(iterable.into(anySet())).thenReturn(new TreeSet<>());
+        when(iterable.into(any())).thenReturn(new TreeSet<>());
         doReturn(iterable).when(collection).find(any(Bson.class));
     }
 

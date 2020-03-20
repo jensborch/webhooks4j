@@ -37,7 +37,7 @@ public class AbstractWebhookRepositoryTest {
     @BeforeEach
     public void setup() {
         FindIterable<?> iterable = mock(FindIterable.class);
-        when(iterable.into(anySet())).thenReturn(new HashSet<>());
+        when(iterable.into(any())).thenReturn(new HashSet<>());
         doReturn(iterable).when(collection).find(any(Bson.class));
     }
 
