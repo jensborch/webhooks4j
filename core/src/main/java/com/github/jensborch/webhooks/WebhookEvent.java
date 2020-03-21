@@ -1,9 +1,6 @@
 package com.github.jensborch.webhooks;
 
 import java.beans.ConstructorProperties;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,8 +8,10 @@ import javax.validation.constraints.NotNull;
 
 /**
  * A event emitted by a publisher on a given topic.
+ *
+ * @param <D> event data type
  */
-public class WebhookEvent {
+public class WebhookEvent<D> {
 
     @NotNull
     private final UUID id;
@@ -24,17 +23,17 @@ public class WebhookEvent {
     private final String topic;
 
     @NotNull
-    private final Map<String, Object> data;
+    private final D data;
 
     @ConstructorProperties({"id", "webhook", "topic", "data"})
-    protected WebhookEvent(final UUID id, final UUID webhook, final String topic, final Map<String, Object> data) {
+    protected WebhookEvent(final UUID id, final UUID webhook, final String topic, final D data) {
         this.id = id;
         this.webhook = webhook;
         this.topic = topic;
-        this.data = data == null ? new HashMap<>() : new HashMap<>(data);
+        this.data = data;
     }
 
-    public WebhookEvent(final UUID webhook, final String topic, final Map<String, Object> data) {
+    public WebhookEvent(final UUID webhook, final String topic, final D data) {
         this(UUID.randomUUID(), webhook, topic, data);
     }
 
@@ -50,8 +49,8 @@ public class WebhookEvent {
         return topic;
     }
 
-    public Map<String, Object> getData() {
-        return Collections.unmodifiableMap(data);
+    public D getData() {
+        return data;
     }
 
     @Override
