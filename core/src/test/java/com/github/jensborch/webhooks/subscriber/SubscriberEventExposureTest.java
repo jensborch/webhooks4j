@@ -68,7 +68,7 @@ public class SubscriberEventExposureTest {
     public void testReceive() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, "test_topic", new HashMap<>());
-        Response response = exposure.receive(callbackEvent, uriInfo);
+        Response response = exposure.receive(callbackEvent, request, uriInfo);
         assertNotNull(response);
         verify(consumer).consume(eq(callbackEvent));
     }

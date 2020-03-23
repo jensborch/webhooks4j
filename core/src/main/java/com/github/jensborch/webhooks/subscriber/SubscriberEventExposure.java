@@ -54,7 +54,8 @@ public class SubscriberEventExposure {
     @POST
     @RolesAllowed("publisher")
     public Response receive(
-            @NotNull @Valid final WebhookEvent callbackEvent,
+            @NotNull @Valid final WebhookEvent<?> callbackEvent,
+            @Context final Request request,
             @Context final UriInfo uriInfo) {
         consumer.consume(callbackEvent);
         return Response.created(uriInfo

@@ -53,7 +53,10 @@ public class WebhookEventConsumer {
      */
     public WebhookEventStatus consume(final WebhookEvent callbackEvent) {
         LOG.debug("Receiving event {}", callbackEvent);
-        Webhook webhook = findPublisher(callbackEvent);
+        Webhook webhook = subscriptions.find(callbackEvent).orElseThrow(() -> new WebhookException(
+                new WebhookError(
+                        WebhookError.Code.UNKNOWN_PUBLISHER,
+                        "Unknown/inactive publisher " + callbackEvent.getWebhook() + " for topic " + callbackEvent.getTopic())));
         WebhookEventStatus status = findOrCreate(callbackEvent);
         if (status.eligible()) {
             try {
@@ -102,18 +105,6 @@ public class WebhookEventConsumer {
         String msg = "Processing error when synchronizing old events";
         LOG.warn(msg, e);
         throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg), e);
-    }
-
-    private Webhook findPublisher(final WebhookEvent callbackEvent) {
-        return subscriptions
-                .find(callbackEvent.getWebhook())
-                .filter(w -> w.getTopics().contains(callbackEvent.getTopic()))
-                .filter(Webhook::isActive)
-                .orElseThrow(() -> new WebhookException(
-                new WebhookError(
-                        WebhookError.Code.UNKNOWN_PUBLISHER,
-                        "Unknown/inactive publisher " + callbackEvent.getWebhook() + " for topic " + callbackEvent.getTopic()))
-                );
     }
 
     private WebhookEventStatus findOrCreate(final WebhookEvent callbackEvent) {

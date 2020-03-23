@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.WebhookError;
+import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.WebhookResponseHandler;
 import com.github.jensborch.webhooks.repositories.WebhookRepository;
@@ -126,6 +127,13 @@ public class WebhookSubscriptions {
 
     public Optional<Webhook> find(final UUID id) {
         return repo.find(id);
+    }
+
+    public Optional<Webhook> find(final WebhookEvent callbackEvent) {
+        return repo
+                .find(callbackEvent.getWebhook())
+                .filter(w -> w.getTopics().contains(callbackEvent.getTopic()))
+                .filter(Webhook::isActive);
     }
 
     public Set<Webhook> list(final String... topic) {

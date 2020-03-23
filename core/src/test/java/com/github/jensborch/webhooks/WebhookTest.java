@@ -20,7 +20,7 @@ public class WebhookTest {
 
     @Test
     public void testCreate() throws Exception {
-        Webhook w = new Webhook(UUID.randomUUID(), new URI("http://pub.dk"), new URI("http://sub.dk"), Webhook.State.ACTIVE, null, null, null);
+        Webhook w = new Webhook(UUID.randomUUID(), new URI("http://pub.dk"), new URI("http://sub.dk"), Webhook.State.ACTIVE, null, null, null, null);
         assertNotNull(w.getTopics());
         assertNotNull(w.getCreated());
         assertNotNull(w.getUpdated());

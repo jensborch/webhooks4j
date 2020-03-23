@@ -66,11 +66,12 @@ public class WebhookEventConsumerTest {
     @BeforeEach
     public void setUp() throws Exception {
         webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), TEST_TOPIC);
-        lenient().when(subscriptions.find(any())).thenReturn(Optional.of(webhook));
+        lenient().when(subscriptions.find(any(UUID.class))).thenReturn(Optional.of(webhook));
+        lenient().when(subscriptions.find(any(WebhookEvent.class))).thenReturn(Optional.of(webhook));
         lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
         lenient().when(repo.save(any())).then(returnsFirstArg());
         Optional<Webhook> publishers = Optional.of(webhook);
-        lenient().when(subscriptions.find(any())).thenReturn(publishers);
+        lenient().when(subscriptions.find(any(UUID.class))).thenReturn(publishers);
     }
 
     @Test
@@ -95,22 +96,12 @@ public class WebhookEventConsumerTest {
     }
 
     @Test
-    public void testReceiveUnknownPublisher() {
-        UUID publisher = UUID.randomUUID();
-        when(subscriptions.find(any())).thenReturn(Optional.empty());
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
-        WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
-        assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
-        assertEquals("Unknown/inactive publisher " + publisher + " for topic test_topic", e.getError().getDetail());
-    }
-
-    @Test
-    public void testReceiveUnknownTopic() {
+    public void testReceiveFindThrowsException() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, "unknown_topic", new HashMap<>());
+        when(subscriptions.find(any(WebhookEvent.class))).thenThrow(new WebhookException(new WebhookError(WebhookError.Code.UNKNOWN_PUBLISHER, "test")));
         WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
-        assertEquals("Unknown/inactive publisher " + publisher + " for topic unknown_topic", e.getError().getDetail());
     }
 
     @Test

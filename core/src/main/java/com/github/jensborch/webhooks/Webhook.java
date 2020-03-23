@@ -44,9 +44,18 @@ public class Webhook {
     @NotNull
     private ZonedDateTime updated;
 
-    @ConstructorProperties({"id", "publisher", "subscriber", "state", "topics", "created", "updated"})
-    protected Webhook(final UUID id, final URI publisher, final URI subscriber, final State state,
-            final Set<String> topics, final ZonedDateTime created, final ZonedDateTime updated) {
+    private final Class<?> type;
+
+    @ConstructorProperties({"id", "publisher", "subscriber", "state", "topics", "created", "updated", "type"})
+    protected Webhook(
+            final UUID id,
+            final URI publisher,
+            final URI subscriber,
+            final State state,
+            final Set<String> topics,
+            final ZonedDateTime created,
+            final ZonedDateTime updated,
+            final Class<?> type) {
         this.state = state;
         this.topics = topics == null ? new HashSet<>() : new HashSet<>(topics);
         this.id = id == null ? UUID.randomUUID() : id;
@@ -54,10 +63,11 @@ public class Webhook {
         this.subscriber = subscriber;
         this.created = created == null ? ZonedDateTime.now() : created;
         this.updated = updated == null ? this.created : updated;
+        this.type = type;
     }
 
     public Webhook(final URI publisher, final URI subscriber, final Set<String> topics) {
-        this(null, publisher, subscriber, State.ACTIVE, topics, null, null);
+        this(null, publisher, subscriber, State.ACTIVE, topics, null, null, null);
     }
 
     public Webhook(final URI publisher, final URI subscriber, final String... topics) {
@@ -100,6 +110,10 @@ public class Webhook {
     @JsonIgnore
     public Endpoints gePublisherEndpoints() {
         return new PublisherEndpoints(publisher);
+    }
+
+    public Class<?> getType() {
+        return type;
     }
 
     public Webhook state(final State state) {

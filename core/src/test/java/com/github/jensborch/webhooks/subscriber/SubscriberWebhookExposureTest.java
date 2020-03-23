@@ -98,7 +98,7 @@ public class SubscriberWebhookExposureTest {
     @Test
     public void testGet() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
-        when(subscriptions.find(any())).thenReturn(Optional.of(webhook));
+        when(subscriptions.find(any(UUID.class))).thenReturn(Optional.of(webhook));
         Response result = exposure.get(UUID.randomUUID().toString(), request);
         assertNotNull(result);
         assertEquals(200, result.getStatus());
