@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
@@ -48,14 +47,12 @@ public class WebhookEventMessageBodyReader implements MessageBodyReader<WebhookE
     public WebhookEvent readFrom(final Class<WebhookEvent> type, final Type genericType, final Annotation[] annotations,
             final MediaType mediaType, final MultivaluedMap<String, String> httpHeaders, final InputStream entityStream)
             throws IOException {
-
         ContextResolver<ObjectMapper> objectMapperResolver = workers.getContextResolver(ObjectMapper.class, MediaType.APPLICATION_JSON_TYPE);
-
         String data = readEntity(entityStream);
         ObjectMapper mapper = objectMapperResolver.getContext(ObjectMapper.class);
         WebhookEvent event = mapper.readValue(data, WebhookEvent.class);
         Class<?> clazz = subscriptions.find(event).map(Webhook::getType).orElse(WebhookEventData.class);
-        return mapper.readValue(data, new WebhookTypeReference(clazz));
+        return mapper.readValue(data, typeReference(clazz));
     }
 
     private String readEntity(final InputStream entityStream) throws IOException {
@@ -65,40 +62,10 @@ public class WebhookEventMessageBodyReader implements MessageBodyReader<WebhookE
         }
     }
 
-    private static class WebhookTypeReference extends TypeReference<WebhookEvent<?>> {
-
-        private final Class<?> clazz;
-
-        public WebhookTypeReference(final Class<?> clazz) {
-            this.clazz = clazz;
-        }
-
-        @Override
-        public Type getType() {
-            return new ParameterizedType() {
-                @Override
-                public Type[] getActualTypeArguments() {
-                    return new Type[]{null == clazz ? WebhookEventData.class : clazz};
-                }
-
-                @Override
-                public Type getRawType() {
-                    return Webhook.class;
-                }
-
-                @Override
-                public Type getOwnerType() {
-                    return null;
-                }
-
-            };
-        }
-
-        @Override
-        public int compareTo(TypeReference<WebhookEvent<?>> o) {
-            return getType().toString().compareTo(o.getType().toString());
-        }
-
+    @SuppressWarnings("PMD.UnusedFormalParameter")
+    private <T> TypeReference<WebhookEvent<T>> typeReference(final Class<T> type) {
+        return new TypeReference<WebhookEvent<T>>() {
+        };
     }
 
 }
