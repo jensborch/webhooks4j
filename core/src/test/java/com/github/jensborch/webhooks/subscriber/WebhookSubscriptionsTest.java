@@ -1,8 +1,8 @@
 package com.github.jensborch.webhooks.subscriber;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
@@ -83,7 +83,7 @@ public class WebhookSubscriptionsTest {
         UUID publisher = UUID.randomUUID();
         when(repo.find(any(UUID.class))).thenReturn(Optional.empty());
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
-        assertTrue(subscriptions.find(callbackEvent).isEmpty());
+        assertFalse(subscriptions.find(callbackEvent).isPresent());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class WebhookSubscriptionsTest {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         when(repo.find(any(UUID.class))).thenReturn(Optional.of(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "unknown_topic")));
-        assertTrue(subscriptions.find(callbackEvent).isEmpty());
+        assertFalse(subscriptions.find(callbackEvent).isPresent());
     }
 
     @Test
