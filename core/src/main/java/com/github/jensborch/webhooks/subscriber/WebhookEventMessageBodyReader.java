@@ -33,7 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * MessageBodyReader for reading events and converting them to the right generic
+ * {@link WebhookEvent}.
  */
 @Provider
 @Consumes(MediaType.APPLICATION_JSON)
@@ -49,7 +50,7 @@ public class WebhookEventMessageBodyReader implements MessageBodyReader<WebhookE
 
     @Override
     public boolean isReadable(final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
-        return type == WebhookEvent.class;
+        return type == WebhookEvent.class && mediaType == MediaType.APPLICATION_JSON_TYPE;
     }
 
     @Override
