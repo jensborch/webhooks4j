@@ -41,7 +41,6 @@ public class Webhook {
     @Size(min = 1)
     private final Set<String> topics;
 
-    @NotNull
     private ZonedDateTime updated;
 
     private final Class<?> type;
@@ -64,7 +63,7 @@ public class Webhook {
         this.subscriber = subscriber;
         this.created = created == null ? ZonedDateTime.now() : created;
         this.updated = updated == null ? this.created : updated;
-        this.type = type;
+        this.type = type == null ? WebhookEventData.class : type;
     }
 
     public Webhook(final URI publisher, final URI subscriber, final Set<String> topics) {

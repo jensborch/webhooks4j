@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
+import javax.enterprise.util.TypeLiteral;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
@@ -68,7 +69,7 @@ public class WebhookEventConsumerTest {
         webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), TEST_TOPIC);
         lenient().when(subscriptions.find(any(UUID.class))).thenReturn(Optional.of(webhook));
         lenient().when(subscriptions.findActiveByTopic(any(WebhookEvent.class))).thenReturn(Optional.of(webhook));
-        lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
+        lenient().when(event.select(ArgumentMatchers.<TypeLiteral<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
         lenient().when(repo.save(any())).then(returnsFirstArg());
         Optional<Webhook> publishers = Optional.of(webhook);
         lenient().when(subscriptions.find(any(UUID.class))).thenReturn(publishers);
@@ -129,7 +130,7 @@ public class WebhookEventConsumerTest {
         SortedSet<WebhookEventStatus> statusSet = new TreeSet<>();
         if (status != null && status.length > 0) {
             Event<?> cdiEvent = mock(Event.class);
-            doReturn(cdiEvent).when(event).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));
+            doReturn(cdiEvent).when(event).select(ArgumentMatchers.<TypeLiteral<WebhookEvent>>any(), any(EventTopicLiteral.class));
             statusSet.addAll(Arrays.asList(status));
         }
         when(response.readEntity(ArgumentMatchers.<GenericType<SortedSet>>any())).thenReturn(statusSet);
@@ -139,7 +140,7 @@ public class WebhookEventConsumerTest {
     public void testSyncNoData() {
         setupSyncResponse();
         consumer.sync(webhook);
-        verify(event, times(0)).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));
+        verify(event, times(0)).select(ArgumentMatchers.<TypeLiteral<WebhookEvent>>any(), any(EventTopicLiteral.class));
     }
 
     @Test
@@ -147,7 +148,7 @@ public class WebhookEventConsumerTest {
         WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()));
         setupSyncResponse(status);
         consumer.sync(webhook);
-        verify(event, times(1)).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));
+        verify(event, times(1)).select(ArgumentMatchers.<TypeLiteral<WebhookEvent>>any(), any(EventTopicLiteral.class));
     }
 
 }

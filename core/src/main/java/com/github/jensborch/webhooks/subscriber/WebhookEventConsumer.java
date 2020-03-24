@@ -6,6 +6,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
 import javax.enterprise.util.AnnotationLiteral;
+import javax.enterprise.util.TypeLiteral;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
@@ -61,7 +62,7 @@ public class WebhookEventConsumer {
         if (status.eligible()) {
             try {
                 event
-                        .select(WebhookEvent.class, new EventTopicLiteral(callbackEvent.getTopic()))
+                        .select(eventTypeLiteral(webhook.getType()), new EventTopicLiteral(callbackEvent.getTopic()))
                         .fire(callbackEvent);
                 repo.save(status.done(true));
                 subscriptions.touch(webhook.getId());
@@ -111,6 +112,13 @@ public class WebhookEventConsumer {
         return repo
                 .find(callbackEvent.getId())
                 .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent)));
+    }
+
+    @SuppressWarnings("PMD.UnusedFormalParameter")
+    private <D> TypeLiteral eventTypeLiteral(final D type) {
+        return new TypeLiteral<WebhookEvent<D>>() {
+            private static final long serialVersionUID = 5636572627689425575L;
+        };
     }
 
     /**
