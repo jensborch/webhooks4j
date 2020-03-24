@@ -11,19 +11,26 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NoContentException;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jensborch.webhooks.Webhook;
+import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,6 +38,8 @@ import com.github.jensborch.webhooks.WebhookEventData;
 @Provider
 @Consumes(MediaType.APPLICATION_JSON)
 public class WebhookEventMessageBodyReader implements MessageBodyReader<WebhookEvent> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WebhookEventMessageBodyReader.class);
 
     @Inject
     WebhookSubscriptions subscriptions;
@@ -44,15 +53,29 @@ public class WebhookEventMessageBodyReader implements MessageBodyReader<WebhookE
     }
 
     @Override
+    @SuppressWarnings("PMD.PreserveStackTrace")
     public WebhookEvent readFrom(final Class<WebhookEvent> type, final Type genericType, final Annotation[] annotations,
             final MediaType mediaType, final MultivaluedMap<String, String> httpHeaders, final InputStream entityStream)
             throws IOException {
-        ContextResolver<ObjectMapper> objectMapperResolver = workers.getContextResolver(ObjectMapper.class, MediaType.APPLICATION_JSON_TYPE);
         String data = readEntity(entityStream);
-        ObjectMapper mapper = objectMapperResolver.getContext(ObjectMapper.class);
-        WebhookEvent event = mapper.readValue(data, WebhookEvent.class);
-        Class<?> clazz = subscriptions.find(event).map(Webhook::getType).orElse(WebhookEventData.class);
-        return mapper.readValue(data, typeReference(clazz));
+        if (data == null || data.isBlank()) {
+            LOG.debug("No webhook event data");
+            throw new NoContentException("No webhook event data");
+        } else {
+            try {
+                ContextResolver<ObjectMapper> objectMapperResolver = workers.getContextResolver(ObjectMapper.class, MediaType.APPLICATION_JSON_TYPE);
+                ObjectMapper mapper = objectMapperResolver.getContext(ObjectMapper.class);
+                WebhookEvent event = mapper.readValue(data, WebhookEvent.class);
+                Class<?> clazz = subscriptions.find(event).map(Webhook::getType).orElse(WebhookEventData.class);
+                return mapper.readValue(data, typeReference(clazz));
+            } catch (JsonProcessingException e) {
+                LOG.debug("Json processing exception reading event data", e);
+                WebhookError error = new WebhookError(WebhookError.Code.VALIDATION_ERROR, e.getMessage());
+                throw new WebApplicationException(Response.status(error.getCode().getStatus())
+                        .entity(error)
+                        .build());
+            }
+        }
     }
 
     private String readEntity(final InputStream entityStream) throws IOException {

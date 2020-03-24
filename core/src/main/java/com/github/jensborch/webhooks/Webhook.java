@@ -46,6 +46,7 @@ public class Webhook {
 
     private final Class<?> type;
 
+    @SuppressWarnings("checkstyle:parameternumber")
     @ConstructorProperties({"id", "publisher", "subscriber", "state", "topics", "created", "updated", "type"})
     protected Webhook(
             final UUID id,
