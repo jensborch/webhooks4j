@@ -51,9 +51,9 @@ public class WebhookEventConsumer {
      * @param callbackEvent to process
      * @return Processing status for the event
      */
-    public WebhookEventStatus consume(final WebhookEvent callbackEvent) {
+    public <T> WebhookEventStatus consume(final WebhookEvent<T> callbackEvent) {
         LOG.debug("Receiving event {}", callbackEvent);
-        Webhook webhook = subscriptions.find(callbackEvent).orElseThrow(() -> new WebhookException(
+        Webhook webhook = subscriptions.findActiveByTopic(callbackEvent).orElseThrow(() -> new WebhookException(
                 new WebhookError(
                         WebhookError.Code.UNKNOWN_PUBLISHER,
                         "Unknown/inactive publisher " + callbackEvent.getWebhook() + " for topic " + callbackEvent.getTopic())));

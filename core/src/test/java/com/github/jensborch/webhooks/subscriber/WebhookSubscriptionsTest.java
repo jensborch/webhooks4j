@@ -83,7 +83,7 @@ public class WebhookSubscriptionsTest {
         UUID publisher = UUID.randomUUID();
         when(repo.find(any(UUID.class))).thenReturn(Optional.empty());
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
-        assertFalse(subscriptions.find(callbackEvent).isPresent());
+        assertFalse(subscriptions.findActiveByTopic(callbackEvent).isPresent());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class WebhookSubscriptionsTest {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
         when(repo.find(any(UUID.class))).thenReturn(Optional.of(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "unknown_topic")));
-        assertFalse(subscriptions.find(callbackEvent).isPresent());
+        assertFalse(subscriptions.findActiveByTopic(callbackEvent).isPresent());
     }
 
     @Test

@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEvent;
-import com.github.jensborch.webhooks.WebhookEventData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,16 +66,22 @@ public class WebhookEventMessageBodyReader implements MessageBodyReader<WebhookE
                 ContextResolver<ObjectMapper> objectMapperResolver = workers.getContextResolver(ObjectMapper.class, MediaType.APPLICATION_JSON_TYPE);
                 ObjectMapper mapper = objectMapperResolver.getContext(ObjectMapper.class);
                 WebhookEvent event = mapper.readValue(data, WebhookEvent.class);
-                Class<?> clazz = subscriptions.find(event).map(Webhook::getType).orElse(WebhookEventData.class);
+                Class<?> clazz = subscriptions.find(event).map(Webhook::getType).orElseThrow(()
+                        -> webApplicationException(WebhookError.Code.NOT_FOUND, "Could not find webhook " + event.getWebhook())
+                );
                 return mapper.readValue(data, typeReference(clazz));
             } catch (JsonProcessingException e) {
                 LOG.debug("Json processing exception reading event data", e);
-                WebhookError error = new WebhookError(WebhookError.Code.VALIDATION_ERROR, e.getMessage());
-                throw new WebApplicationException(Response.status(error.getCode().getStatus())
-                        .entity(error)
-                        .build());
+                throw webApplicationException(WebhookError.Code.VALIDATION_ERROR, e.getMessage());
             }
         }
+    }
+
+    private WebApplicationException webApplicationException(final WebhookError.Code code, final String msg) {
+        WebhookError error = new WebhookError(code, msg);
+        return new WebApplicationException(Response.status(code.getStatus())
+                .entity(error)
+                .build());
     }
 
     private String readEntity(final InputStream entityStream) throws IOException {

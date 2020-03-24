@@ -67,7 +67,7 @@ public class WebhookEventConsumerTest {
     public void setUp() throws Exception {
         webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), TEST_TOPIC);
         lenient().when(subscriptions.find(any(UUID.class))).thenReturn(Optional.of(webhook));
-        lenient().when(subscriptions.find(any(WebhookEvent.class))).thenReturn(Optional.of(webhook));
+        lenient().when(subscriptions.findActiveByTopic(any(WebhookEvent.class))).thenReturn(Optional.of(webhook));
         lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
         lenient().when(repo.save(any())).then(returnsFirstArg());
         Optional<Webhook> publishers = Optional.of(webhook);
@@ -99,7 +99,7 @@ public class WebhookEventConsumerTest {
     public void testReceiveFindThrowsException() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(publisher, "unknown_topic", new HashMap<>());
-        when(subscriptions.find(any(WebhookEvent.class))).thenThrow(new WebhookException(new WebhookError(WebhookError.Code.UNKNOWN_PUBLISHER, "test")));
+        when(subscriptions.findActiveByTopic(any(WebhookEvent.class))).thenThrow(new WebhookException(new WebhookError(WebhookError.Code.UNKNOWN_PUBLISHER, "test")));
         WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
     }
