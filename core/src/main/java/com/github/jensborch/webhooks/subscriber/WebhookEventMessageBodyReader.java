@@ -59,7 +59,7 @@ public class WebhookEventMessageBodyReader implements MessageBodyReader<WebhookE
             final MediaType mediaType, final MultivaluedMap<String, String> httpHeaders, final InputStream entityStream)
             throws IOException {
         String data = readEntity(entityStream);
-        if (data == null || data.isBlank()) {
+        if (data == null || data.trim().isEmpty()) {
             LOG.debug("No webhook event data");
             throw new NoContentException("No webhook event data");
         } else {
