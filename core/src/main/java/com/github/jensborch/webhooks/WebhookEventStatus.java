@@ -24,13 +24,13 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
 
     @NotNull
     @Valid
-    private final WebhookEvent event;
+    private final WebhookEvent<?> event;
 
     @NotNull
     private final ZonedDateTime start;
 
     @ConstructorProperties({"id", "event", "start", "end", "status"})
-    protected WebhookEventStatus(final UUID id, final WebhookEvent event, final ZonedDateTime start, final ZonedDateTime end, final Status status) {
+    protected WebhookEventStatus(final UUID id, final WebhookEvent<?> event, final ZonedDateTime start, final ZonedDateTime end, final Status status) {
         if (!id.equals(event.getId())) {
             throw new IllegalArgumentException("Status ID and event ID must be identical");
         }
@@ -41,7 +41,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
         this.start = start;
     }
 
-    public WebhookEventStatus(final WebhookEvent event) {
+    public WebhookEventStatus(final WebhookEvent<?> event) {
         this(event.getId(), event, ZonedDateTime.now(), null, Status.STARTED);
     }
 
@@ -65,7 +65,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
         return id;
     }
 
-    public WebhookEvent getEvent() {
+    public WebhookEvent<?> getEvent() {
         return event;
     }
 
