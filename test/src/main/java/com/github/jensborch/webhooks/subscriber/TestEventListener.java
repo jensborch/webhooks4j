@@ -9,6 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
 import com.github.jensborch.webhooks.WebhookEvent;
+import com.github.jensborch.webhooks.WebhookEventData;
 import com.github.jensborch.webhooks.WebhookEventTopic;
 
 /**
@@ -21,7 +22,7 @@ public class TestEventListener {
 
     private final Map<UUID, WebhookEvent> events = new ConcurrentHashMap<>();
 
-    public void observe(@Observes @WebhookEventTopic(TOPIC) final WebhookEvent event) {
+    public void observe(@Observes @WebhookEventTopic(TOPIC) final WebhookEvent<WebhookEventData> event) {
         events.put(event.getId(), event);
     }
 

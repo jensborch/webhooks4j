@@ -40,7 +40,7 @@ public class WebhookEventMessageBodyReaderTest {
     }
 
     @Test
-    public void testReadFrom() throws Exception {
+    public void testReadFrom() {
         InputStream entityStream = new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8));
         NoContentException e = assertThrows(NoContentException.class, () -> reader.readFrom(WebhookEvent.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, entityStream));
         assertEquals("No webhook event data", e.getMessage());

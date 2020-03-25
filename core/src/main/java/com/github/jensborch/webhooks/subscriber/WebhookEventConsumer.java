@@ -59,10 +59,11 @@ public class WebhookEventConsumer {
                         WebhookError.Code.UNKNOWN_PUBLISHER,
                         "Unknown/inactive publisher " + callbackEvent.getWebhook() + " for topic " + callbackEvent.getTopic())));
         WebhookEventStatus status = findOrCreate(callbackEvent);
+        //Helper<?> helper = Helper.create(webhook.getType());
         if (status.eligible()) {
             try {
                 event
-                        .select(eventTypeLiteral(webhook.getType()), new EventTopicLiteral(callbackEvent.getTopic()))
+                        .select(new EventTopicLiteral(callbackEvent.getTopic()))
                         .fire(callbackEvent);
                 repo.save(status.done(true));
                 subscriptions.touch(webhook.getId());
@@ -73,6 +74,35 @@ public class WebhookEventConsumer {
             }
         }
         return status;
+    }
+
+    /**
+     *
+     * @param <D>
+     */
+    private static class Helper<D> {
+
+        private final Class<D> type;
+
+        Helper(final Class<D> type) {
+            this.type = type;
+        }
+
+        static <D> Helper<D> create(final Class<D> type) {
+            return new Helper<D>(type);
+        }
+
+        @SuppressWarnings("PMD.UnusedFormalParameter")
+        TypeLiteral<WebhookEvent<D>> eventTypeLiteral() {
+            return new TypeLiteral<WebhookEvent<D>>() {
+                private static final long serialVersionUID = 5636572627689425575L;
+            };
+        }
+
+        <U> WebhookEvent<U> caseEvent(final WebhookEvent<?> callbackEvent) {
+            return (WebhookEvent<U>) callbackEvent;
+        }
+
     }
 
     /**
@@ -112,13 +142,6 @@ public class WebhookEventConsumer {
         return repo
                 .find(callbackEvent.getId())
                 .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent)));
-    }
-
-    @SuppressWarnings("PMD.UnusedFormalParameter")
-    private <D> TypeLiteral eventTypeLiteral(final D type) {
-        return new TypeLiteral<WebhookEvent<D>>() {
-            private static final long serialVersionUID = 5636572627689425575L;
-        };
     }
 
     /**
