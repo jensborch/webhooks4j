@@ -89,7 +89,7 @@ public class WebhookEventConsumerTest {
         when(repo.find(any()))
                 .thenReturn(Optional.of(new WebhookEventStatus(callbackEvent)
                         .done(true))
-                );
+            );
         consumer.consume(callbackEvent);
         verify(repo, times(0)).save(any());
     }

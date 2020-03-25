@@ -20,11 +20,19 @@ To build the application run the following command:
 ./mvnw package
 ```
 
+Install the application in your local maven repository (required for running locally)
+
+```sh
+./mvnw install
+```
+
 Start the test application using:
 
 ```sh
 ./mvnw compile -pl test quarkus:dev
 ```
+
+Call endpoints using VSCode RestClient or similar. See webhooks4j.http
 
 Run mutation tests:
 

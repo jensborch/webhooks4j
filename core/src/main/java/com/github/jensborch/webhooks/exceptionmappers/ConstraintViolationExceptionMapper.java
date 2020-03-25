@@ -26,8 +26,8 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
                 .build();
     }
 
-    private String message(final ConstraintViolationException exception) {
-        return exception.getConstraintViolations()
+    private String message(final ConstraintViolationException e) {
+        return e.getConstraintViolations()
                 .stream()
                 .map(cv -> cv.getPropertyPath() + ":'" + cv.getMessage() + "'").collect(Collectors.joining(","));
     }

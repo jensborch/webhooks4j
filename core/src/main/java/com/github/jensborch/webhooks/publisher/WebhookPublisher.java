@@ -52,7 +52,6 @@ public class WebhookPublisher {
                 .forEach(w -> call(w, event));
     }
 
-    @SuppressWarnings("PMD.InvalidSlf4jMessageFormat")
     private void call(final Webhook webhook, final WebhookEvent event) {
         LOG.debug("Publishing to {}", webhook);
         WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event));
@@ -70,7 +69,9 @@ public class WebhookPublisher {
                     statusRepo.save(status.done(false));
                 })
                 .exception(e -> {
-                    LOG.warn("Error publishing to {} got error processing response", webhook, e);
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Error publishing to " + webhook + " got error processing response", e);
+                    }
                     statusRepo.save(status.done(false));
                 })
                 .invoke();
