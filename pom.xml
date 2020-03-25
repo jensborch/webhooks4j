@@ -3,9 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j</artifactId>
-    <version>0.5.7-SNAPSHOT</version>
+    <version>0.5.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>Webhooks4j</name>
     <description>Small, simple and extendable Java library for messaging using webhooks</description>
 
     <modules>
