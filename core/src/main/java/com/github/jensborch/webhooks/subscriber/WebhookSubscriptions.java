@@ -129,11 +129,11 @@ public class WebhookSubscriptions {
         return repo.find(id);
     }
 
-    public Optional<Webhook> find(final WebhookEvent callbackEvent) {
+    public Optional<Webhook> find(final WebhookEvent<?> callbackEvent) {
         return repo.find(callbackEvent.getWebhook());
     }
 
-    public Optional<Webhook> findActiveByTopic(final WebhookEvent callbackEvent) {
+    public Optional<Webhook> findActiveByTopic(final WebhookEvent<?> callbackEvent) {
         return find(callbackEvent)
                 .filter(w -> w.getTopics().contains(callbackEvent.getTopic()))
                 .filter(Webhook::isActive);

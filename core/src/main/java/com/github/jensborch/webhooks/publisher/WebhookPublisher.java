@@ -43,7 +43,7 @@ public class WebhookPublisher {
      *
      * @param event to publish.
      */
-    public void publish(@NotNull @Valid final WebhookEvent event) {
+    public void publish(@NotNull @Valid final WebhookEvent<?> event) {
         LOG.debug("Publishing event {}", event);
         repo.list(event.getTopic())
                 .stream()
@@ -53,7 +53,7 @@ public class WebhookPublisher {
     }
 
     @SuppressWarnings("PMD.InvalidSlf4jMessageFormat")
-    private void call(final Webhook webhook, final WebhookEvent event) {
+    private void call(final Webhook webhook, final WebhookEvent<?> event) {
         LOG.debug("Publishing to {}", webhook);
         WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event));
         WebhookResponseHandler

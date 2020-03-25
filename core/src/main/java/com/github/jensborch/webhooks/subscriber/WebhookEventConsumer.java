@@ -33,7 +33,7 @@ public class WebhookEventConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(WebhookEventConsumer.class);
 
     @Inject
-    Event<WebhookEvent> event;
+    Event<WebhookEvent<?>> event;
 
     @Inject
     @Subscriber
@@ -52,7 +52,7 @@ public class WebhookEventConsumer {
      * @param callbackEvent to process
      * @return Processing status for the event
      */
-    public <T> WebhookEventStatus consume(final WebhookEvent<T> callbackEvent) {
+    public WebhookEventStatus consume(final WebhookEvent<?> callbackEvent) {
         LOG.debug("Receiving event {}", callbackEvent);
         Webhook webhook = subscriptions.findActiveByTopic(callbackEvent).orElseThrow(() -> new WebhookException(
                 new WebhookError(
@@ -108,7 +108,7 @@ public class WebhookEventConsumer {
         throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg), e);
     }
 
-    private WebhookEventStatus findOrCreate(final WebhookEvent callbackEvent) {
+    private WebhookEventStatus findOrCreate(final WebhookEvent<?> callbackEvent) {
         return repo
                 .find(callbackEvent.getId())
                 .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent)));
