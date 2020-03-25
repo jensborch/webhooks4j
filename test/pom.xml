@@ -6,7 +6,10 @@
         <artifactId>webhooks4j</artifactId>
         <version>0.5.8-SNAPSHOT</version>
     </parent>
+
     <artifactId>webhook4j-test</artifactId>
+    <name>Webhooks4j integration tests</name>
+
     <dependencies>
         <dependency>
             <groupId>com.github.jensborch.webhooks4j</groupId>

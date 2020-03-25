@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>webhook4j-core</artifactId>
+    <name>Webhooks4j core</name>
 
     <dependencies>
         <dependency>

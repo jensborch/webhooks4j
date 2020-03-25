@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>webhook4j-mongodb</artifactId>
+    <name>Webhooks4j MongoDB</name>
 
     <dependencies>
         <dependency>

@@ -6,6 +6,7 @@
     <version>0.5.8-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>Webhooks4j</name>
     <description>Small, simple and extendable Java library for messaging using webhooks</description>
 
     <modules>
