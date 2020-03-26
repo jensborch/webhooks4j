@@ -9,6 +9,8 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Processing status for a webhook event.
  */
@@ -28,6 +30,12 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
 
     @NotNull
     private final ZonedDateTime start;
+
+    @SuppressFBWarnings("NP_NULL_PARAM_DEREF_NONVIRTUAL")
+    protected WebhookEventStatus() {
+        //Needed for MongoDB POJO support
+        this(null);
+    }
 
     @ConstructorProperties({"id", "event", "start", "end", "status"})
     protected WebhookEventStatus(final UUID id, final WebhookEvent event, final ZonedDateTime start, final ZonedDateTime end, final Status status) {

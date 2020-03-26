@@ -51,7 +51,7 @@ public class WebhookSubscriptions {
             WebhookResponseHandler
                     .type(Response.class)
                     .invocation(client
-                            .target(webhook.gePublisherEndpoints().getWebhooks())
+                            .target(webhook.publisherEndpoints().getWebhooks())
                             .request(MediaType.APPLICATION_JSON)
                             .buildPost(Entity.json(webhook.state(Webhook.State.SUBSCRIBE)))
                     )
@@ -88,7 +88,7 @@ public class WebhookSubscriptions {
         WebhookResponseHandler
                 .type(Response.class)
                 .invocation(client
-                        .target(webhook.gePublisherEndpoints().getWebhooks())
+                        .target(webhook.publisherEndpoints().getWebhooks())
                         .path("{id}")
                         .resolveTemplate("id", webhook.getId())
                         .request()

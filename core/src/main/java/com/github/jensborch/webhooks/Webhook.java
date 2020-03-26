@@ -44,6 +44,11 @@ public class Webhook {
     @NotNull
     private ZonedDateTime updated;
 
+    protected Webhook() {
+        //Needed for MongoDB POJO support
+        this(null, null, (String) null);
+    }
+
     @ConstructorProperties({"id", "publisher", "subscriber", "state", "topics", "created", "updated"})
     protected Webhook(final UUID id, final URI publisher, final URI subscriber, final State state,
             final Set<String> topics, final ZonedDateTime created, final ZonedDateTime updated) {
@@ -92,13 +97,11 @@ public class Webhook {
         return created;
     }
 
-    @JsonIgnore
-    public Endpoints getSubscriberEndpoints() {
+    public Endpoints subscriberEndpoints() {
         return new SubscriberEndpoints(subscriber);
     }
 
-    @JsonIgnore
-    public Endpoints gePublisherEndpoints() {
+    public Endpoints publisherEndpoints() {
         return new PublisherEndpoints(publisher);
     }
 

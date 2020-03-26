@@ -81,7 +81,7 @@ public class WebhookEventConsumer {
                 .type(new GenericType<SortedSet<WebhookEventStatus>>() {
                 })
                 .invocation(client
-                        .target(webhook.gePublisherEndpoints().getEvents())
+                        .target(webhook.publisherEndpoints().getEvents())
                         .queryParam("from", webhook.getUpdated())
                         .queryParam("webhook", webhook.getId())
                         .request(MediaType.APPLICATION_JSON)

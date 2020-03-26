@@ -26,8 +26,14 @@ public class WebhookEvent {
     @NotNull
     private final Map<String, Object> data;
 
+    public WebhookEvent() {
+        //Needed for MongoDB POJO support
+        this(null, null, null);
+    }
+
     @ConstructorProperties({"id", "webhook", "topic", "data"})
-    protected WebhookEvent(final UUID id, final UUID webhook, final String topic, final Map<String, Object> data) {
+    protected WebhookEvent(final UUID id, final UUID webhook, final String topic, final Map<String, Object> data
+    ) {
         this.id = id;
         this.webhook = webhook;
         this.topic = topic;
