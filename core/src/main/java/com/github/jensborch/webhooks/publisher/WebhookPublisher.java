@@ -49,7 +49,7 @@ public class WebhookPublisher {
                 .stream()
                 .filter(w -> w.getTopics().contains(event.getTopic()))
                 .filter(Webhook::isActive)
-                .forEach(w -> call(w, event));
+                .forEach(w -> call(w, event.webhook(w.getId())));
     }
 
     @SuppressWarnings("PMD.InvalidSlf4jMessageFormat")
