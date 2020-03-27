@@ -12,7 +12,7 @@ Small, simple and extendable Java library for messaging using webhooks and CDI e
 
 Webhooks4j is a simple Java library for implementing messaging using webhooks and event-sourcing, that does not need any infrastructure. It is meant to work for simple use cases where message brokers like [Kafka](https://kafka.apache.org/) are not needed. The library is based on the publish–subscribe pattern.
 
-To subscribe to to a topic, inject ```WebhookSubscriptions``` and call the subscribe method:
+To subscribe to to a topic, inject `WebhookSubscriptions` and call the subscribe method:
 
 ```Java
 import com.github.jensborch.webhooks.Webhook;
@@ -25,7 +25,7 @@ Webhook webhook = new Webhook(new URI("http://publisher-host/context-root"), new
 subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
 ```
 
-To publish an events events inject a ```WebhookPublisher``` and call the publish method:
+To publish events, inject a `WebhookPublisher` and call the publish method:
 
 ```Java
 import com.github.jensborch.webhooks.WebhookEvent;
@@ -38,7 +38,7 @@ Map<String, Object> eventData = new HashMap<>();
 publisher.publish(new WebhookEvent(webhook.getId(), "my-topic", eventData));
 ```
 
-To receive event use the CDI ```@Observes``` annotation:
+To receive event use the CDI `@Observes` annotation:
 
 ```Java
 import com.github.jensborch.webhooks.WebhookEvent;
@@ -49,11 +49,13 @@ public void observe(@Observes @WebhookEventTopic("my-topic") final WebhookEvent 
 }
 ```
 
-The library build using [CDI 1.2](http://www.cdi-spec.org/), [JAX-RS 2.0](https://github.com/jax-rs) and [Jackson](https://github.com/FasterXML/jackson). CDI 1.2 is used to be compatible with as many application servers as possible. This imposes some constraints on the solution and the solution thus currently do not support asynchronous CDI events and generic event data.
+The library build using [CDI 1.2](http://www.cdi-spec.org/), [JAX-RS 2.0](https://github.com/jax-rs) and [Jackson](https://github.com/FasterXML/jackson).
+
+CDI 1.2 is used to be compatible with as many application servers as possible. This imposes some constraints on the solution and the solution thus currently do not support asynchronous CDI events and generic event data.
 
 ## Getting started
 
-Added the following dependency:
+Added the following dependencies:
 
 ```xml
 <dependency>
@@ -72,6 +74,135 @@ For MongoDB support:
     <version>0.5.8</version>
 </dependency>
 ```
+
+If MongoDB is not use for persistence, it is necessary to implement `WebhookEventStatusRepository` and `WebhookRepository` repository interfaces.
+
+The MongoDB dependency requires [POJO](https://mongodb.github.io/mongo-java-driver/3.12/bson/pojos/) support, see examples below.
+
+CDI producers must be defined for:
+
+- javax.ws.rs.client.Client
+- com.mongodb.client.MongoDatabase (for mongoDB support)
+
+and the following REST exposure classes:
+
+- com.github.jensborch.webhooks.subscriber.SubscriberEventExposure
+- com.github.jensborch.webhooks.subscriber.SubscriberWebhooksExposure
+- com.github.jensborch.webhooks.publisher.PublisherEventExposure
+- com.github.jensborch.webhooks.publisher.PublisherWebhookExposure
+
+should be registered in your JAX-RS application class, depending on how you do JAX-RS configuration.
+
+Additionally it might be necessary to configure Jackson by implementing ContextResolver<ObjectMapper>, as the `Jdk8Module` and `JavaTimeModule` are required.
+
+An example application using [Quarkus](https://quarkus.io/) can be found in the Maven test module.
+
+### Examples
+
+JAX-RS client producer:
+
+```Java
+@Dependent
+public class ClientProducer {
+
+    @Produces
+    @Publisher
+    public Client getPublisherClient() {
+        return ClientBuilder.newClient();
+    }
+
+    @Produces
+    @Subscriber
+    public Client getSubscriberClient() {
+        return ClientBuilder.newClient();
+    }
+
+}
+```
+
+MongoDB collection producer:
+
+```Java
+@ApplicationScoped
+public class WebhookMongoCollectionsProducer {
+
+    @Inject
+    private MongoDatabase db;
+
+    @Produces
+    @Publisher
+    public MongoCollection<WebhookEventStatus> publisherStatusCollection() {
+        return db.getCollection("PublisherProcessingStatuses", WebhookEventStatus.class);
+    }
+
+    @Produces
+    @Publisher
+    public MongoCollection<Webhook> publisherWebHookCollection() {
+        return db.getCollection("PublisherWebhooks", Webhook.class);
+    }
+
+    @Produces
+    @Subscriber
+    public MongoCollection<WebhookEventStatus> subscriberStatusCollection() {
+        return db.getCollection("SubscriberProcessingStatuses", WebhookEventStatus.class);
+    }
+
+    @Produces
+    @Subscriber
+    public MongoCollection<Webhook> subscriberWebHookCollection() {
+        return db.getCollection("SubscriberWebhooks", Webhook.class);
+    }
+
+}
+```
+
+Note, this requires an additional CDI producer for `MongoDatabase`, but it is possible to configure a `MongoDatabase` directly instead. If no codecs for `ZonedDateTime` and `URI` exists, register the following class:
+
+- com.github.jensborch.webhooks.mongodb.URICodec
+- com.github.jensborch.webhooks.mongodb.ZonedDateTimeCode
+
+JAX-RS application class:
+
+```Java
+@ApplicationPath("/")
+public class MyApplication extends Application {
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> classes = new HashSet<>(Arrays.asList(
+                MyExposure.class,
+                SubscriberEventExposure.class,
+                SubscriberWebhooksExposure.class,
+                PublisherEventExposure.class,
+                PublisherWebhookExposure.class,
+        ));
+        return classes;
+    }
+}
+```
+
+Jackson ContextResolver class:
+
+```Java
+@Provider
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
+
+    @Override
+    public ObjectMapper getContext(final Class<?> objectType) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new Jdk8Module());
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
+
+}
+```
+
+## Security
+
+All endpoints are secured using JAX-RS roles.
 
 ## Building
 
@@ -100,4 +231,4 @@ Release to Maven central:
 ```sh
 ./mvnw release:clean release:prepare -Prelease
 ./mvnw release:perform -Prelease
-````
+```
