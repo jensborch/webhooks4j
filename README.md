@@ -8,6 +8,8 @@ Small, simple and extendable Java library for messaging using webhooks and CDI e
 
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.github.jensborch.webhooks4j%3Awebhooks4j&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.github.jensborch.webhooks4j%3Awebhooks4j)
 
+Webhooks4j is currently under development.
+
 ## Introduction
 
 Webhooks4j is a simple Java library for implementing messaging using webhooks and event-sourcing, that does not need any infrastructure. It is meant to work for simple use cases where message brokers like [Kafka](https://kafka.apache.org/) are not needed. The library is based on the publish–subscribe pattern.
@@ -51,7 +53,7 @@ public void observe(@Observes @WebhookEventTopic("my-topic") final WebhookEvent 
 
 The library build using [CDI 1.2](http://www.cdi-spec.org/), [JAX-RS 2.0](https://github.com/jax-rs) and [Jackson](https://github.com/FasterXML/jackson).
 
-CDI 1.2 is used to be compatible with as many application servers as possible. This imposes some constraints on the solution and the solution thus currently do not support asynchronous CDI events and generic event data.
+CDI 1.2 is used to be compatible with as many application servers as possible. This imposes some constraints and the solution thus currently do not support asynchronous CDI events and generic event data.
 
 ## Getting started
 
@@ -61,7 +63,7 @@ Added the following dependencies:
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-core</artifactId>
-    <version>0.5.8</version>
+    <version>0.5.10</version>
 </dependency>
 ```
 
@@ -71,7 +73,7 @@ For MongoDB support:
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-mongodb</artifactId>
-    <version>0.5.8</version>
+    <version>0.5.10</version>
 </dependency>
 ```
 
@@ -202,7 +204,9 @@ public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
 ## Security
 
-All endpoints are secured using JAX-RS roles.
+All endpoints are secured using JAX-RS roles. To access subscriber end-point, the __subscriber__ role is needed. To access publisher endpoints the __publisher__ role is need. The are some exceptions to this, as a __publisher__ is allowed to POST callback events to a subscriber end-point. Refer to [Swagger documentation](swagger.yml) for details.
+
+When creating the JAX-RS Client CDI producer, filters should be added to handle security correctly. A simple HTTP Basic access authentication filter can be found in the Maven test module. 
 
 ## Building
 

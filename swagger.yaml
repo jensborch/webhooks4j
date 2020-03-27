@@ -1,0 +1,283 @@
+openapi: 3.0.1
+info:
+  title: Webhooks4j
+  description: Small, simple and extendable Java library for messaging using webhooks.
+  version: v1
+paths:
+  /publisher-events/{id}:
+    get:
+      operationId: get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /publisher-events:
+    get:
+      operationId: list
+      parameters:
+      - name: topics
+        in: query
+        schema:
+          type: string
+      - name: webhook
+        in: query
+        schema:
+          type: string
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /publisher-webhooks/{id}:
+    get:
+      operationId: get_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /publisher-webhooks:
+    get:
+      operationId: list_1
+      parameters:
+      - name: topics
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /subscriber-events:
+    get:
+      operationId: list_2
+      parameters:
+      - name: topics
+        in: query
+        schema:
+          type: string
+      - name: webhook
+        in: query
+        schema:
+          type: string
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: receive
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookEvent'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /subscriber-events/{id}:
+    get:
+      operationId: get_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /subscriber-webhooks/{id}:
+    get:
+      operationId: get_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: delete_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /subscriber-webhooks:
+    get:
+      operationId: list_3
+      parameters:
+      - name: topics
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+components:
+  schemas:
+    Webhook:
+      required:
+      - created
+      - id
+      - publisher
+      - state
+      - subscriber
+      - topics
+      - updated
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        publisher:
+          type: string
+          format: uri
+        subscriber:
+          type: string
+          format: uri
+        state:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - SUBSCRIBE
+          - SUBSCRIBING
+          - SYNCHRONIZE
+          - SYNCHRONIZING
+          - UNSUBSCRIBE
+          - UNSUBSCRIBING
+          - FAILED
+        topics:
+          maxItems: 2147483647
+          minItems: 1
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+    WebhookEvent:
+      required:
+      - data
+      - id
+      - topic
+      - webhook
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        webhook:
+          type: string
+          format: uuid
+        topic:
+          type: string
+        data:
+          type: object
+          additionalProperties:
+            type: object
