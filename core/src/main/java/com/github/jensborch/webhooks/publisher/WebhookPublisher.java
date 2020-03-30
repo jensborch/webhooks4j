@@ -69,9 +69,7 @@ public class WebhookPublisher {
                     statusRepo.save(status.done(false));
                 })
                 .exception(e -> {
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn("Error publishing to " + webhook + " got error processing response", e);
-                    }
+                    LOG.warn("Error publishing to {} got error processing response", webhook, e);
                     statusRepo.save(status.done(false));
                 })
                 .invoke();

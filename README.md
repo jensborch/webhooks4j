@@ -46,3 +46,6 @@ Release to Maven central:
 ./mvnw release:clean release:prepare -Prelease
 ./mvnw release:perform -Prelease
 ````
+
+## Dependencies
+We assume the usage of SLF4J version 1.6.0+
