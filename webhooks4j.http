@@ -61,3 +61,19 @@ Content-Type: application/json
     "publisher": "http://localhost:8081/",
     "subscriber": "http://localhost:8081/"
 }
+
+
+### Sync events
+PUT http://localhost:8080/subscriber-webhooks/fe5db9df-1e54-4c8b-8667-986b2a128fc1
+Authorization: {{subscriberToken}}
+Content-Type: application/json
+
+{
+    "id": "fe5db9df-1e54-4c8b-8667-986b2a128fc1",
+    "state": "UNSUBSCRIBE",
+    "topics": [
+        "test"
+    ],
+    "publisher": "http://localhost:8081/",
+    "subscriber": "http://localhost:8081/"
+}

@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.github.jensborch.webhooks.Webhook;
+import com.github.jensborch.webhooks.WebhookDocumentation;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEventTopics;
 import com.github.jensborch.webhooks.WebhookException;
@@ -58,20 +59,22 @@ public class PublisherWebhookExposure {
     @RolesAllowed({"subscriber"})
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.SUBSCRIBED,
                 responseCode = "201"
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
                 )
         )
     })
-    public Response create(
+    public Response subscribe(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
         if (webhook.getState() != Webhook.State.SUBSCRIBE) {
-            throw new WebhookException(new WebhookError(WebhookError.Code.REGISTER_ERROR, "Illegal webhook status for " + webhook.getId()));
+            throw new WebhookException(new WebhookError(WebhookError.Code.VALIDATION_ERROR, "Illegal webhook status for " + webhook.getId()));
         }
         LOG.debug("Subscribing to webhook {}", webhook);
         repo.save(webhook.state(Webhook.State.ACTIVE));
@@ -88,15 +91,18 @@ public class PublisherWebhookExposure {
     @Path("{id}")
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.DELETED,
                 responseCode = "202"
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
                 )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
                 responseCode = "404",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
@@ -112,12 +118,14 @@ public class PublisherWebhookExposure {
     @RolesAllowed({"subscriber", "publisher"})
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.WEBHOOK,
                 responseCode = "200",
                 content = @Content(array = @ArraySchema(
                         schema = @Schema(implementation = Webhook.class)
                 ))
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
@@ -136,18 +144,21 @@ public class PublisherWebhookExposure {
     @Path("{id}")
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.WEBHOOK,
                 responseCode = "200",
                 content = @Content(
                         schema = @Schema(implementation = Webhook.class)
                 )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
                 )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
                 responseCode = "404",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)

@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.github.jensborch.webhooks.Webhook;
+import com.github.jensborch.webhooks.WebhookDocumentation;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEventTopics;
 import com.github.jensborch.webhooks.WebhookException;
@@ -34,6 +35,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exposure for registration of webhooks.
@@ -47,6 +50,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SubscriberWebhookExposure {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SubscriberWebhookExposure.class);
+
     @Inject
     WebhookSubscriptions subscriptions;
 
@@ -56,18 +61,24 @@ public class SubscriberWebhookExposure {
     @POST
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.SUBSCRIBED,
                 responseCode = "201"
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
                 )
         )
     })
-    public Response create(
+    public Response subscribe(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
+        if (webhook.getState() != Webhook.State.SUBSCRIBE) {
+            throw new WebhookException(new WebhookError(WebhookError.Code.VALIDATION_ERROR, "Illegal webhook status for " + webhook.getId()));
+        }
+        LOG.debug("Subscribing to webhook {}", webhook);
         subscriptions.subscribe(webhook);
         return Response.created(uriInfo
                 .getBaseUriBuilder()
@@ -81,18 +92,21 @@ public class SubscriberWebhookExposure {
     @Path("{id}")
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.WEBHOOK,
                 responseCode = "200",
-                content = @Content(array = @ArraySchema(
+                content = @Content(
                         schema = @Schema(implementation = Webhook.class)
-                ))
+                )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
                 )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
                 responseCode = "404",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
@@ -130,15 +144,18 @@ public class SubscriberWebhookExposure {
     @Path("{id}")
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.DELETED,
                 responseCode = "202"
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
                 )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
                 responseCode = "404",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
@@ -153,12 +170,14 @@ public class SubscriberWebhookExposure {
     @GET
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.WEBHOOK,
                 responseCode = "200",
                 content = @Content(array = @ArraySchema(
                         schema = @Schema(implementation = Webhook.class)
                 ))
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
@@ -176,18 +195,21 @@ public class SubscriberWebhookExposure {
     @Path("{id}")
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.WEBHOOK,
                 responseCode = "200",
                 content = @Content(
                         schema = @Schema(implementation = Webhook.class)
                 )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
                 )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
                 responseCode = "404",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)

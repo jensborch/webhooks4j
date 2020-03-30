@@ -38,10 +38,10 @@ public class WebhookSubscriptions {
     WebhookRepository repo;
 
     /**
-     * Register a webhook to receive events from a publisher. Will throw a
+     * Subscribe to a webhook to receive events from a publisher. Will throw a
      * {@link WebhookError} runtime exception if registration fails.
      *
-     * @param webhook to register.
+     * @param webhook to subscribe to.
      */
     public void subscribe(@NotNull @Valid final Webhook webhook) {
         if (repo.find(webhook.getId()).filter(w -> w.getState() != Webhook.State.FAILED).isPresent()) {
@@ -59,11 +59,11 @@ public class WebhookSubscriptions {
                     .success(r -> repo.save(webhook.state(Webhook.State.ACTIVE)))
                     .error(e -> {
                         repo.save(webhook.state(Webhook.State.FAILED));
-                        throwWebhookException("Failed to register, got error response: " + e);
+                        throwWebhookException("Failed to subscribe, got error response: " + e);
                     })
                     .exception(e -> {
                         repo.save(webhook.state(Webhook.State.FAILED));
-                        throwWebhookException("Failed to register, error processing response", e);
+                        throwWebhookException("Failed to subscribe, error processing response", e);
                     })
                     .invoke();
         } else {
@@ -72,11 +72,11 @@ public class WebhookSubscriptions {
     }
 
     /**
-     * Unregister a webhook from a publisher. This will throw a
+     * Unsubscribe from a webhook from a publisher. This will throw a
      * {@link WebhookError} runtime exception if it isn't possible to
-     * unregister.
+     * unsubscribe.
      *
-     * @param id of webhook to unregister.
+     * @param id of webhook to unsubscribe from.
      */
     public void unsubscribe(@NotNull final UUID id) {
         Webhook w = find(id).orElseThrow(() -> new WebhookException(
@@ -101,12 +101,12 @@ public class WebhookSubscriptions {
                         repo.save(webhook.state(Webhook.State.INACTIVE));
                     } else {
                         repo.save(webhook.state(Webhook.State.FAILED));
-                        throwWebhookException("Failed to unregister, got error response: " + error);
+                        throwWebhookException("Failed to unsubscribe, got error response: " + error);
                     }
                 })
                 .exception(e -> {
                     repo.save(webhook.state(Webhook.State.FAILED));
-                    throwWebhookException("Failed to unregister, error processing response", e);
+                    throwWebhookException("Failed to unsubscribe, error processing response", e);
                 })
                 .invoke();
     }
@@ -114,14 +114,14 @@ public class WebhookSubscriptions {
     private void throwWebhookException(final String msg) {
         LOG.error(msg);
         throw new WebhookException(
-                new WebhookError(WebhookError.Code.REGISTER_ERROR, msg)
+                new WebhookError(WebhookError.Code.SUBSCRIPTION_ERROR, msg)
         );
     }
 
     private void throwWebhookException(final String msg, final Exception e) {
         LOG.error(msg, e);
         throw new WebhookException(
-                new WebhookError(WebhookError.Code.REGISTER_ERROR, msg), e
+                new WebhookError(WebhookError.Code.SUBSCRIPTION_ERROR, msg), e
         );
     }
 

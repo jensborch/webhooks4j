@@ -84,7 +84,7 @@ The MongoDB dependency requires [POJO](https://mongodb.github.io/mongo-java-driv
 CDI producers must be defined for:
 
 - javax.ws.rs.client.Client
-- com.mongodb.client.MongoDatabase (for mongoDB support)
+- com.mongodb.client.MongoDatabase (for MongoDB support)
 
 and the following REST exposure classes:
 

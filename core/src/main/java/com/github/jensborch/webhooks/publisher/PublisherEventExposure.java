@@ -1,5 +1,7 @@
 package com.github.jensborch.webhooks.publisher;
 
+import com.github.jensborch.webhooks.WebhookDocumentation;
+
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -58,12 +60,14 @@ public class PublisherEventExposure {
     @GET
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.EVENT_STATUS,
                 responseCode = "200",
                 content = @Content(array = @ArraySchema(
                         schema = @Schema(implementation = WebhookEventStatus.class)
                 ))
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
@@ -93,18 +97,21 @@ public class PublisherEventExposure {
     @Path("{id}")
     @ApiResponses(value = {
         @ApiResponse(
+                description = WebhookDocumentation.EVENT_STATUS,
                 responseCode = "200",
                 content = @Content(
                         schema = @Schema(implementation = WebhookEventStatus.class)
                 )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
                 responseCode = "400",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
                 )
         ),
         @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
                 responseCode = "404",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
