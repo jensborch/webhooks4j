@@ -38,7 +38,8 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
     }
 
     @ConstructorProperties({"id", "event", "start", "end", "status"})
-    protected WebhookEventStatus(final UUID id, final WebhookEvent event, final ZonedDateTime start, final ZonedDateTime end, final Status status) {
+    protected WebhookEventStatus(final UUID id, final WebhookEvent event, final ZonedDateTime start, final ZonedDateTime end, 
+        final Status status) {
         if (!id.equals(event.getId())) {
             throw new IllegalArgumentException("Status ID and event ID must be identical");
         }

@@ -51,7 +51,7 @@ public void observe(@Observes @WebhookEventTopic("my-topic") final WebhookEvent 
 }
 ```
 
-The library build using [CDI 1.2](http://www.cdi-spec.org/), [JAX-RS 2.0](https://github.com/jax-rs) and [Jackson](https://github.com/FasterXML/jackson).
+The library is build using [CDI 1.2](http://www.cdi-spec.org/), [JAX-RS 2.0](https://github.com/jax-rs), [Jackson](https://github.com/FasterXML/jackson) and [SLF4J](http://www.slf4j.org/). Usage of SLF4J version 1.6.0 or higher is assumed.
 
 CDI 1.2 is used to be compatible with as many application servers as possible. This imposes some constraints and the solution thus currently do not support asynchronous CDI events and generic event data.
 
@@ -220,11 +220,19 @@ To build the application run the following command:
 ./mvnw package
 ```
 
+Install the application in your local maven repository (required for running locally)
+
+```sh
+./mvnw install
+```
+
 Start the test application using:
 
 ```sh
 ./mvnw compile -pl test quarkus:dev
 ```
+
+Call endpoints using VSCode RestClient or similar. See webhooks4j.http
 
 Run mutation tests:
 
@@ -237,4 +245,4 @@ Release to Maven central:
 ```sh
 ./mvnw release:clean release:prepare -Prelease
 ./mvnw release:perform -Prelease
-```
+````

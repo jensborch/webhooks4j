@@ -52,7 +52,6 @@ public class WebhookPublisher {
                 .forEach(w -> call(w, event.webhook(w.getId())));
     }
 
-    @SuppressWarnings("PMD.InvalidSlf4jMessageFormat")
     private void call(final Webhook webhook, final WebhookEvent event) {
         LOG.debug("Publishing to {}", webhook);
         WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event));
