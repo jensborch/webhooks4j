@@ -1,6 +1,7 @@
 package com.github.jensborch.webhooks.subscriber;
 
 import java.util.SortedSet;
+import java.util.UUID;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -81,7 +82,7 @@ public class WebhookEventConsumer {
                 .type(new GenericType<SortedSet<WebhookEventStatus>>() {
                 })
                 .invocation(client
-                        .target(webhook.gePublisherEndpoints().getEvents())
+                        .target(webhook.publisherEndpoints().getEvents())
                         .queryParam("from", webhook.getUpdated())
                         .queryParam("webhook", webhook.getId())
                         .request(MediaType.APPLICATION_JSON)
@@ -106,14 +107,17 @@ public class WebhookEventConsumer {
 
     private Webhook findPublisher(final WebhookEvent callbackEvent) {
         return subscriptions
-                .find(callbackEvent.getWebhook())
+                .find(callbackEvent.getWebhook().orElseThrow(() -> noPublisher(callbackEvent)))
                 .filter(w -> w.getTopics().contains(callbackEvent.getTopic()))
                 .filter(Webhook::isActive)
-                .orElseThrow(() -> new WebhookException(
+                .orElseThrow(() -> noPublisher(callbackEvent));
+    }
+
+    private WebhookException noPublisher(final WebhookEvent callbackEvent) {
+        return new WebhookException(
                 new WebhookError(
                         WebhookError.Code.UNKNOWN_PUBLISHER,
-                        "Unknown/inactive publisher " + callbackEvent.getWebhook() + " for topic " + callbackEvent.getTopic()))
-                );
+                        "Unknown/inactive publisher " + callbackEvent.getWebhook().map(UUID::toString).orElse("null") + " for topic " + callbackEvent.getTopic()));
     }
 
     private WebhookEventStatus findOrCreate(final WebhookEvent callbackEvent) {

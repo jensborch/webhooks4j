@@ -76,7 +76,7 @@ public class WebhookEventConsumerTest {
     @Test
     public void testReceive() {
         UUID publisher = UUID.randomUUID();
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
         WebhookEventStatus status = consumer.consume(callbackEvent);
         assertNotNull(status);
         verify(repo, times(2)).save(any());
@@ -85,7 +85,7 @@ public class WebhookEventConsumerTest {
     @Test
     public void testReceiveTwice() {
         UUID publisher = UUID.randomUUID();
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
         when(repo.find(any()))
                 .thenReturn(Optional.of(new WebhookEventStatus(callbackEvent)
                         .done(true))
@@ -98,7 +98,7 @@ public class WebhookEventConsumerTest {
     public void testReceiveUnknownPublisher() {
         UUID publisher = UUID.randomUUID();
         when(subscriptions.find(any())).thenReturn(Optional.empty());
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
         WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
         assertEquals("Unknown/inactive publisher " + publisher + " for topic test_topic", e.getError().getDetail());
@@ -107,7 +107,7 @@ public class WebhookEventConsumerTest {
     @Test
     public void testReceiveUnknownTopic() {
         UUID publisher = UUID.randomUUID();
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, "unknown_topic", new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent("unknown_topic", new HashMap<>()).webhook(publisher);
         WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
         assertEquals("Unknown/inactive publisher " + publisher + " for topic unknown_topic", e.getError().getDetail());
@@ -117,7 +117,7 @@ public class WebhookEventConsumerTest {
     public void testReceiveException() {
         UUID publisher = UUID.randomUUID();
         doThrow(new ObserverException("Test")).when(event).fire(any());
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
         WebhookEventStatus status = consumer.consume(callbackEvent);
         assertNotNull(status);
         verify(repo, times(2)).save(any());
@@ -153,7 +153,7 @@ public class WebhookEventConsumerTest {
 
     @Test
     public void testSync() {
-        WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()));
+        WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(webhook.getId()));
         setupSyncResponse(status);
         consumer.sync(webhook);
         verify(event, times(1)).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));

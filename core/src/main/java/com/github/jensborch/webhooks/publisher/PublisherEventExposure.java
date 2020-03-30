@@ -29,6 +29,8 @@ import com.github.jensborch.webhooks.WebhookResponseBuilder;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.github.jensborch.webhooks.validation.ValidUUID;
 import com.github.jensborch.webhooks.validation.ValidZonedDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exposure for listing events published.
@@ -41,6 +43,8 @@ import com.github.jensborch.webhooks.validation.ValidZonedDateTime;
 @ApplicationScoped
 public class PublisherEventExposure {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PublisherEventExposure.class);
+
     @Inject
     @Publisher
     WebhookEventStatusRepository repo;
@@ -51,6 +55,7 @@ public class PublisherEventExposure {
             @ValidUUID @QueryParam("webhook") final String webhook,
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
             @Context final UriInfo uriInfo) {
+        LOG.debug("Listing events using webhook {}, topics {} and from {}", webhook, topics, from);
         if (webhook == null) {
             return WebhookResponseBuilder
                     .create()
