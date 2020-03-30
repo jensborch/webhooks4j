@@ -29,6 +29,11 @@ import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.WebhookResponseBuilder;
 import com.github.jensborch.webhooks.repositories.WebhookRepository;
 import com.github.jensborch.webhooks.validation.ValidUUID;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +45,7 @@ import org.slf4j.LoggerFactory;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@SuppressWarnings("PMD.ExcessiveImports")
 public class PublisherWebhookExposure {
 
     private static final Logger LOG = LoggerFactory.getLogger(PublisherWebhookExposure.class);
@@ -50,6 +56,17 @@ public class PublisherWebhookExposure {
 
     @POST
     @RolesAllowed({"subscriber"})
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "201"
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
@@ -69,6 +86,17 @@ public class PublisherWebhookExposure {
     @DELETE
     @RolesAllowed({"subscriber"})
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "202"
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response delete(@NotNull @ValidUUID @PathParam("id") final String id) {
         repo.delete(UUID.fromString(id));
         return Response.noContent().build();
@@ -76,6 +104,20 @@ public class PublisherWebhookExposure {
 
     @GET
     @RolesAllowed({"subscriber", "publisher"})
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                content = @Content(array = @ArraySchema(
+                        schema = @Schema(implementation = Webhook.class)
+                ))
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response list(@QueryParam("topics") final String topics) {
         return WebhookResponseBuilder
                 .create()
@@ -86,6 +128,26 @@ public class PublisherWebhookExposure {
     @GET
     @RolesAllowed({"subscriber", "publisher"})
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                content = @Content(
+                        schema = @Schema(implementation = Webhook.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response get(@NotNull @ValidUUID @PathParam("id") final String id, @Context final Request request) {
         return WebhookResponseBuilder
                 .create(request, Webhook.class)
