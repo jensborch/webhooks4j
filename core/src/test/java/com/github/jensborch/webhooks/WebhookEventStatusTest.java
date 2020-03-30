@@ -32,7 +32,7 @@ public class WebhookEventStatusTest {
         URI publisherUri = new URI("http://publisher.dk");
         URI subscriberUri = new URI("http://subscriber.dk");
         webhook = new Webhook(publisherUri, subscriberUri, "test");
-        status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
+        status = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class WebhookEventStatusTest {
     @Test
     public void testCompareTo() throws Exception {
         TimeUnit.SECONDS.sleep(1);
-        WebhookEventStatus status2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
+        WebhookEventStatus status2 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
         assertTrue(status.compareTo(status2) > 0);
         SortedSet<WebhookEventStatus> list = new TreeSet<>();
         list.add(status);
@@ -64,8 +64,8 @@ public class WebhookEventStatusTest {
 
     @Test
     public void testToString() {
-        WebhookEventStatus s = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
-        assertThat(s.toString(), startsWith("WebhookEventStatus{end=null, status=STARTED, id=" + s.getId() + ", event=WebhookEvent{id=" + s.getId() + ", webhook=" + s.getEvent().getWebhook() + ", topic=test, data={}}"));
+        WebhookEventStatus s = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()).webhook(webhook.getId()));
+        assertThat(s.toString(), startsWith("WebhookEventStatus{end=null, status=STARTED, id=" + s.getId() + ", event=WebhookEvent{id=" + s.getId() + ", webhook=" + s.getEvent().getWebhook().get() + ", topic=test, data={}}"));
     }
 
     @Test
@@ -83,8 +83,8 @@ public class WebhookEventStatusTest {
 
     @Test
     public void testSet() {
-        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
-        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
+        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
+        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
         SortedSet<WebhookEventStatus> set = new TreeSet<>();
         set.add(s1);
         set.add(s2);
@@ -93,8 +93,8 @@ public class WebhookEventStatusTest {
 
     @Test
     public void testNotEquals() {
-        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
-        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), "test", new HashMap<>()));
+        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
+        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
         assertNotEquals(s1, s2);
         assertNotEquals(null, s1);
         assertNotEquals(new Object(), s1);

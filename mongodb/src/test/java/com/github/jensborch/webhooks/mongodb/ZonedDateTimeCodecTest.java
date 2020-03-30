@@ -30,6 +30,7 @@ class ZonedDateTimeCodecTest {
     @Test
     public void testDecode() {
         when(reader.readDateTime()).thenReturn(DATE_TIME.toInstant().toEpochMilli());
+
         assertEquals(DATE_TIME.toInstant().toEpochMilli(), new ZonedDateTimeCodec().decode(reader, null).toInstant().toEpochMilli());
     }
 

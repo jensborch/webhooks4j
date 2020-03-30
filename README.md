@@ -37,7 +37,7 @@ import com.github.jensborch.webhooks.publisher.WebhookPublisher;
 WebhookPublisher publisher;
 
 Map<String, Object> eventData = new HashMap<>();
-publisher.publish(new WebhookEvent(webhook.getId(), "my-topic", eventData));
+publisher.publish("my-topic", eventData));
 ```
 
 To receive event use the CDI `@Observes` annotation:
@@ -163,6 +163,8 @@ Note, this requires an additional CDI producer for `MongoDatabase`, but it is po
 - com.github.jensborch.webhooks.mongodb.URICodec
 - com.github.jensborch.webhooks.mongodb.ZonedDateTimeCode
 
+Additionally the [SET_PRIVATE_FIELDS_CONVENTION](https://mongodb.github.io/mongo-java-driver/3.12/javadoc/org/bson/codecs/pojo/Conventions.html#SET_PRIVATE_FIELDS_CONVENTION) convention must be set.
+
 JAX-RS application class:
 
 ```Java
@@ -206,7 +208,7 @@ public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
 All endpoints are secured using JAX-RS roles. To access subscriber end-point, the __subscriber__ role is needed. To access publisher endpoints the __publisher__ role is need. The are some exceptions to this, as a __publisher__ is allowed to POST callback events to a subscriber end-point. Refer to [Swagger documentation](swagger.yml) for details.
 
-When creating the JAX-RS Client CDI producer, filters should be added to handle security correctly. A simple HTTP Basic access authentication filter can be found in the Maven test module. 
+When creating the JAX-RS Client CDI producer, filters should be added to handle security correctly. A simple HTTP Basic access authentication filter can be found in the Maven test module.
 
 ## Building
 

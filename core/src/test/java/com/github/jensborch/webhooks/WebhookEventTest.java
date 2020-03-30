@@ -15,7 +15,7 @@ public class WebhookEventTest {
     @Test
     public void testToString() {
         UUID id = UUID.randomUUID();
-        WebhookEvent w = new WebhookEvent(id, "test", Collections.singletonMap("t1", "t2"));
+        WebhookEvent w = new WebhookEvent("test", Collections.singletonMap("t1", "t2")).webhook(id);
         assertEquals("WebhookEvent{id=" + w.getId() + ", webhook=" + id + ", topic=test, data={t1=t2}}", w.toString());
     }
 
@@ -31,8 +31,8 @@ public class WebhookEventTest {
 
     @Test
     public void testNotEquals() {
-        WebhookEvent w1 = new WebhookEvent(UUID.randomUUID(), "test", Collections.singletonMap("t1", "t2"));
-        WebhookEvent w2 = new WebhookEvent(UUID.randomUUID(), "test", Collections.singletonMap("t1", "t2"));
+        WebhookEvent w1 = new WebhookEvent("test", Collections.singletonMap("t1", "t2"));
+        WebhookEvent w2 = new WebhookEvent("test", Collections.singletonMap("t1", "t2"));
         assertNotEquals(w1, w2);
         assertNotEquals(null, w1);
         assertNotEquals(w1, new Object());

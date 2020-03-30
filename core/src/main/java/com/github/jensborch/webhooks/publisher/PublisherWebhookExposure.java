@@ -29,6 +29,8 @@ import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.WebhookResponseBuilder;
 import com.github.jensborch.webhooks.repositories.WebhookRepository;
 import com.github.jensborch.webhooks.validation.ValidUUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exposure for registration of webhooks.
@@ -39,6 +41,8 @@ import com.github.jensborch.webhooks.validation.ValidUUID;
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
 public class PublisherWebhookExposure {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PublisherWebhookExposure.class);
 
     @Inject
     @Publisher
@@ -52,6 +56,7 @@ public class PublisherWebhookExposure {
         if (webhook.getState() != Webhook.State.SUBSCRIBE) {
             throw new WebhookException(new WebhookError(WebhookError.Code.REGISTER_ERROR, "Illegal webhook status for " + webhook.getId()));
         }
+        LOG.debug("Subscribing to webhook {}", webhook);
         repo.save(webhook.state(Webhook.State.ACTIVE));
         return Response.created(uriInfo
                 .getBaseUriBuilder()

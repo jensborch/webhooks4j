@@ -67,7 +67,7 @@ public class SubscriberEventExposureTest {
     @Test
     public void testReceive() {
         UUID publisher = UUID.randomUUID();
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, "test_topic", new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent("test_topic", new HashMap<>());
         Response response = exposure.receive(callbackEvent, uriInfo);
         assertNotNull(response);
         verify(consumer).consume(eq(callbackEvent));
@@ -99,7 +99,7 @@ public class SubscriberEventExposureTest {
     @Test
     public void testGet() {
         UUID publisher = UUID.randomUUID();
-        WebhookEvent event = new WebhookEvent(publisher, "test", new HashMap<>());
+        WebhookEvent event = new WebhookEvent("test", new HashMap<>());
         when(repo.find(any())).thenReturn(Optional.of(new WebhookEventStatus(event)));
         Response result = exposure.get(UUID.randomUUID().toString(), request);
         assertNotNull(result);

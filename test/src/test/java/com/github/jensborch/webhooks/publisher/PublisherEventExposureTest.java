@@ -46,7 +46,7 @@ public class PublisherEventExposureTest {
     @BeforeAll
     public static void setUpClass() throws Exception {
         webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TEST_TOPIC);
-        event = new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>());
+        event = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(webhook.getId());
     }
 
     @BeforeEach

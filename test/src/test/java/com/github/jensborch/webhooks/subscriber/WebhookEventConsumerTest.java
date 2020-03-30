@@ -42,8 +42,8 @@ public class WebhookEventConsumerTest {
     public void testSync() throws Exception {
         Webhook webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
-        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, new HashMap<>()));
-        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, new HashMap<>()));
+        WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));
+        WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));
         repo.save(s1);
         repo.save(s2);
         SortedSet<WebhookEventStatus> events = repo.list(ZonedDateTime.now().minusMinutes(1), TestEventListener.TOPIC);
