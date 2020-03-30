@@ -206,7 +206,7 @@ public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
 ## Security
 
-All endpoints are secured using JAX-RS roles. To access subscriber end-point, the __subscriber__ role is needed. To access publisher endpoints the __publisher__ role is need. The are some exceptions to this, as a __publisher__ is allowed to POST callback events to a subscriber end-point. Refer to [Swagger documentation](../master/swagger.yml) for details.
+All endpoints are secured using JAX-RS roles. To access subscriber end-point, the __subscriber__ role is needed. To access publisher endpoints the __publisher__ role is need. The are some exceptions to this, as a __publisher__ is allowed to POST callback events to a subscriber end-point. Refer to [Swagger documentation](../master/swagger.yaml) for details.
 
 When creating the JAX-RS Client CDI producer, filters should be added to handle security correctly. A simple HTTP Basic access authentication filter can be found in the Maven test module.
 
