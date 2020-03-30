@@ -29,6 +29,11 @@ import com.github.jensborch.webhooks.WebhookEventTopics;
 import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.WebhookResponseBuilder;
 import com.github.jensborch.webhooks.validation.ValidUUID;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 /**
  * Exposure for registration of webhooks.
@@ -49,6 +54,17 @@ public class SubscriberWebhookExposure {
     WebhookEventConsumer consumer;
 
     @POST
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "201"
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response create(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
@@ -63,6 +79,26 @@ public class SubscriberWebhookExposure {
 
     @PUT
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                content = @Content(array = @ArraySchema(
+                        schema = @Schema(implementation = Webhook.class)
+                ))
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response update(
             @ValidUUID @NotNull @PathParam("id") final String id,
             @NotNull @Valid final Webhook updated,
@@ -92,12 +128,43 @@ public class SubscriberWebhookExposure {
 
     @DELETE
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "202"
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response delete(@ValidUUID @NotNull @PathParam("id") final String id) {
         subscriptions.unsubscribe(UUID.fromString(id));
         return Response.noContent().build();
     }
 
     @GET
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                content = @Content(array = @ArraySchema(
+                        schema = @Schema(implementation = Webhook.class)
+                ))
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response list(@QueryParam("topics") final String topics) {
         return WebhookResponseBuilder
                 .create()
@@ -107,6 +174,26 @@ public class SubscriberWebhookExposure {
 
     @GET
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                content = @Content(
+                        schema = @Schema(implementation = Webhook.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response get(@ValidUUID @NotNull @PathParam("id") final String id, @Context final Request request) {
         return WebhookResponseBuilder
                 .create(request, Webhook.class)

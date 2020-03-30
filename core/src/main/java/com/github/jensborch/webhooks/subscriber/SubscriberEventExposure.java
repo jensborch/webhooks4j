@@ -32,6 +32,11 @@ import com.github.jensborch.webhooks.WebhookResponseBuilder;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.github.jensborch.webhooks.validation.ValidUUID;
 import com.github.jensborch.webhooks.validation.ValidZonedDateTime;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 /**
  * Exposure for receiving callback events.
@@ -53,6 +58,17 @@ public class SubscriberEventExposure {
 
     @POST
     @RolesAllowed("publisher")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "201"
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response receive(
             @NotNull @Valid final WebhookEvent callbackEvent,
             @Context final UriInfo uriInfo) {
@@ -67,6 +83,20 @@ public class SubscriberEventExposure {
 
     @GET
     @RolesAllowed({"subscriber", "publisher"})
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                content = @Content(array = @ArraySchema(
+                        schema = @Schema(implementation = WebhookEventStatus.class)
+                ))
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response list(
             @QueryParam("topics") final String topics,
             @ValidUUID @QueryParam("webhook") final String webhook,
@@ -88,6 +118,26 @@ public class SubscriberEventExposure {
     @GET
     @Path("{id}")
     @RolesAllowed({"subscriber", "publisher"})
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookEventStatus.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response get(
             @NotNull @ValidUUID @PathParam("id") final String id,
             @Context final Request request) {

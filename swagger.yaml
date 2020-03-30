@@ -93,6 +93,11 @@ paths:
         schema:
           type: string
       responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
         "404":
           content:
             application/json:
@@ -143,10 +148,21 @@ paths:
         schema:
           type: string
       responses:
-        default:
-          description: default response
+        "200":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventStatus'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
   /subscriber-events:
     get:
       operationId: list_2
@@ -165,10 +181,18 @@ paths:
         schema:
           type: string
       responses:
-        default:
-          description: default response
+        "200":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookEventStatus'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
     post:
       operationId: receive
       requestBody:
@@ -178,10 +202,11 @@ paths:
               $ref: '#/components/schemas/WebhookEvent'
         required: true
       responses:
-        default:
-          description: default response
+        "400":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
   /subscriber-webhooks/{id}:
     get:
       operationId: get_3
@@ -192,10 +217,21 @@ paths:
         schema:
           type: string
       responses:
-        default:
-          description: default response
+        "200":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
     put:
       operationId: update
       parameters:
@@ -211,10 +247,23 @@ paths:
               $ref: '#/components/schemas/Webhook'
         required: true
       responses:
-        default:
-          description: default response
+        "200":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
     delete:
       operationId: delete_1
       parameters:
@@ -224,10 +273,16 @@ paths:
         schema:
           type: string
       responses:
-        default:
-          description: default response
+        "400":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
   /subscriber-webhooks:
     get:
       operationId: list_3
@@ -237,10 +292,18 @@ paths:
         schema:
           type: string
       responses:
-        default:
-          description: default response
+        "200":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
     post:
       operationId: create_1
       requestBody:
@@ -250,10 +313,11 @@ paths:
               $ref: '#/components/schemas/Webhook'
         required: true
       responses:
-        default:
-          description: default response
+        "400":
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
 components:
   schemas:
     WebhookEvent:

@@ -91,6 +91,12 @@ public class PublisherWebhookExposure {
                 responseCode = "202"
         ),
         @ApiResponse(
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
                 responseCode = "404",
                 content = @Content(
                         schema = @Schema(implementation = WebhookError.class)
