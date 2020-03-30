@@ -37,7 +37,7 @@ import com.github.jensborch.webhooks.publisher.WebhookPublisher;
 WebhookPublisher publisher;
 
 Map<String, Object> eventData = new HashMap<>();
-publisher.publish(new WebhookEvent(webhook.getId(), "my-topic", eventData));
+publisher.publish("my-topic", eventData));
 ```
 
 To receive event use the CDI `@Observes` annotation:
