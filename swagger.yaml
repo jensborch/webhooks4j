@@ -15,16 +15,19 @@ paths:
           type: string
       responses:
         "200":
+          description: Webhook event status information
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookEventStatus'
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
         "404":
+          description: Not found
           content:
             application/json:
               schema:
@@ -48,6 +51,7 @@ paths:
           type: string
       responses:
         "200":
+          description: Webhook event status information
           content:
             application/json:
               schema:
@@ -55,6 +59,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/WebhookEventStatus'
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
@@ -70,16 +75,19 @@ paths:
           type: string
       responses:
         "200":
+          description: Webhook information
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Webhook'
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
         "404":
+          description: Not found
           content:
             application/json:
               schema:
@@ -93,12 +101,16 @@ paths:
         schema:
           type: string
       responses:
+        "202":
+          description: Deleted
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
         "404":
+          description: Not found
           content:
             application/json:
               schema:
@@ -113,6 +125,7 @@ paths:
           type: string
       responses:
         "200":
+          description: Webhook information
           content:
             application/json:
               schema:
@@ -120,12 +133,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/Webhook'
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
     post:
-      operationId: create
+      operationId: subscribe
       requestBody:
         content:
           application/json:
@@ -133,7 +147,10 @@ paths:
               $ref: '#/components/schemas/Webhook'
         required: true
       responses:
+        "201":
+          description: Subscribed to webhook
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
@@ -149,16 +166,19 @@ paths:
           type: string
       responses:
         "200":
+          description: Webhook event status information
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookEventStatus'
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
         "404":
+          description: Not found
           content:
             application/json:
               schema:
@@ -182,6 +202,7 @@ paths:
           type: string
       responses:
         "200":
+          description: Webhook event status information
           content:
             application/json:
               schema:
@@ -189,6 +210,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/WebhookEventStatus'
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
@@ -202,7 +224,10 @@ paths:
               $ref: '#/components/schemas/WebhookEvent'
         required: true
       responses:
+        "201":
+          description: Webhook event received
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
@@ -218,16 +243,19 @@ paths:
           type: string
       responses:
         "200":
+          description: Webhook information
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Webhook'
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
         "404":
+          description: Not found
           content:
             application/json:
               schema:
@@ -248,18 +276,19 @@ paths:
         required: true
       responses:
         "200":
+          description: Webhook information
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Webhook'
+                $ref: '#/components/schemas/Webhook'
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
         "404":
+          description: Not found
           content:
             application/json:
               schema:
@@ -273,12 +302,16 @@ paths:
         schema:
           type: string
       responses:
+        "202":
+          description: Deleted
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
         "404":
+          description: Not found
           content:
             application/json:
               schema:
@@ -293,6 +326,7 @@ paths:
           type: string
       responses:
         "200":
+          description: Webhook information
           content:
             application/json:
               schema:
@@ -300,12 +334,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/Webhook'
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
     post:
-      operationId: create_1
+      operationId: subscribe_1
       requestBody:
         content:
           application/json:
@@ -313,7 +348,10 @@ paths:
               $ref: '#/components/schemas/Webhook'
         required: true
       responses:
+        "201":
+          description: Subscribed to webhook
         "400":
+          description: Validation error
           content:
             application/json:
               schema:
@@ -383,7 +421,7 @@ components:
           - VALIDATION_ERROR
           - UNKNOWN_PUBLISHER
           - UNKNOWN_ERROR
-          - REGISTER_ERROR
+          - SUBSCRIPTION_ERROR
           - NOT_FOUND
           - SYNC_ERROR
           - ILLEGAL_STATUS
