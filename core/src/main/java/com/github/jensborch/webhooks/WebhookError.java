@@ -154,7 +154,7 @@ public class WebhookError implements Serializable {
         VALIDATION_ERROR(Response.Status.BAD_REQUEST, "Validation error"),
         UNKNOWN_PUBLISHER(Response.Status.BAD_REQUEST, "Unknown publisher"),
         UNKNOWN_ERROR(Response.Status.INTERNAL_SERVER_ERROR, "Unknown error"),
-        REGISTER_ERROR(Response.Status.SERVICE_UNAVAILABLE, "Webhook registration error"),
+        SUBSCRIPTION_ERROR(Response.Status.SERVICE_UNAVAILABLE, "Error subscribing to webhook"),
         NOT_FOUND(Response.Status.NOT_FOUND, "Not found"),
         SYNC_ERROR(Response.Status.SERVICE_UNAVAILABLE, "Event synchronisation error"),
         ILLEGAL_STATUS(Response.Status.BAD_REQUEST, "Illegal webhook state");

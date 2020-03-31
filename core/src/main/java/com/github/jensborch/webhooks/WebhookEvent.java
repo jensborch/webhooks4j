@@ -2,6 +2,7 @@ package com.github.jensborch.webhooks;
 
 import java.beans.ConstructorProperties;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -16,14 +17,18 @@ public class WebhookEvent<D> {
     @NotNull
     private final UUID id;
 
-    @NotNull
-    private final UUID webhook;
+    private UUID webhook;
 
     @NotNull
     private final String topic;
 
     @NotNull
     private final D data;
+
+    public WebhookEvent() {
+        //Needed for MongoDB POJO support
+        this(null, null);
+    }
 
     @ConstructorProperties({"id", "webhook", "topic", "data"})
     protected WebhookEvent(final UUID id, final UUID webhook, final String topic, final D data) {
@@ -33,16 +38,16 @@ public class WebhookEvent<D> {
         this.data = data;
     }
 
-    public WebhookEvent(final UUID webhook, final String topic, final D data) {
-        this(UUID.randomUUID(), webhook, topic, data);
+    public WebhookEvent(final String topic, final D data) {
+        this(UUID.randomUUID(), null, topic, data);
     }
 
     public UUID getId() {
         return id;
     }
 
-    public UUID getWebhook() {
-        return webhook;
+    public Optional<UUID> getWebhook() {
+        return Optional.ofNullable(webhook);
     }
 
     public String getTopic() {
@@ -51,6 +56,11 @@ public class WebhookEvent<D> {
 
     public D getData() {
         return data;
+    }
+
+    public WebhookEvent webhook(final UUID webhook) {
+        this.webhook = webhook;
+        return this;
     }
 
     @Override

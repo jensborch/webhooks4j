@@ -102,13 +102,11 @@ public class Webhook {
         return created;
     }
 
-    @JsonIgnore
-    public Endpoints getSubscriberEndpoints() {
+    public Endpoints subscriberEndpoints() {
         return new SubscriberEndpoints(subscriber);
     }
 
-    @JsonIgnore
-    public Endpoints gePublisherEndpoints() {
+    public Endpoints publisherEndpoints() {
         return new PublisherEndpoints(publisher);
     }
 

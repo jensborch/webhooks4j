@@ -69,7 +69,7 @@ public class WebhookEventConsumerTest {
         webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), TEST_TOPIC);
         lenient().when(subscriptions.find(any(UUID.class))).thenReturn(Optional.of(webhook));
         lenient().when(subscriptions.findActiveByTopic(any(WebhookEvent.class))).thenReturn(Optional.of(webhook));
-        lenient().when(event.select(ArgumentMatchers.<TypeLiteral<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
+        lenient().when(event.select(any(EventTopicLiteral.class))).thenReturn(event);
         lenient().when(repo.save(any())).then(returnsFirstArg());
         Optional<Webhook> publishers = Optional.of(webhook);
         lenient().when(subscriptions.find(any(UUID.class))).thenReturn(publishers);
@@ -78,7 +78,7 @@ public class WebhookEventConsumerTest {
     @Test
     public void testReceive() {
         UUID publisher = UUID.randomUUID();
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
         WebhookEventStatus status = consumer.consume(callbackEvent);
         assertNotNull(status);
         verify(repo, times(2)).save(any());
@@ -87,11 +87,11 @@ public class WebhookEventConsumerTest {
     @Test
     public void testReceiveTwice() {
         UUID publisher = UUID.randomUUID();
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
         when(repo.find(any()))
                 .thenReturn(Optional.of(new WebhookEventStatus(callbackEvent)
                         .done(true))
-                );
+            );
         consumer.consume(callbackEvent);
         verify(repo, times(0)).save(any());
     }
@@ -99,7 +99,17 @@ public class WebhookEventConsumerTest {
     @Test
     public void testReceiveFindThrowsException() {
         UUID publisher = UUID.randomUUID();
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, "unknown_topic", new HashMap<>());
+        when(subscriptions.findActiveByTopic(any(WebhookEvent.class))).thenReturn(Optional.empty());
+        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
+        WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
+        assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
+        assertEquals("Unknown/inactive publisher " + publisher + " for topic test_topic", e.getError().getDetail());
+    }
+
+    @Test
+    public void testReceiveUnknownTopic() {
+        UUID publisher = UUID.randomUUID();
+        WebhookEvent callbackEvent = new WebhookEvent("unknown_topic", new HashMap<>()).webhook(publisher);
         when(subscriptions.findActiveByTopic(any(WebhookEvent.class))).thenThrow(new WebhookException(new WebhookError(WebhookError.Code.UNKNOWN_PUBLISHER, "test")));
         WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
         assertEquals(WebhookError.Code.UNKNOWN_PUBLISHER, e.getError().getCode());
@@ -109,7 +119,7 @@ public class WebhookEventConsumerTest {
     public void testReceiveException() {
         UUID publisher = UUID.randomUUID();
         doThrow(new ObserverException("Test")).when(event).fire(any());
-        WebhookEvent callbackEvent = new WebhookEvent(publisher, TEST_TOPIC, new HashMap<>());
+        WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
         WebhookEventStatus status = consumer.consume(callbackEvent);
         assertNotNull(status);
         verify(repo, times(2)).save(any());
@@ -130,7 +140,7 @@ public class WebhookEventConsumerTest {
         SortedSet<WebhookEventStatus> statusSet = new TreeSet<>();
         if (status != null && status.length > 0) {
             Event<?> cdiEvent = mock(Event.class);
-            doReturn(cdiEvent).when(event).select(ArgumentMatchers.<TypeLiteral<WebhookEvent>>any(), any(EventTopicLiteral.class));
+            doReturn(cdiEvent).when(event).select(any(EventTopicLiteral.class));
             statusSet.addAll(Arrays.asList(status));
         }
         when(response.readEntity(ArgumentMatchers.<GenericType<SortedSet>>any())).thenReturn(statusSet);
@@ -145,10 +155,10 @@ public class WebhookEventConsumerTest {
 
     @Test
     public void testSync() {
-        WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(webhook.getId(), TEST_TOPIC, new HashMap<>()));
+        WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(webhook.getId()));
         setupSyncResponse(status);
         consumer.sync(webhook);
-        verify(event, times(1)).select(ArgumentMatchers.<TypeLiteral<WebhookEvent>>any(), any(EventTopicLiteral.class));
+        verify(event, times(1)).select(any(EventTopicLiteral.class));
     }
 
 }

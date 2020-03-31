@@ -59,8 +59,8 @@ public class SubscriberWebhookExposureTest {
 
     @Test
     public void testCreate() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
-        Response result = exposure.create(webhook, uriInfo);
+        Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic").state(Webhook.State.SUBSCRIBE);
+        Response result = exposure.subscribe(webhook, uriInfo);
         assertNotNull(result);
         verify(subscriptions).subscribe(webhook);
     }

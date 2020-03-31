@@ -60,7 +60,7 @@ public class PublisherWebhookExposureTest {
     public void testCreate() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE);
-        Response result = exposure.create(webhook, uriInfo);
+        Response result = exposure.subscribe(webhook, uriInfo);
         assertNotNull(result);
         verify(repo).save(webhook);
     }

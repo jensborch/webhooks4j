@@ -33,11 +33,11 @@ public class WebhookPublisherTest {
     WebhookPublisher publisher;
 
     @Test
-    public void testRegister() throws Exception {
+    public void testSubscribe() throws Exception {
         Webhook webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         Map<String, Object> data = new HashMap<>();
-        WebhookEvent event = new WebhookEvent(webhook.getId(), TestEventListener.TOPIC, data);
+        WebhookEvent event = new WebhookEvent(TestEventListener.TOPIC, data).webhook(webhook.getId());
         publisher.publish(event);
         assertThat(listener.getCount(), greaterThan(0));
         assertThat(listener.getEvents().keySet(), hasItems(event.getId()));

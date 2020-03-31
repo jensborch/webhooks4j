@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.github.jensborch.webhooks.Webhook;
+import com.github.jensborch.webhooks.WebhookDocumentation;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventStatus;
@@ -32,6 +33,13 @@ import com.github.jensborch.webhooks.WebhookResponseBuilder;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.github.jensborch.webhooks.validation.ValidUUID;
 import com.github.jensborch.webhooks.validation.ValidZonedDateTime;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exposure for receiving callback events.
@@ -44,6 +52,8 @@ import com.github.jensborch.webhooks.validation.ValidZonedDateTime;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SubscriberEventExposure {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SubscriberEventExposure.class);
+
     @Inject
     WebhookEventConsumer consumer;
 
@@ -53,6 +63,19 @@ public class SubscriberEventExposure {
 
     @POST
     @RolesAllowed("publisher")
+    @ApiResponses(value = {
+        @ApiResponse(
+                description = WebhookDocumentation.EVENT_RECEIVED,
+                responseCode = "201"
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response receive(
             @NotNull @Valid final WebhookEvent<?> callbackEvent,
             @Context final Request request,
@@ -68,11 +91,28 @@ public class SubscriberEventExposure {
 
     @GET
     @RolesAllowed({"subscriber", "publisher"})
+    @ApiResponses(value = {
+        @ApiResponse(
+                description = WebhookDocumentation.EVENT_STATUS,
+                responseCode = "200",
+                content = @Content(array = @ArraySchema(
+                        schema = @Schema(implementation = WebhookEventStatus.class)
+                ))
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response list(
             @QueryParam("topics") final String topics,
             @ValidUUID @QueryParam("webhook") final String webhook,
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
             @Context final UriInfo uriInfo) {
+        LOG.debug("Listing events using webhook {}, topics {} and from {}", webhook, topics, from);
         if (webhook == null) {
             return WebhookResponseBuilder
                     .create()
@@ -89,6 +129,29 @@ public class SubscriberEventExposure {
     @GET
     @Path("{id}")
     @RolesAllowed({"subscriber", "publisher"})
+    @ApiResponses(value = {
+        @ApiResponse(
+                description = WebhookDocumentation.EVENT_STATUS,
+                responseCode = "200",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookEventStatus.class)
+                )
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response get(
             @NotNull @ValidUUID @PathParam("id") final String id,
             @Context final Request request) {
@@ -104,5 +167,4 @@ public class SubscriberEventExposure {
     private WebhookException notFound(final String id) {
         return new WebhookException(new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + id + " not found"));
     }
-
 }

@@ -1,12 +1,12 @@
 package com.github.jensborch.webhooks.subscriber;
 
 import java.util.SortedSet;
+import java.util.UUID;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.ObserverException;
 import javax.enterprise.util.AnnotationLiteral;
-import javax.enterprise.util.TypeLiteral;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
@@ -54,12 +54,8 @@ public class WebhookEventConsumer {
      */
     public WebhookEventStatus consume(final WebhookEvent<?> callbackEvent) {
         LOG.debug("Receiving event {}", callbackEvent);
-        Webhook webhook = subscriptions.findActiveByTopic(callbackEvent).orElseThrow(() -> new WebhookException(
-                new WebhookError(
-                        WebhookError.Code.UNKNOWN_PUBLISHER,
-                        "Unknown/inactive publisher " + callbackEvent.getWebhook() + " for topic " + callbackEvent.getTopic())));
+        Webhook webhook = subscriptions.findActiveByTopic(callbackEvent).orElseThrow(() -> noPublisher(callbackEvent));
         WebhookEventStatus status = findOrCreate(callbackEvent);
-        //Helper<?> helper = Helper.create(webhook.getType());
         if (status.eligible()) {
             try {
                 event
@@ -77,35 +73,6 @@ public class WebhookEventConsumer {
     }
 
     /**
-     *
-     * @param <D>
-     */
-    private static class Helper<D> {
-
-        private final Class<D> type;
-
-        Helper(final Class<D> type) {
-            this.type = type;
-        }
-
-        static <D> Helper<D> create(final Class<D> type) {
-            return new Helper<D>(type);
-        }
-
-        @SuppressWarnings("PMD.UnusedFormalParameter")
-        TypeLiteral<WebhookEvent<D>> eventTypeLiteral() {
-            return new TypeLiteral<WebhookEvent<D>>() {
-                private static final long serialVersionUID = 5636572627689425575L;
-            };
-        }
-
-        <U> WebhookEvent<U> caseEvent(final WebhookEvent<?> callbackEvent) {
-            return (WebhookEvent<U>) callbackEvent;
-        }
-
-    }
-
-    /**
      * Synchronize with old events from publisher.
      *
      * @param webhook to synchronize.
@@ -115,7 +82,7 @@ public class WebhookEventConsumer {
                 .type(new GenericType<SortedSet<WebhookEventStatus>>() {
                 })
                 .invocation(client
-                        .target(webhook.gePublisherEndpoints().getEvents())
+                        .target(webhook.publisherEndpoints().getEvents())
                         .queryParam("from", webhook.getUpdated())
                         .queryParam("webhook", webhook.getId())
                         .request(MediaType.APPLICATION_JSON)
@@ -136,6 +103,13 @@ public class WebhookEventConsumer {
         String msg = "Processing error when synchronizing old events";
         LOG.warn(msg, e);
         throw new WebhookException(new WebhookError(WebhookError.Code.SYNC_ERROR, msg), e);
+    }
+
+    private WebhookException noPublisher(final WebhookEvent<?> callbackEvent) {
+        return new WebhookException(
+                new WebhookError(
+                        WebhookError.Code.UNKNOWN_PUBLISHER,
+                        "Unknown/inactive publisher " + callbackEvent.getWebhook().map(UUID::toString).orElse("null") + " for topic " + callbackEvent.getTopic()));
     }
 
     private WebhookEventStatus findOrCreate(final WebhookEvent<?> callbackEvent) {

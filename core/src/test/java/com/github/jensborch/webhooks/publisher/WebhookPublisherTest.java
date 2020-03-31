@@ -7,7 +7,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
@@ -73,7 +72,7 @@ public class WebhookPublisherTest {
 
     @Test
     public void testNoPublishers() {
-        publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
+        publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
     }
 
@@ -82,7 +81,7 @@ public class WebhookPublisherTest {
         Set<Webhook> hooks = new HashSet<>();
         hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), TOPIC));
         when(repo.list(TOPIC)).thenReturn(hooks);
-        publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
+        publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
         verify(statusRepo, times(2)).save(any());
     }
@@ -94,7 +93,7 @@ public class WebhookPublisherTest {
         Set<Webhook> hooks = new HashSet<>();
         hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), TOPIC));
         when(repo.list(TOPIC)).thenReturn(hooks);
-        publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
+        publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
         verify(statusRepo, times(2)).save(any());
     }
@@ -106,7 +105,7 @@ public class WebhookPublisherTest {
         Set<Webhook> hooks = new HashSet<>();
         hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), TOPIC));
         when(repo.list(TOPIC)).thenReturn(hooks);
-        publisher.publish(new WebhookEvent(UUID.randomUUID(), TOPIC, new HashMap<>()));
+        publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
         verify(statusRepo, times(2)).save(any());
     }

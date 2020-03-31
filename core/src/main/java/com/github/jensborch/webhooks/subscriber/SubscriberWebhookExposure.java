@@ -24,11 +24,19 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.github.jensborch.webhooks.Webhook;
+import com.github.jensborch.webhooks.WebhookDocumentation;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEventTopics;
 import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.WebhookResponseBuilder;
 import com.github.jensborch.webhooks.validation.ValidUUID;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exposure for registration of webhooks.
@@ -42,6 +50,8 @@ import com.github.jensborch.webhooks.validation.ValidUUID;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SubscriberWebhookExposure {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SubscriberWebhookExposure.class);
+
     @Inject
     WebhookSubscriptions subscriptions;
 
@@ -49,9 +59,26 @@ public class SubscriberWebhookExposure {
     WebhookEventConsumer consumer;
 
     @POST
-    public Response create(
+    @ApiResponses(value = {
+        @ApiResponse(
+                description = WebhookDocumentation.SUBSCRIBED,
+                responseCode = "201"
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
+    public Response subscribe(
             @NotNull @Valid final Webhook webhook,
             @Context final UriInfo uriInfo) {
+        if (webhook.getState() != Webhook.State.SUBSCRIBE) {
+            throw new WebhookException(new WebhookError(WebhookError.Code.VALIDATION_ERROR, "Illegal webhook status for " + webhook.getId()));
+        }
+        LOG.debug("Subscribing to webhook {}", webhook);
         subscriptions.subscribe(webhook);
         return Response.created(uriInfo
                 .getBaseUriBuilder()
@@ -63,6 +90,29 @@ public class SubscriberWebhookExposure {
 
     @PUT
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(
+                description = WebhookDocumentation.WEBHOOK,
+                responseCode = "200",
+                content = @Content(
+                        schema = @Schema(implementation = Webhook.class)
+                )
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response update(
             @ValidUUID @NotNull @PathParam("id") final String id,
             @NotNull @Valid final Webhook updated,
@@ -92,12 +142,48 @@ public class SubscriberWebhookExposure {
 
     @DELETE
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(
+                description = WebhookDocumentation.DELETED,
+                responseCode = "202"
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response delete(@ValidUUID @NotNull @PathParam("id") final String id) {
         subscriptions.unsubscribe(UUID.fromString(id));
         return Response.noContent().build();
     }
 
     @GET
+    @ApiResponses(value = {
+        @ApiResponse(
+                description = WebhookDocumentation.WEBHOOK,
+                responseCode = "200",
+                content = @Content(array = @ArraySchema(
+                        schema = @Schema(implementation = Webhook.class)
+                ))
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response list(@QueryParam("topics") final String topics) {
         return WebhookResponseBuilder
                 .create()
@@ -107,6 +193,29 @@ public class SubscriberWebhookExposure {
 
     @GET
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(
+                description = WebhookDocumentation.WEBHOOK,
+                responseCode = "200",
+                content = @Content(
+                        schema = @Schema(implementation = Webhook.class)
+                )
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
     public Response get(@ValidUUID @NotNull @PathParam("id") final String id, @Context final Request request) {
         return WebhookResponseBuilder
                 .create(request, Webhook.class)

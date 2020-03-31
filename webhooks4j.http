@@ -1,15 +1,18 @@
 
+@publisherToken=Basic cHVibGlzaGVyOnB1YnB1Yg==
+@subscriberToken=Basic c3Vic2NyaWJlcjpjb25jb24=
+
 ### Get publisher event
 GET http://localhost:8080/publisher-events/e9b285cc-9c88-4618-99c9-88aa91f24e3e
-Authorization: Basic cHVibGlzaGVyOnB1YnB1Yg==
+Authorization: {{publisherToken}}
 
 ### List all publisher events
 GET http://localhost:8080/publisher-events/?from=2007-12-03T10%3A15%3A30%2B01%3A00
-Authorization: Basic cHVibGlzaGVyOnB1YnB1Yg==
+Authorization: {{publisherToken}}
 
 ### Create publisher webhooks
 POST http://localhost:8080/publisher-webhooks/
-Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+Authorization: {{subscriberToken}}
 Content-Type: application/json
 
 {
@@ -23,35 +26,51 @@ Content-Type: application/json
 
 ### List all publisher webhooks
 GET http://localhost:8080/publisher-webhooks/
-Authorization: Basic cHVibGlzaGVyOnB1YnB1Yg==
+Authorization: {{publisherToken}}
 
 ### Get subscriber event
 GET http://localhost:8080/subscriber-events/e9b285cc-9c88-4618-99c9-88aa91f24e3e
-Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+Authorization: {{subscriberToken}}
 
 ### List all subscriber events
 GET http://localhost:8080/subscriber-events/?from=2007-12-03T10%3A15%3A30%2B01%3A00
-Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+Authorization: {{subscriberToken}}
 
 ### Post invalid subscriber events
 POST http://localhost:8080/subscriber-events/
-Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+Authorization: {{subscriberToken}}
 Content-Type: application/json
 
 { }
 
 ### List all subscriber webhooks
 GET http://localhost:8080/subscriber-webhooks/
-Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+Authorization: {{subscriberToken}}
 
 ### Sync events
 PUT http://localhost:8080/subscriber-webhooks/fe5db9df-1e54-4c8b-8667-986b2a128fc1
-Authorization: Basic c3Vic2NyaWJlcjpjb25jb24=
+Authorization: {{subscriberToken}}
 Content-Type: application/json
 
 {
     "id": "fe5db9df-1e54-4c8b-8667-986b2a128fc1",
     "state": "SYNCHRONIZE",
+    "topics": [
+        "test"
+    ],
+    "publisher": "http://localhost:8081/",
+    "subscriber": "http://localhost:8081/"
+}
+
+
+### Sync events
+PUT http://localhost:8080/subscriber-webhooks/fe5db9df-1e54-4c8b-8667-986b2a128fc1
+Authorization: {{subscriberToken}}
+Content-Type: application/json
+
+{
+    "id": "fe5db9df-1e54-4c8b-8667-986b2a128fc1",
+    "state": "UNSUBSCRIBE",
     "topics": [
         "test"
     ],
