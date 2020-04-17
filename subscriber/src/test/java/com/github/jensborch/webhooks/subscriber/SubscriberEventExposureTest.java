@@ -1,8 +1,5 @@
 package com.github.jensborch.webhooks.subscriber;
 
-import com.github.jensborch.webhooks.subscriber.WebhookEventConsumer;
-import com.github.jensborch.webhooks.subscriber.SubscriberEventExposure;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;

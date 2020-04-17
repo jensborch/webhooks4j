@@ -1,7 +1,5 @@
 package com.github.jensborch.webhooks.subscriber;
 
-import com.github.jensborch.webhooks.subscriber.WebhookSubscriptions;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
