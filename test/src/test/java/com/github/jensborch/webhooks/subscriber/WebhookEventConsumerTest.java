@@ -1,5 +1,6 @@
 package com.github.jensborch.webhooks.subscriber;
 
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
