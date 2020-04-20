@@ -3,18 +3,22 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j</artifactId>
-    <version>0.5.11-SNAPSHOT</version>
+    <version>0.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Webhooks4j</name>
-    <description>Small, simple and extendable Java library for messaging using webhooks</description>
+    <description>Small, simple and extendable Java library for messaging using webhooks.</description>
 
     <modules>
         <module>core</module>
         <module>test</module>
         <module>mongodb</module>
+        <module>publisher</module>
+        <module>subscriber</module>
     </modules>
     <properties>
+        <api.description>Small, simple and extendable Java library for messaging using webhooks.</api.description>
+        <api.version>v1</api.version>
         <cdi-api.version>1.2</cdi-api.version>
         <checkstyle-plugin.version>3.1.0</checkstyle-plugin.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
@@ -37,10 +41,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus-plugin.version>1.3.0.Final</quarkus-plugin.version>
+        <quarkus-plugin.version>1.3.2.Final</quarkus-plugin.version>
         <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-        <quarkus.platform.version>1.3.0.Final</quarkus.platform.version>
+        <quarkus.platform.version>1.3.2.Final</quarkus.platform.version>
         <release-plugin.version>2.5.3</release-plugin.version>
         <rs-api.version>2.0.1</rs-api.version>
         <sonar-plugin.version>3.6.0.1398</sonar-plugin.version>
