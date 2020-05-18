@@ -34,7 +34,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
     @SuppressFBWarnings("NP_NULL_PARAM_DEREF_NONVIRTUAL")
     protected WebhookEventStatus() {
         //Needed for MongoDB POJO support
-        this(null);
+        this(null, null, null, null, null);
     }
 
     @ConstructorProperties({"id", "event", "start", "end", "status"})
@@ -44,7 +44,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
             final ZonedDateTime start,
             final ZonedDateTime end,
             final Status status) {
-        if (!id.equals(event.getId())) {
+        if (id != null && !id.equals(event.getId())) {
             throw new IllegalArgumentException("Status ID and event ID must be identical");
         }
         this.end = end;

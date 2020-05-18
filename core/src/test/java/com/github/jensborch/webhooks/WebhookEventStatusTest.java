@@ -36,6 +36,12 @@ public class WebhookEventStatusTest {
     }
 
     @Test
+    public void testNoArgConstuctor() {
+        WebhookEventStatus webhook = new WebhookEventStatus();
+        assertNull(webhook.getId());
+    }
+
+    @Test
     public void testDone() {
         WebhookEventStatus result = status.done(true);
         assertEquals(WebhookEventStatus.Status.SUCCESS, result.getStatus());
@@ -65,7 +71,7 @@ public class WebhookEventStatusTest {
     @Test
     public void testToString() {
         WebhookEventStatus s = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()).webhook(webhook.getId()));
-        assertThat(s.toString(), startsWith("WebhookEventStatus{end=null, status=STARTED, id=" + s.getId() + ", event=WebhookEvent{id=" + s.getId() + ", webhook=" + s.getEvent().getWebhook().get() + ", topic=test, data={}}"));
+        assertThat(s.toString(), startsWith("WebhookEventStatus{end=null, status=STARTED, id=" + s.getId() + ", event=WebhookEvent{id=" + s.getId() + ", webhook=" + s.getEvent().getWebhook() + ", topic=test, data={}}"));
     }
 
     @Test

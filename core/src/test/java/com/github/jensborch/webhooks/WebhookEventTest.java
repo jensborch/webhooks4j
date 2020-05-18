@@ -20,6 +20,12 @@ public class WebhookEventTest {
     }
 
     @Test
+    public void testNoArgConstuctor() {
+        WebhookEvent event = new WebhookEvent();
+        assertNull(event.getId());
+    }
+
+    @Test
     public void testEquals() {
         UUID publisher = UUID.randomUUID();
         UUID id = UUID.randomUUID();

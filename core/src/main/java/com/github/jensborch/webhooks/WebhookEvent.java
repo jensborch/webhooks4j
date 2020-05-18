@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -28,12 +27,11 @@ public class WebhookEvent {
 
     public WebhookEvent() {
         //Needed for MongoDB POJO support
-        this(null, null);
+        this(null, null, null, null);
     }
 
     @ConstructorProperties({"id", "webhook", "topic", "data"})
-    protected WebhookEvent(final UUID id, final UUID webhook, final String topic, final Map<String, Object> data
-    ) {
+    protected WebhookEvent(final UUID id, final UUID webhook, final String topic, final Map<String, Object> data) {
         this.id = id;
         this.webhook = webhook;
         this.topic = topic;
@@ -48,8 +46,8 @@ public class WebhookEvent {
         return id;
     }
 
-    public Optional<UUID> getWebhook() {
-        return Optional.ofNullable(webhook);
+    public UUID getWebhook() {
+        return webhook;
     }
 
     public String getTopic() {

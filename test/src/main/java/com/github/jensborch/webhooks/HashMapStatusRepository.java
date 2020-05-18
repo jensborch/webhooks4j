@@ -41,7 +41,7 @@ public abstract class HashMapStatusRepository implements WebhookEventStatusRepos
     public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final UUID webhook) {
         return map.values().stream()
                 .filter(p -> p.getStart().isAfter(from))
-                .filter(p -> p.getEvent().getWebhook().map(w -> w.equals(webhook)).orElse(false))
+                .filter(p -> Optional.ofNullable(p.getEvent().getWebhook()).map(w -> w.equals(webhook)).orElse(false))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
