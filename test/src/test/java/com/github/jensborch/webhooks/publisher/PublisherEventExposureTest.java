@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * {@link com.github.jensborch.webhooks.publisher.PublisherEventExposure}
  */
 @QuarkusTest
-public class PublisherEventExposureTest {
+class PublisherEventExposureTest {
 
     @Inject
     WebhookSubscriptions subscriptions;

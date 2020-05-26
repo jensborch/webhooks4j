@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link Webhook}.
  */
-public class WebhookTest {
+class WebhookTest {
 
     @Test
     public void testCreate() throws Exception {

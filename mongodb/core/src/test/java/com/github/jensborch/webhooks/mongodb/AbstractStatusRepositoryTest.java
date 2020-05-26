@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link AbstractStatusRepository}.
  */
 @ExtendWith(MockitoExtension.class)
-public class AbstractStatusRepositoryTest {
+class AbstractStatusRepositoryTest {
 
     private static final ZonedDateTime DATE_TIME = ZonedDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneId.of("Europe/Copenhagen"));
 

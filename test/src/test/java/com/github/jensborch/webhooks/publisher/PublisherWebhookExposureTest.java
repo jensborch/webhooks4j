@@ -25,7 +25,7 @@ import org.junit.jupiter.api.TestMethodOrder;
  */
 @QuarkusTest
 @TestMethodOrder(OrderAnnotation.class)
-public class PublisherWebhookExposureTest {
+class PublisherWebhookExposureTest {
 
     private static final String TEST_TOPIC = PublisherWebhookExposureTest.class.getName();
     private RequestSpecification spec;

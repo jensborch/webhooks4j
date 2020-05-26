@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
  * Integration test for {@link WebhookPublisher}.
  */
 @QuarkusTest
-public class WebhookPublisherTest {
+class WebhookPublisherTest {
 
     @Inject
     WebhookSubscriptions subscriptions;

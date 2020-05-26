@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link WebhookEvent}.
  */
-public class WebhookEventTest {
+class WebhookEventTest {
 
     @Test
     public void testToString() {

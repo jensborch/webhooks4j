@@ -39,7 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link PublisherEventExposure}.
  */
 @ExtendWith(MockitoExtension.class)
-public class PublisherEventExposureTest {
+class PublisherEventExposureTest {
 
     @Mock
     private WebhookEventStatusRepository repo;

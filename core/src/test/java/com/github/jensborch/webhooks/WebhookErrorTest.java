@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link WebhookError}.
  */
 @ExtendWith(MockitoExtension.class)
-public class WebhookErrorTest {
+class WebhookErrorTest {
 
     @Mock
     private Response response;

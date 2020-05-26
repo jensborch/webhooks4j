@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 /**
  *
  */
-public class ObjectMapperProviderTest {
+class ObjectMapperProviderTest {
 
     @Test
     public void testSerialize() throws Exception {

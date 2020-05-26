@@ -33,7 +33,7 @@ import org.junit.jupiter.api.TestMethodOrder;
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SubscriberEventExposureTest {
+class SubscriberEventExposureTest {
 
     @Inject
     WebhookSubscriptions subscriptions;

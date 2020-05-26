@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
  * Integration test for {@link PublisherWebhookExposure}.
  */
 @QuarkusTest
-public class SubscriberWebhookExposureTest {
+class SubscriberWebhookExposureTest {
 
     @Inject
     WebhookSubscriptions subscriptions;

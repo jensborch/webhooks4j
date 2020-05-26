@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link WebhookEventStatus}.
  */
-public class WebhookEventStatusTest {
+class WebhookEventStatusTest {
 
     private Webhook webhook;
     private WebhookEventStatus status;

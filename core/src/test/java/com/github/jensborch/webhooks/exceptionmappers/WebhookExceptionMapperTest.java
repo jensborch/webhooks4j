@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link WebhookExceptionMapper}.
  */
-public class WebhookExceptionMapperTest {
+class WebhookExceptionMapperTest {
 
     @Test
     public void testToResponse() {

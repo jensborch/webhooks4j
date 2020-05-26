@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link WebhookResponseBuilder}.
  */
 @ExtendWith(MockitoExtension.class)
-public class WebhookResponseBuilderTest {
+class WebhookResponseBuilderTest {
 
     @Mock
     private Request request;

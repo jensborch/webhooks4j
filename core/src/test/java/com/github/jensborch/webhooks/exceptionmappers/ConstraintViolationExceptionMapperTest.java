@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link ConstraintViolationExceptionMapper}.
  */
-public class ConstraintViolationExceptionMapperTest {
+class ConstraintViolationExceptionMapperTest {
 
     @Test
     public void testToResponse() {

@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link AbstractWebhookRepository}.
  */
 @ExtendWith(MockitoExtension.class)
-public class AbstractWebhookRepositoryTest {
+class AbstractWebhookRepositoryTest {
 
     @Mock
     private MongoCollection<Webhook> collection;

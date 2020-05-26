@@ -31,7 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link SubscriberWebhookExposure}.
  */
 @ExtendWith(MockitoExtension.class)
-public class SubscriberWebhookExposureTest {
+class SubscriberWebhookExposureTest {
 
     @Mock
     private WebhookSubscriptions subscriptions;

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link ValidUUID}.
  */
-public class ValidUUIDTest {
+class ValidUUIDTest {
 
     @Test
     public void testIsNotValid() {

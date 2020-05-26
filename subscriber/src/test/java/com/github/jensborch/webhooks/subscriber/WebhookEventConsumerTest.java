@@ -45,7 +45,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link com.github.jensborch.webhooks.subscriber.WebhookEventConsumer}.
  */
 @ExtendWith(MockitoExtension.class)
-public class WebhookEventConsumerTest {
+class WebhookEventConsumerTest {
 
     private static final String TEST_TOPIC = "test_topic";
 

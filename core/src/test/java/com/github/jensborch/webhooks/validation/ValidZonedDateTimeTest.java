@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link ValidZonedDateTime}.
  */
-public class ValidZonedDateTimeTest {
+class ValidZonedDateTimeTest {
 
     @Test
     public void testIsNotValid() {

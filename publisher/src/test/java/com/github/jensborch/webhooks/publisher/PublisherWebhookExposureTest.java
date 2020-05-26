@@ -35,7 +35,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test for {@link PublisherWebhookExposure}.
  */
 @ExtendWith(MockitoExtension.class)
-public class PublisherWebhookExposureTest {
+class PublisherWebhookExposureTest {
 
     @Mock
     private WebhookRepository repo;

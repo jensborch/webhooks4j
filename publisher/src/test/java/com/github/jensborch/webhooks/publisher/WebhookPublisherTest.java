@@ -35,7 +35,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  */
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("PMD.UnusedPrivateField")
-public class WebhookPublisherTest {
+class WebhookPublisherTest {
 
     private static final String TOPIC = "test";
 
