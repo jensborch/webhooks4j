@@ -116,7 +116,6 @@ public class SubscriberWebhookExposure {
     public Response update(
             @ValidUUID @NotNull @PathParam("id") final String id,
             @NotNull @Valid final Webhook updated,
-            @Context final UriInfo uriInfo,
             @Context final Request request) {
         if (!id.equals(updated.getId().toString())) {
             throw new WebhookException(

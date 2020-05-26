@@ -1,6 +1,5 @@
 package com.github.jensborch.webhooks.publisher;
 
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -15,6 +14,7 @@ import javax.inject.Inject;
 
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.WebhookEvent;
+import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.subscriber.WebhookSubscriptions;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.builder.RequestSpecBuilder;
@@ -70,6 +70,30 @@ class PublisherEventExposureTest {
                 .when()
                 .pathParam("id", event.getId())
                 .get("publisher-events/{id}")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    void testupdate() {
+        WebhookEventStatus status = given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .when()
+                .pathParam("id", event.getId())
+                .get("publisher-events/{id}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .as(WebhookEventStatus.class);
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .log().all()
+                .when()
+                .pathParam("id", event.getId())
+                .body(status)
+                .put("publisher-events/{id}")
                 .then()
                 .statusCode(200);
     }
