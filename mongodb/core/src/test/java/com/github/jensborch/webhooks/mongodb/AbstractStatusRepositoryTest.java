@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,17 +30,28 @@ public class AbstractStatusRepositoryTest {
     @Mock
     private MongoCollection<WebhookEventStatus> collection;
 
+    @Mock
+    private MongoDatabase db;
+
     private final AbstractStatusRepository repository = new AbstractStatusRepository() {
         @Override
-        protected MongoCollection<WebhookEventStatus> collection() {
-            return collection;
+        protected String collectionName() {
+            return "test";
         }
+
+        @Override
+        protected MongoDatabase db() {
+            return db;
+        }
+
     };
 
     private final ArgumentCaptor<Bson> captor = ArgumentCaptor.forClass(Bson.class);
 
     @BeforeEach
     public void setup() {
+        when(db.withCodecRegistry(any())).thenReturn(db);
+        when(db.getCollection(any(String.class), any(Class.class))).thenReturn(collection);
         FindIterable<?> iterable = mock(FindIterable.class);
         when(iterable.into(any())).thenReturn(new TreeSet<>());
         doReturn(iterable).when(collection).find(any(Bson.class));

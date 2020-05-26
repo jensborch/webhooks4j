@@ -3,9 +3,8 @@ package com.github.jensborch.webhooks.mongodb;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.mongodb.client.MongoCollection;
-import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.subscriber.Subscriber;
+import com.mongodb.client.MongoDatabase;
 
 /**
  * Repository for consumed webhooks status.
@@ -16,11 +15,17 @@ public class SubscriberStatusRepository extends AbstractStatusRepository {
 
     @Inject
     @Subscriber
-    private MongoCollection<WebhookEventStatus> collection;
+    private MongoDatabase db;
 
     @Override
-    protected MongoCollection<WebhookEventStatus> collection() {
-        return collection;
+    protected String collectionName() {
+        return "SubscriberStatusRepository";
+    }
+
+    @Override
+    @SuppressWarnings("PMD.ShortMethodName")
+    protected MongoDatabase db() {
+        return db;
     }
 
 }

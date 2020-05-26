@@ -8,6 +8,7 @@ import java.util.HashSet;
 import com.github.jensborch.webhooks.Webhook;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,17 +26,33 @@ public class AbstractWebhookRepositoryTest {
     @Mock
     private MongoCollection<Webhook> collection;
 
+    @Mock
+    private MongoDatabase db;
+
     private final AbstractWebhookRepository repository = new AbstractWebhookRepository() {
         @Override
-        protected MongoCollection<Webhook> collection() {
-            return collection;
+        protected String collectionName() {
+            return "test";
         }
+
+        @Override
+        protected MongoDatabase db() {
+            return db;
+        }
+
+        @Override
+        protected AbstractStatusRepository statusRepository() {
+            throw new UnsupportedOperationException("Not needed yet.");
+        }
+
     };
 
     private final ArgumentCaptor<Bson> captor = ArgumentCaptor.forClass(Bson.class);
 
     @BeforeEach
     public void setup() {
+        when(db.withCodecRegistry(any())).thenReturn(db);
+        when(db.getCollection(any(String.class), any(Class.class))).thenReturn(collection);
         FindIterable<?> iterable = mock(FindIterable.class);
         when(iterable.into(any())).thenReturn(new HashSet<>());
         doReturn(iterable).when(collection).find(any(Bson.class));

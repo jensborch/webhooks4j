@@ -39,7 +39,7 @@ public class WebhookTest {
         Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
         ZonedDateTime old = w.getUpdated();
         TimeUnit.SECONDS.sleep(1);
-        assertNotEquals(old, w.touch().getUpdated());
+        assertNotEquals(old, w.touch(null).getUpdated());
     }
 
     @Test

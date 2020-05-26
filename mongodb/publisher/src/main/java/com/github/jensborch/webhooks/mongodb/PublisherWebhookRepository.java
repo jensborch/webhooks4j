@@ -3,9 +3,8 @@ package com.github.jensborch.webhooks.mongodb;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.mongodb.client.MongoCollection;
-import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.publisher.Publisher;
+import com.mongodb.client.MongoDatabase;
 
 /**
  * Repository for published webhooks.
@@ -16,10 +15,25 @@ public class PublisherWebhookRepository extends AbstractWebhookRepository {
 
     @Inject
     @Publisher
-    private MongoCollection<Webhook> collection;
+    private MongoDatabase db;
+
+    @Inject
+    @Publisher
+    private PublisherStatusRepository statusRepo;
 
     @Override
-    protected MongoCollection<Webhook> collection() {
-        return collection;
+    protected String collectionName() {
+        return "PublisherStatusRepository";
+    }
+
+    @Override
+    @SuppressWarnings("PMD.ShortMethodName")
+    protected MongoDatabase db() {
+        return db;
+    }
+
+    @Override
+    protected AbstractStatusRepository statusRepository() {
+        return statusRepo;
     }
 }
