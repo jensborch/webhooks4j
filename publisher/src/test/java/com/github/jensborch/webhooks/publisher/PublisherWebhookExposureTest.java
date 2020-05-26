@@ -1,7 +1,5 @@
 package com.github.jensborch.webhooks.publisher;
 
-import com.github.jensborch.webhooks.publisher.PublisherWebhookExposure;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -76,7 +74,8 @@ class PublisherWebhookExposureTest {
 
     @Test
     void testGet404() {
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString(), request));
+        String id = UUID.randomUUID().toString();
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(id, request));
         assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 

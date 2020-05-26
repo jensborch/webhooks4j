@@ -78,7 +78,9 @@ class SubscriberWebhookExposureTest {
     void testUpdateToInvalid() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.getId().toString(), webhook.state(Webhook.State.FAILED), uriInfo, request));
+        String id = webhook.getId().toString();
+        Webhook failedWebhook = webhook.state(Webhook.State.FAILED);
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(id, failedWebhook, uriInfo, request));
         assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
     }
 
@@ -91,7 +93,8 @@ class SubscriberWebhookExposureTest {
 
     @Test
     void testGet404() {
-        WebhookException e = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString(), request));
+        String id = UUID.randomUUID().toString();
+        WebhookException e = assertThrows(WebhookException.class, () -> exposure.get(id, request));
         assertEquals(Response.Status.NOT_FOUND, e.getError().getCode().getStatus());
     }
 

@@ -92,7 +92,8 @@ class SubscriberEventExposureTest {
 
     @Test
     void testGet404() {
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString(), request));
+        String id = UUID.randomUUID().toString();
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(id, request));
         assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 

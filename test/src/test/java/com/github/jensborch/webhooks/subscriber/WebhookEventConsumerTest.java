@@ -5,6 +5,7 @@ import static org.exparity.hamcrest.date.ZonedDateTimeMatchers.after;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -32,11 +33,11 @@ class WebhookEventConsumerTest {
 
     @Inject
     @Publisher
-    PublisherStatusRepository repo;
+    PublisherStatusRepository pubStatusRepo;
 
     @Inject
     @Subscriber
-    SubscriberStatusRepository subRepo;
+    SubscriberStatusRepository subStatusRepo;
 
     @Inject
     TestEventListener listener;
@@ -51,15 +52,15 @@ class WebhookEventConsumerTest {
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));
-        repo.save(s1);
-        repo.save(s2);
-        SortedSet<WebhookEventStatus> events = repo.list(ZonedDateTime.now().minusMinutes(1), TestEventListener.TOPIC);
+        pubStatusRepo.save(s1);
+        pubStatusRepo.save(s2);
+        SortedSet<WebhookEventStatus> events = pubStatusRepo.list(ZonedDateTime.now().minusMinutes(1), TestEventListener.TOPIC);
         assertThat(events.size(), greaterThan(1));
         assertThat(events, hasItems(s2, s1));
         consumer.sync(webhook);
         webhook = subscriptions.find(webhook.getId()).get();
         assertThat(webhook.getUpdated(), after(webhook.getCreated()));
-        //assertEquals(webhook.getUpdated(), subRepo.list(from, webhook.getId()).stream().findFirst().get().getStart());
+        assertTrue(subStatusRepo.list(from, webhook.getId()).stream().filter(s -> s.getStatus() == WebhookEventStatus.Status.FAILED).findAny().isEmpty());
         assertThat(listener.getEvents().keySet(), hasItems(s2.getId(), s1.getId()));
     }
 
