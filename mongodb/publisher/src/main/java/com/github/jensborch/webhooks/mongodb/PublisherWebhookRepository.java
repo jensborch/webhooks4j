@@ -23,7 +23,7 @@ public class PublisherWebhookRepository extends AbstractWebhookRepository {
 
     @Override
     protected String collectionName() {
-        return "PublisherStatusRepository";
+        return "PublisherWebhooks";
     }
 
     @Override

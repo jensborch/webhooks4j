@@ -19,7 +19,7 @@ public class SubscriberStatusRepository extends AbstractStatusRepository {
 
     @Override
     protected String collectionName() {
-        return "SubscriberStatusRepository";
+        return "SubscriberStatuses";
     }
 
     @Override
