@@ -1,9 +1,11 @@
 package com.github.jensborch.webhooks.subscriber;
 
 
+import static org.exparity.hamcrest.date.ZonedDateTimeMatchers.after;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -34,6 +36,10 @@ public class WebhookEventConsumerTest {
     PublisherStatusRepository repo;
 
     @Inject
+    @Subscriber
+    SubscriberStatusRepository subRepo;
+
+    @Inject
     TestEventListener listener;
 
     @Inject
@@ -41,6 +47,7 @@ public class WebhookEventConsumerTest {
 
     @Test
     public void testSync() throws Exception {
+        ZonedDateTime from = ZonedDateTime.now();
         Webhook webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));
@@ -51,6 +58,9 @@ public class WebhookEventConsumerTest {
         assertThat(events.size(), greaterThan(1));
         assertThat(events, hasItems(s2, s1));
         consumer.sync(webhook);
+        webhook = subscriptions.find(webhook.getId()).get();
+        assertThat(webhook.getUpdated(), after(webhook.getCreated()));
+        assertEquals(webhook.getUpdated(), subRepo.list(from, webhook.getId()).stream().findFirst().get().getStart());
         assertThat(listener.getEvents().keySet(), hasItems(s2.getId(), s1.getId()));
     }
 
