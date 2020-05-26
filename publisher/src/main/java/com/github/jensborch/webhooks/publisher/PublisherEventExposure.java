@@ -1,7 +1,5 @@
 package com.github.jensborch.webhooks.publisher;
 
-import com.github.jensborch.webhooks.WebhookDocumentation;
-
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -9,9 +7,11 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.github.jensborch.webhooks.Webhook;
+import com.github.jensborch.webhooks.WebhookDocumentation;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.WebhookEventTopics;
@@ -128,6 +129,60 @@ public class PublisherEventExposure {
                         .find(UUID.fromString(id))
                         .orElseThrow(() -> notFound(id)))
                 .build();
+    }
+
+    @PUT
+    @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(
+                description = WebhookDocumentation.EVENT_STATUS,
+                responseCode = "200",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookEventStatus.class)
+                )
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.VALIDATION_ERROR,
+                responseCode = "400",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        ),
+        @ApiResponse(
+                description = WebhookDocumentation.NOT_FOUND,
+                responseCode = "404",
+                content = @Content(
+                        schema = @Schema(implementation = WebhookError.class)
+                )
+        )
+    })
+    public Response update(
+            @NotNull @ValidUUID @PathParam("id") final String id,
+            @NotNull @Valid final WebhookEventStatus status,
+            @Context final Request request) {
+        requireStatusSuccess(status);
+        requireSameId(id, status);
+        WebhookEventStatus found = repo
+                .find(UUID.fromString(id))
+                .orElseThrow(() -> notFound(id));
+        return WebhookResponseBuilder
+                .create(request, WebhookEventStatus.class)
+                .entity(status)
+                .tag(e -> String.valueOf(e.getStart().toInstant().toEpochMilli()))
+                .fulfilled(s -> Response.ok(repo.save(found.done(true))))
+                .build();
+    }
+
+    private void requireStatusSuccess(final WebhookEventStatus status) {
+        if (status.getStatus() != WebhookEventStatus.Status.SUCCESS) {
+            throw new WebhookException(new WebhookError(WebhookError.Code.VALIDATION_ERROR, "Illegal event status for " + status.getId() + " - status must be SUCCESS"));
+        }
+    }
+
+    private void requireSameId(final String id, final WebhookEventStatus status) {
+        if (!id.equals(status.getId().toString())) {
+            throw new WebhookException(new WebhookError(WebhookError.Code.VALIDATION_ERROR, "Illegal event id for " + status.getId() + " - id must equal " + id));
+        }
     }
 
     private WebhookException notFound(final String id) {

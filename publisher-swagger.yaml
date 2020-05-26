@@ -32,6 +32,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
+    put:
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookEventStatus'
+        required: true
+      responses:
+        "200":
+          description: Webhook event status information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventStatus'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
   /publisher-events:
     get:
       operationId: list

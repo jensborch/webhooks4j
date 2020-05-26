@@ -87,7 +87,7 @@ public class WebhookEventConsumer {
                         .queryParam("webhook", webhook.getId())
                         .request(MediaType.APPLICATION_JSON)
                         .buildGet())
-                .success(events -> events.stream().map(WebhookEventStatus::getEvent).forEach(this::consume))
+                .success(events -> events.stream().map(WebhookEventStatus::getEvent).map(this::consume).forEach(this::updateStatus))
                 .error(this::handleError)
                 .exception(this::handleException)
                 .invoke();
@@ -124,6 +124,11 @@ public class WebhookEventConsumer {
         return repo
                 .find(callbackEvent.getId())
                 .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent)));
+    }
+
+    private void updateStatus(final WebhookEventStatus status) {
+        LOG.debug("Updating status for event: {}", status);
+        //TODO
     }
 
     /**
