@@ -31,7 +31,7 @@ class WebhookResponseBuilderTest {
     private Request request;
 
     @Test
-    public void testBuildNoStore() {
+    void testBuildNoStore() {
         Response response = WebhookResponseBuilder
                 .create(request, String.class)
                 .entity("test")
@@ -42,7 +42,7 @@ class WebhookResponseBuilderTest {
     }
 
     @Test
-    public void testBuildNotFulfilled() {
+    void testBuildNotFulfilled() {
         Response.ResponseBuilder responseBuilder = mock(Response.ResponseBuilder.class);
         when(request.evaluatePreconditions(any(EntityTag.class))).thenReturn(responseBuilder);
         when(responseBuilder.cacheControl(any())).thenReturn(responseBuilder);
@@ -60,7 +60,7 @@ class WebhookResponseBuilderTest {
     }
 
     @Test
-    public void testBuildFulfilled() {
+    void testBuildFulfilled() {
         Response response = WebhookResponseBuilder
                 .create(request, String.class)
                 .entity("test")

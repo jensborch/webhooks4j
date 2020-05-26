@@ -49,7 +49,7 @@ class SubscriberWebhookExposureTest {
     private SubscriberWebhookExposure exposure;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         UriBuilder uriBuilder = mock(UriBuilder.class);
         lenient().when(uriInfo.getBaseUriBuilder()).thenReturn(uriBuilder);
         lenient().when(uriBuilder.path(any(Class.class))).thenReturn(uriBuilder);
@@ -58,7 +58,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic").state(Webhook.State.SUBSCRIBE);
         Response result = exposure.subscribe(webhook, uriInfo);
         assertNotNull(result);
@@ -66,7 +66,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testSync() throws Exception {
+    void testSync() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
         Response result = exposure.update(webhook.getId().toString(), webhook.state(Webhook.State.SYNCHRONIZE), uriInfo, request);
@@ -75,7 +75,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testUpdateToInvalid() throws Exception {
+    void testUpdateToInvalid() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(webhook.getId())).thenReturn(Optional.of(webhook));
         WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(webhook.getId().toString(), webhook.state(Webhook.State.FAILED), uriInfo, request));
@@ -83,20 +83,20 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testList() {
+    void testList() {
         Response result = exposure.list("test_topic");
         assertNotNull(result);
         verify(subscriptions).list("test_topic");
     }
 
     @Test
-    public void testGet404() {
+    void testGet404() {
         WebhookException e = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString(), request));
         assertEquals(Response.Status.NOT_FOUND, e.getError().getCode().getStatus());
     }
 
     @Test
-    public void testGet() throws Exception {
+    void testGet() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(subscriptions.find(any())).thenReturn(Optional.of(webhook));
         Response result = exposure.get(UUID.randomUUID().toString(), request);

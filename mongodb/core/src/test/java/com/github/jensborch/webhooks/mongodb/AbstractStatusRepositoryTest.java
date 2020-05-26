@@ -49,7 +49,7 @@ class AbstractStatusRepositoryTest {
     private final ArgumentCaptor<Bson> captor = ArgumentCaptor.forClass(Bson.class);
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         when(db.withCodecRegistry(any())).thenReturn(db);
         when(db.getCollection(any(String.class), any(Class.class))).thenReturn(collection);
         FindIterable<?> iterable = mock(FindIterable.class);
@@ -58,7 +58,7 @@ class AbstractStatusRepositoryTest {
     }
 
     @Test
-    public void testListWithTopics() {
+    void testListWithTopics() {
         repository.list(DATE_TIME, "a", "b", "c");
 
         verify(collection, times(1)).find(captor.capture());
@@ -72,7 +72,7 @@ class AbstractStatusRepositoryTest {
     }
 
     @Test
-    public void testListWithoutTopics() {
+    void testListWithoutTopics() {
         repository.list(DATE_TIME);
 
         verify(collection, times(1)).find(captor.capture());

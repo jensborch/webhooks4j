@@ -55,7 +55,7 @@ class SubscriberEventExposureTest {
     private SubscriberEventExposure exposure;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         UriBuilder uriBuilder = mock(UriBuilder.class);
         lenient().when(uriInfo.getBaseUriBuilder()).thenReturn(uriBuilder);
         lenient().when(uriBuilder.path(any(Class.class))).thenReturn(uriBuilder);
@@ -65,7 +65,7 @@ class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testReceive() {
+    void testReceive() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent("test_topic", new HashMap<>());
         Response response = exposure.receive(callbackEvent, uriInfo);
@@ -74,7 +74,7 @@ class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testListByTopic() {
+    void testListByTopic() {
         ZonedDateTime now = ZonedDateTime.now();
         Response response = exposure.list("test1, test2", null, now.toString(), uriInfo);
         assertNotNull(response);
@@ -82,7 +82,7 @@ class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testListByWebhook() {
+    void testListByWebhook() {
         ZonedDateTime now = ZonedDateTime.now();
         UUID id = UUID.randomUUID();
         Response response = exposure.list(null, id.toString(), now.toString(), uriInfo);
@@ -91,13 +91,13 @@ class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testGet404() {
+    void testGet404() {
         WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString(), request));
         assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 
     @Test
-    public void testGet() {
+    void testGet() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent event = new WebhookEvent("test", new HashMap<>());
         when(repo.find(any())).thenReturn(Optional.of(new WebhookEventStatus(event)));

@@ -26,19 +26,19 @@ class URICodecTest {
     private BsonWriter writer;
 
     @Test
-    public void decode() {
+    void decode() {
         when(reader.readString()).thenReturn("http://test.dk");
         assertEquals("test.dk",new URICodec().decode(reader, null).getHost());
     }
 
     @Test
-    public void encode() throws Exception {
+    void encode() throws Exception {
         new URICodec().encode(writer, new URI("http://test.dk"), null);
         verify(writer).writeString("http://test.dk");
     }
 
     @Test
-    public void getEncoderClass() {
+    void getEncoderClass() {
         assertEquals(URI.class, new URICodec().getEncoderClass());
     }
 

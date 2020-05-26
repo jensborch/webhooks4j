@@ -50,7 +50,7 @@ class PublisherWebhookExposureTest {
     private PublisherWebhookExposure exposure;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         UriBuilder uriBuilder = mock(UriBuilder.class);
         lenient().when(uriInfo.getBaseUriBuilder()).thenReturn(uriBuilder);
         lenient().when(uriBuilder.path(any(Class.class))).thenReturn(uriBuilder);
@@ -59,7 +59,7 @@ class PublisherWebhookExposureTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE);
         Response result = exposure.subscribe(webhook, uriInfo);
@@ -68,20 +68,20 @@ class PublisherWebhookExposureTest {
     }
 
     @Test
-    public void testList() {
+    void testList() {
         Response result = exposure.list("test_topic");
         assertNotNull(result);
         verify(repo).list("test_topic");
     }
 
     @Test
-    public void testGet404() {
+    void testGet404() {
         WebhookException result = assertThrows(WebhookException.class, () -> exposure.get(UUID.randomUUID().toString(), request));
         assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 
     @Test
-    public void testGet() throws Exception {
+    void testGet() throws Exception {
         Webhook webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
         when(repo.find(any())).thenReturn(Optional.of(webhook));
         Response result = exposure.get(UUID.randomUUID().toString(), request);
@@ -90,7 +90,7 @@ class PublisherWebhookExposureTest {
     }
 
     @Test
-    public void testDelete() {
+    void testDelete() {
         UUID id = UUID.randomUUID();
         Response result = exposure.delete(id.toString());
         assertNotNull(result);

@@ -58,7 +58,7 @@ class WebhookPublisherTest {
     private WebhookPublisher publisher;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         WebTarget target = mock(WebTarget.class);
         Invocation.Builder builder = mock(Invocation.Builder.class);
         lenient().when(target.request(eq(MediaType.APPLICATION_JSON))).thenReturn(builder);
@@ -73,13 +73,13 @@ class WebhookPublisherTest {
     }
 
     @Test
-    public void testNoPublishers() {
+    void testNoPublishers() {
         publisher.publish(new WebhookEvent(TOPIC, new HashMap<>()));
         verify(repo, times(1)).list(eq(TOPIC));
     }
 
     @Test
-    public void testPublish() throws Exception {
+    void testPublish() throws Exception {
         Set<Webhook> hooks = new HashSet<>();
         hooks.add(new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), TOPIC));
         when(repo.list(TOPIC)).thenReturn(hooks);
@@ -89,7 +89,7 @@ class WebhookPublisherTest {
     }
 
     @Test
-    public void testPublishProcessingException() throws Exception {
+    void testPublishProcessingException() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.BAD_REQUEST);
         when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenThrow(new ProcessingException("test"));
         Set<Webhook> hooks = new HashSet<>();
@@ -101,7 +101,7 @@ class WebhookPublisherTest {
     }
 
     @Test
-    public void testPublishFailure() throws Exception {
+    void testPublishFailure() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.BAD_REQUEST);
         when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"VALIDATION_ERROR\", \"status\":\"400\", \"msg\":\"test\" }");
         Set<Webhook> hooks = new HashSet<>();

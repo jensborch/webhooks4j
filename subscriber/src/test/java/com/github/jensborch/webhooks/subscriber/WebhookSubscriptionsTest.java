@@ -57,7 +57,7 @@ class WebhookSubscriptionsTest {
     private WebhookSubscriptions subscriptions;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         WebTarget target = mock(WebTarget.class);
         lenient().when(target.request(eq(MediaType.APPLICATION_JSON))).thenReturn(builder);
         lenient().when(target.request()).thenReturn(builder);
@@ -72,21 +72,21 @@ class WebhookSubscriptionsTest {
     }
 
     @Test
-    public void testSubscribe() throws Exception {
+    void testSubscribe() throws Exception {
         subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE));
         verify(repo, times(2)).save(any());
     }
 
     @Test
-    public void testUnsubscribe() throws Exception {
+    void testUnsubscribe() throws Exception {
         subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
                 .state(Webhook.State.SUBSCRIBE));
         verify(repo, times(2)).save(any());
     }
 
     @Test
-    public void testUnsubscribe404() throws Exception {
+    void testUnsubscribe404() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
         when(response.getStatus()).thenReturn(404);
         when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
@@ -96,7 +96,7 @@ class WebhookSubscriptionsTest {
     }
 
     @Test
-    public void testUnsubscribe500() {
+    void testUnsubscribe500() {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
         when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"SUBSCRIPTION_ERROR\", \"status\":\"500\", \"msg\":\"test\" }");
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
@@ -106,14 +106,14 @@ class WebhookSubscriptionsTest {
     }
 
     @Test
-    public void testUnsubscribeProcessingException() {
+    void testUnsubscribeProcessingException() {
         when(invocation.invoke()).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")));
         assertEquals(WebhookError.Code.SUBSCRIPTION_ERROR, e.getError().getCode());
     }
 
     @Test
-    public void testSubscribeProcessingException() {
+    void testSubscribeProcessingException() {
         when(invocation.invoke()).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions
                 .subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
@@ -123,7 +123,7 @@ class WebhookSubscriptionsTest {
     }
 
     @Test
-    public void testSubscribeHttp400() {
+    void testSubscribeHttp400() {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
         when(response.getStatus()).thenReturn(404);
         when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
@@ -134,7 +134,7 @@ class WebhookSubscriptionsTest {
     }
 
     @Test
-    public void testSubscribeHttp500() {
+    void testSubscribeHttp500() {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
         when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenThrow(new ProcessingException("test"));
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")

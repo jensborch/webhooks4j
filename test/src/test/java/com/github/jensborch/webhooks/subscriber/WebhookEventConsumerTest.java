@@ -45,7 +45,7 @@ class WebhookEventConsumerTest {
     WebhookEventConsumer consumer;
 
     @Test
-    public void testSync() throws Exception {
+    void testSync() throws Exception {
         ZonedDateTime from = ZonedDateTime.now();
         Webhook webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));

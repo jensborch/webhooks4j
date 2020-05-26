@@ -34,7 +34,7 @@ class WebhookPublisherTest {
     WebhookPublisher publisher;
 
     @Test
-    public void testSubscribe() throws Exception {
+    void testSubscribe() throws Exception {
         Webhook webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         Map<String, Object> data = new HashMap<>();

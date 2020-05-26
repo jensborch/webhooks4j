@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 class ConstraintViolationExceptionMapperTest {
 
     @Test
-    public void testToResponse() {
+    void testToResponse() {
         Set<? extends ConstraintViolation<?>> constraintViolations = new HashSet<>();
         ConstraintViolationException e = new ConstraintViolationException(constraintViolations);
         ConstraintViolationExceptionMapper mapper = new ConstraintViolationExceptionMapper();

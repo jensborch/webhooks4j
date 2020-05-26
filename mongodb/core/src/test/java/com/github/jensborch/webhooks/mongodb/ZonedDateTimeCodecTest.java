@@ -28,20 +28,20 @@ class ZonedDateTimeCodecTest {
     private BsonWriter writer;
 
     @Test
-    public void testDecode() {
+    void testDecode() {
         when(reader.readDateTime()).thenReturn(DATE_TIME.toInstant().toEpochMilli());
 
         assertEquals(DATE_TIME.toInstant().toEpochMilli(), new ZonedDateTimeCodec().decode(reader, null).toInstant().toEpochMilli());
     }
 
     @Test
-    public void testEncode() {
+    void testEncode() {
         new ZonedDateTimeCodec().encode(writer, DATE_TIME, null);
         verify(writer).writeDateTime(DATE_TIME.toInstant().toEpochMilli());
     }
 
     @Test
-    public void testGetEncoderClass() {
+    void testGetEncoderClass() {
         assertEquals(ZonedDateTime.class, new ZonedDateTimeCodec().getEncoderClass());
     }
 

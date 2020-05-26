@@ -41,7 +41,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
@@ -52,7 +52,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testGetWebhook() {
+    void testGetWebhook() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -65,7 +65,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testListWebhooksWithTopics() {
+    void testListWebhooksWithTopics() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -78,7 +78,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testListWebhooksUnknownTopic() {
+    void testListWebhooksUnknownTopic() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -91,7 +91,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testListWebhooks() {
+    void testListWebhooks() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -103,7 +103,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testDeleteWebhooks() throws Exception {
+    void testDeleteWebhooks() throws Exception {
         Webhook toDelete = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), "delete");
         given()
                 .spec(spec)
@@ -124,7 +124,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testUpdateWebhook400() {
+    void testUpdateWebhook400() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -137,7 +137,7 @@ class SubscriberWebhookExposureTest {
     }
 
     @Test
-    public void testUpdateWebhookSync() {
+    void testUpdateWebhookSync() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 class WebhookTest {
 
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         Webhook w = new Webhook(UUID.randomUUID(), new URI("http://pub.dk"), new URI("http://sub.dk"), Webhook.State.ACTIVE, null, null, null);
         assertNotNull(w.getTopics());
         assertNotNull(w.getCreated());
@@ -29,14 +29,14 @@ class WebhookTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    void testUpdate() throws Exception {
         ZonedDateTime updated = ZonedDateTime.now();
         Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test").updated(updated);
         assertEquals(updated, w.getUpdated());
     }
 
     @Test
-    public void testTouchNull() throws Exception {
+    void testTouchNull() throws Exception {
         Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
         ZonedDateTime old = w.getUpdated();
         TimeUnit.SECONDS.sleep(1);
@@ -44,34 +44,34 @@ class WebhookTest {
     }
 
     @Test
-    public void testTouch() throws Exception {
+    void testTouch() throws Exception {
         Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
         ZonedDateTime now = ZonedDateTime.now().plusMinutes(5);
         assertEquals(now, w.touch(now).getUpdated());
     }
 
     @Test
-    public void testSubscribeEndpoints() throws Exception {
+    void testSubscribeEndpoints() throws Exception {
         Webhook.SubscriberEndpoints sub = new Webhook.SubscriberEndpoints(new URI("http://test.dk"));
         assertEquals("http://test.dk/subscriber-events", sub.getEvents().toString());
         assertEquals("http://test.dk/subscriber-webhooks", sub.getWebhooks().toString());
     }
 
     @Test
-    public void testPublisherEndpoints() throws Exception {
+    void testPublisherEndpoints() throws Exception {
         Webhook.PublisherEndpoints sub = new Webhook.PublisherEndpoints(new URI("http://test.dk/test"));
         assertEquals("http://test.dk/test/publisher-events", sub.getEvents().toString());
         assertEquals("http://test.dk/test/publisher-webhooks", sub.getWebhooks().toString());
     }
 
     @Test
-    public void testToString() throws Exception {
+    void testToString() throws Exception {
         Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
         assertThat(w.toString(), startsWith("Webhook{state=ACTIVE,"));
     }
 
     @Test
-    public void testEquals() throws Exception {
+    void testEquals() throws Exception {
         Webhook w1 = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
         Webhook w2 = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
         assertEquals(w1, w2);
@@ -79,7 +79,7 @@ class WebhookTest {
     }
 
     @Test
-    public void testNotEquals() throws Exception {
+    void testNotEquals() throws Exception {
         Webhook w1 = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
         Webhook w2 = new Webhook(new URI("http://pub2.dk"), new URI("http://sub2.dk"), "different");
         assertNotEquals(w1, w2);

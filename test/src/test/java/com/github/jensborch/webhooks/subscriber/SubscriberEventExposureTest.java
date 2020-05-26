@@ -48,7 +48,7 @@ class SubscriberEventExposureTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
@@ -60,7 +60,7 @@ class SubscriberEventExposureTest {
 
     @Test
     @Order(1)
-    public void testPublishEvent() {
+    void testPublishEvent() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -73,7 +73,7 @@ class SubscriberEventExposureTest {
 
     @Test
     @Order(2)
-    public void testList() {
+    void testList() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -86,7 +86,7 @@ class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testListUnknownTopic() {
+    void testListUnknownTopic() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -100,7 +100,7 @@ class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testPublishInvalidEvent() {
+    void testPublishInvalidEvent() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -113,7 +113,7 @@ class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testPublishEventInvalidPublisher() {
+    void testPublishEventInvalidPublisher() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -126,7 +126,7 @@ class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testPublishEventUnknownTopic() {
+    void testPublishEventUnknownTopic() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")

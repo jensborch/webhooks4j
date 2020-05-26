@@ -67,7 +67,7 @@ class WebhookEventConsumerTest {
     private Webhook webhook;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), TEST_TOPIC);
         lenient().when(subscriptions.find(any())).thenReturn(Optional.of(webhook));
         lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);
@@ -77,7 +77,7 @@ class WebhookEventConsumerTest {
     }
 
     @Test
-    public void testReceive() {
+    void testReceive() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
         WebhookEventStatus status = consumer.consume(callbackEvent);
@@ -86,7 +86,7 @@ class WebhookEventConsumerTest {
     }
 
     @Test
-    public void testReceiveTwice() {
+    void testReceiveTwice() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
         when(repo.find(any()))
@@ -98,7 +98,7 @@ class WebhookEventConsumerTest {
     }
 
     @Test
-    public void testReceiveUnknownPublisher() {
+    void testReceiveUnknownPublisher() {
         UUID publisher = UUID.randomUUID();
         when(subscriptions.find(any())).thenReturn(Optional.empty());
         WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
@@ -108,7 +108,7 @@ class WebhookEventConsumerTest {
     }
 
     @Test
-    public void testReceiveUnknownTopic() {
+    void testReceiveUnknownTopic() {
         UUID publisher = UUID.randomUUID();
         WebhookEvent callbackEvent = new WebhookEvent("unknown_topic", new HashMap<>()).webhook(publisher);
         WebhookException e = assertThrows(WebhookException.class, () -> consumer.consume(callbackEvent));
@@ -117,7 +117,7 @@ class WebhookEventConsumerTest {
     }
 
     @Test
-    public void testReceiveException() {
+    void testReceiveException() {
         UUID publisher = UUID.randomUUID();
         doThrow(new ObserverException("Test")).when(event).fire(any());
         WebhookEvent callbackEvent = new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(publisher);
@@ -126,7 +126,7 @@ class WebhookEventConsumerTest {
         verify(repo, times(2)).save(any());
     }
 
-    public void setupSyncResponse(final WebhookEventStatus... status) {
+    void setupSyncResponse(final WebhookEventStatus... status) {
         WebTarget target = mock(WebTarget.class);
         when(client.target(any(URI.class))).thenReturn(target);
         when(target.queryParam(any(String.class), any())).thenReturn(target);
@@ -148,14 +148,14 @@ class WebhookEventConsumerTest {
     }
 
     @Test
-    public void testSyncNoData() {
+    void testSyncNoData() {
         setupSyncResponse();
         consumer.sync(webhook);
         verify(event, times(0)).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));
     }
 
     @Test
-    public void testSync() {
+    void testSync() {
         WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(webhook.getId()));
         setupSyncResponse(status);
         consumer.sync(webhook);
