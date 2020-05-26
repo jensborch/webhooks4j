@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link PublisherWebhookRepository}.
  */
-public class PublisherWebhookRepositoryTest {
+class PublisherWebhookRepositoryTest {
 
     @Test
-    public void testCollectionName() {
+    void testCollectionName() {
         PublisherWebhookRepository instance = new PublisherWebhookRepository();
         assertEquals("PublisherWebhooks", instance.collectionName());
     }

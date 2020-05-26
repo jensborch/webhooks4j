@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link SubscriberStatusRepository}.
  */
-public class SubscriberStatusRepositoryTest {
+class SubscriberStatusRepositoryTest {
 
     @Test
-    public void testCollectionName() {
+    void testCollectionName() {
         SubscriberStatusRepository instance = new SubscriberStatusRepository();
         assertEquals("SubscriberStatuses", instance.collectionName());
     }
