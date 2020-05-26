@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.github.jensborch.webhooks.Webhook;
@@ -93,6 +94,15 @@ class AbstractWebhookRepositoryTest {
         UUID id = UUID.randomUUID();
         repository.delete(id);
         verify(collection, times(1)).deleteOne(eq(Filters.eq("_id", id)));
+    }
+
+    @Test
+    void testFind() throws Exception {
+        Webhook webhook = new Webhook(new URI("http://test.dk"), new URI("http://test.dk"), "topics");
+        when(iterable.first()).thenReturn(webhook);
+        UUID id = UUID.randomUUID();
+        Optional<Webhook> found = repository.find(id);
+        assertEquals(webhook, found.get());
     }
 
     @Test
