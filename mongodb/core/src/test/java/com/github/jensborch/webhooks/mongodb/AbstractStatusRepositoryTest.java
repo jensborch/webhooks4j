@@ -6,7 +6,9 @@ import static org.mockito.Mockito.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventStatus;
@@ -36,6 +38,9 @@ class AbstractStatusRepositoryTest {
     @Mock
     private MongoDatabase db;
 
+    @Mock
+    private FindIterable iterable;
+
     private final AbstractStatusRepository repository = new AbstractStatusRepository() {
         @Override
         protected String collectionName() {
@@ -55,8 +60,8 @@ class AbstractStatusRepositoryTest {
     void setup() {
         when(db.withCodecRegistry(any())).thenReturn(db);
         when(db.getCollection(any(String.class), any(Class.class))).thenReturn(collection);
-        FindIterable<?> iterable = mock(FindIterable.class);
         lenient().when(iterable.into(any())).thenReturn(new TreeSet<>());
+        lenient().when(iterable.limit(eq(1))).thenReturn(iterable);
         lenient().doReturn(iterable).when(collection).find(any(Bson.class));
     }
 
@@ -91,5 +96,15 @@ class AbstractStatusRepositoryTest {
         WebhookEventStatus status = new WebhookEventStatus(event);
         repository.save(status);
         verify(collection, times(1)).replaceOne(any(Bson.class), eq(status), any(ReplaceOptions.class));
+    }
+
+    @Test
+    void testFind() throws Exception {
+        WebhookEvent event = new WebhookEvent("topic", new HashMap<>());
+        WebhookEventStatus status = new WebhookEventStatus(event);
+        when(iterable.first()).thenReturn(status);
+        UUID id = UUID.randomUUID();
+        Optional<WebhookEventStatus> found = repository.find(id);
+        assertEquals(status, found.get());
     }
 }

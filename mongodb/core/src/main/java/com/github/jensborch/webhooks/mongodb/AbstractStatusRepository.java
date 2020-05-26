@@ -9,7 +9,6 @@ import java.util.UUID;
 import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import org.bson.conversions.Bson;
@@ -27,9 +26,10 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
 
     @Override
     public Optional<WebhookEventStatus> find(final UUID eventId) {
-        return Optional.of(collection(WebhookEventStatus.class))
-                .map(hooks -> hooks.find(Filters.eq("_id", eventId)))
-                .map(MongoIterable::first);
+        return Optional.ofNullable(collection(WebhookEventStatus.class)
+                .find(Filters.and(Filters.eq("_id", eventId)))
+                .limit(1)
+                .first());
     }
 
     @Override
