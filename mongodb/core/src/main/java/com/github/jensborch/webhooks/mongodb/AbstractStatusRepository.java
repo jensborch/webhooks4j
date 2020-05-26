@@ -48,11 +48,12 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
                 .into(new TreeSet<>());
     }
 
-    public WebhookEventStatus firstFailed(final UUID webhook) {
-        return collection(WebhookEventStatus.class)
+    public Optional<WebhookEventStatus> firstFailed(final UUID webhook) {
+        return Optional.ofNullable(collection(WebhookEventStatus.class)
                 .find(Filters.and(Filters.eq("webhook", webhook), Filters.eq("status", WebhookEventStatus.Status.FAILED)))
                 .sort(new BasicDBObject("end", 1))
-                .limit(1).first();
+                .limit(1)
+                .first());
 
     }
 

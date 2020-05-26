@@ -7,9 +7,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.github.jensborch.webhooks.Webhook;
+import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.repositories.WebhookRepository;
 import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 
@@ -30,9 +30,10 @@ public abstract class AbstractWebhookRepository extends MongoRepository<Webhook>
 
     @Override
     public Optional<Webhook> find(final UUID id) {
-        return Optional.of(collection(Webhook.class))
-                .map(hooks -> hooks.find(Filters.eq("_id", id)))
-                .map(MongoIterable::first);
+        return Optional.ofNullable(collection(Webhook.class)
+                .find(Filters.and(Filters.eq("_id", id)))
+                .limit(1)
+                .first());
     }
 
     @Override
@@ -45,7 +46,7 @@ public abstract class AbstractWebhookRepository extends MongoRepository<Webhook>
     @Override
     public void touch(final UUID id) {
         find(id).ifPresent(w -> {
-            ZonedDateTime max = statusRepository().firstFailed(id).getStart();
+            ZonedDateTime max = statusRepository().firstFailed(id).map(WebhookEventStatus::getStart).orElse(null);
             collection(Webhook.class).replaceOne(Filters.eq("_id", w.getId()), w.touch(max));
         });
     }
