@@ -38,6 +38,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
     }
 
     @ConstructorProperties({"id", "event", "start", "end", "status"})
+    @SuppressWarnings("java:S2637")
     protected WebhookEventStatus(
             final UUID id,
             final WebhookEvent event,
