@@ -1,5 +1,6 @@
 package com.github.jensborch.webhooks;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -43,9 +44,8 @@ public abstract class HashMapWebhookRepository implements WebhookRepository {
         return Optional.ofNullable(map.get(id));
     }
 
-    @Override
-    public void touch(final UUID id) {
-        map.get(id).touch(null);
+    public void touch(final UUID id, final ZonedDateTime max) {
+        map.get(id).touch(max);
     }
 
 }

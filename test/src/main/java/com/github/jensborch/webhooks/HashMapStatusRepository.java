@@ -2,6 +2,7 @@ package com.github.jensborch.webhooks;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -45,4 +46,10 @@ public abstract class HashMapStatusRepository implements WebhookEventStatusRepos
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
+    public Optional<WebhookEventStatus> lastFailed() {
+        return map.values().stream()
+                .filter(s -> s.getStatus() == WebhookEventStatus.Status.FAILED)
+                .sorted(Comparator.reverseOrder())
+                .findFirst();
+    }
 }

@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -35,11 +36,18 @@ public class WebhookTest {
     }
 
     @Test
-    public void testTouch() throws Exception {
+    public void testTouchNull() throws Exception {
         Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
         ZonedDateTime old = w.getUpdated();
         TimeUnit.SECONDS.sleep(1);
-        assertNotEquals(old, w.touch(null).getUpdated());
+        assertTrue(old.isBefore(w.touch(null).getUpdated()));
+    }
+
+    @Test
+    public void testTouch() throws Exception {
+        Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
+        ZonedDateTime now = ZonedDateTime.now().plusMinutes(5);
+        assertEquals(now, w.touch(now).getUpdated());
     }
 
     @Test
