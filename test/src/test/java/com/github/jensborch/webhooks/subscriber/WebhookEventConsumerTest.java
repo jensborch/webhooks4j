@@ -5,7 +5,7 @@ import static org.exparity.hamcrest.date.ZonedDateTimeMatchers.after;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -60,7 +60,7 @@ class WebhookEventConsumerTest {
         consumer.sync(webhook);
         webhook = subscriptions.find(webhook.getId()).get();
         assertThat(webhook.getUpdated(), after(webhook.getCreated()));
-        assertTrue(subStatusRepo.list(from, webhook.getId()).stream().filter(s -> s.getStatus() == WebhookEventStatus.Status.FAILED).findAny().isEmpty());
+        assertFalse(subStatusRepo.list(from, webhook.getId()).stream().filter(s -> s.getStatus() == WebhookEventStatus.Status.FAILED).findAny().isPresent());
         assertThat(listener.getEvents().keySet(), hasItems(s2.getId(), s1.getId()));
     }
 
