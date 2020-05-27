@@ -77,7 +77,7 @@ public class WebhookEventConsumer {
      *
      * @param webhook to synchronize.
      */
-    public void sync(final Webhook webhook) {
+    public Webhook sync(final Webhook webhook) {
         WebhookResponseHandler
                 .type(new GenericType<SortedSet<WebhookEventStatus>>() {
                 })
@@ -91,6 +91,11 @@ public class WebhookEventConsumer {
                 .error(this::handleError)
                 .exception(this::handleException)
                 .invoke();
+        return subscriptions
+                .find(webhook.getId())
+                .orElseThrow(() -> new WebhookException(
+                new WebhookError(WebhookError.Code.NOT_FOUND, "Webhook " + webhook.getId() + " has been deleted while synchronizing")
+        ));
     }
 
     private void handleError(final WebhookError error) {

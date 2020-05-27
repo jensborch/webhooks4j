@@ -22,6 +22,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
+import io.restassured.http.Headers;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -124,6 +125,47 @@ class PublisherEventExposureTest {
                 .then()
                 .statusCode(400)
                 .body("detail", equalTo("Illegal event status for " + event.getId().toString() + " - status must be SUCCESS"));
+    }
+
+    @Test
+    void testUpdatePreconditionsNotFulfilled() {
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .log().all()
+                .when()
+                .header("If-Match", "test")
+                .pathParam("id", event.getId())
+                .body(new WebhookEventStatus(event).done(true))
+                .put("publisher-events/{id}")
+                .then()
+                .statusCode(412);
+    }
+
+    @Test
+    void testUpdatePreconditionsFulfilled() {
+        Headers headers = given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .when()
+                .pathParam("id", event.getId())
+                .get("publisher-events/{id}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .headers();
+        String etag = headers.getValue("etag");
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .log().all()
+                .when()
+                .header("If-Match", etag)
+                .pathParam("id", event.getId())
+                .body(new WebhookEventStatus(event).done(true))
+                .put("publisher-events/{id}")
+                .then()
+                .statusCode(200);
     }
 
     @Test

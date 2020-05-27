@@ -115,28 +115,29 @@ public class SubscriberWebhookExposure {
     })
     public Response update(
             @ValidUUID @NotNull @PathParam("id") final String id,
-            @NotNull @Valid final Webhook updated,
+            @NotNull @Valid final Webhook webhook,
             @Context final Request request) {
-        if (!id.equals(updated.getId().toString())) {
-            throw new WebhookException(
-                    new WebhookError(
-                            WebhookError.Code.VALIDATION_ERROR,
-                            "Webhook " + id + " does not match id in payload " + updated.getId())
-            );
-        }
-        Webhook webhook = subscriptions.find(updated.getId()).orElseThrow(() -> throwNotFound(updated.getId().toString()));
+        requireStateSync(webhook);
+        requireSameId(id, webhook);
+        Webhook found = subscriptions.find(webhook.getId()).orElseThrow(() -> throwNotFound(webhook.getId().toString()));
         return WebhookResponseBuilder
                 .create(request, Webhook.class)
-                .entity(webhook)
-                .tag(w -> String.valueOf(w.getUpdated().toInstant().toEpochMilli()))
-                .fulfilled(w -> {
-                    if (updated.getState() != Webhook.State.SYNCHRONIZE) {
-                        throw new WebhookException(new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + updated.getState()));
-                    }
-                    consumer.sync(updated);
-                    return Response.ok(w);
-                })
+                .entity(found)
+                .tag(e -> String.valueOf(e.getUpdated().toInstant().toEpochMilli()))
+                .fulfilled(w -> Response.ok(consumer.sync(webhook)))
                 .build();
+    }
+
+    private void requireStateSync(final Webhook webhook) {
+        if (webhook.getState() != Webhook.State.SYNCHRONIZE) {
+            throw new WebhookException(new WebhookError(WebhookError.Code.ILLEGAL_STATUS, "Illegal status " + webhook.getState()));
+        }
+    }
+
+    private void requireSameId(final String id, final Webhook webhook) {
+        if (!id.equals(webhook.getId().toString())) {
+            throw new WebhookException(new WebhookError(WebhookError.Code.VALIDATION_ERROR, "Webhook " + id + " does not match id in payload " + webhook.getId()));
+        }
     }
 
     @DELETE

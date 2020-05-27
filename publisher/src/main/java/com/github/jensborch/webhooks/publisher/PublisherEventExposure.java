@@ -167,7 +167,7 @@ public class PublisherEventExposure {
                 .orElseThrow(() -> notFound(id));
         return WebhookResponseBuilder
                 .create(request, WebhookEventStatus.class)
-                .entity(status)
+                .entity(found)
                 .tag(e -> String.valueOf(e.getStart().toInstant().toEpochMilli()))
                 .fulfilled(s -> Response.ok(repo.save(found.done(true))))
                 .build();
