@@ -96,49 +96,54 @@ class WebhookSubscriptionsTest {
     }
 
     @Test
-    void testUnsubscribe500() {
+    void testUnsubscribe500() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
         when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"SUBSCRIPTION_ERROR\", \"status\":\"500\", \"msg\":\"test\" }");
-        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
-                .state(Webhook.State.SUBSCRIBE)));
+        Webhook w = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE);
+        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(w));
         verify(repo, times(2)).save(any());
         assertEquals(WebhookError.Code.SUBSCRIPTION_ERROR, e.getError().getCode());
     }
 
     @Test
-    void testUnsubscribeProcessingException() {
+    void testUnsubscribeProcessingException() throws Exception {
         when(invocation.invoke()).thenThrow(new ProcessingException("test"));
-        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")));
+        Webhook w = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic");
+        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.unsubscribe(w));
         assertEquals(WebhookError.Code.SUBSCRIPTION_ERROR, e.getError().getCode());
     }
 
     @Test
-    void testSubscribeProcessingException() {
+    void testSubscribeProcessingException() throws Exception {
         when(invocation.invoke()).thenThrow(new ProcessingException("test"));
+        Webhook w = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE);
         WebhookException e = assertThrows(WebhookException.class, () -> subscriptions
-                .subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
-                        .state(Webhook.State.SUBSCRIBE))
+                .subscribe(w)
         );
         assertEquals(WebhookError.Code.SUBSCRIPTION_ERROR, e.getError().getCode());
     }
 
     @Test
-    void testSubscribeHttp400() {
+    void testSubscribeHttp400() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
         when(response.getStatus()).thenReturn(404);
         when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenReturn("{ \"code\":\"NOT_FOUND\", \"status\":\"404\", \"msg\":\"test\" }");
-        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
-                .state(Webhook.State.SUBSCRIBE)));
+        Webhook w = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE);
+        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(w));
         assertEquals(WebhookError.Code.SUBSCRIPTION_ERROR, e.getError().getCode());
         assertEquals("Failed to subscribe, got error response: WebhookError{status=404, code=NOT_FOUND, title=Not found, detail=test}", e.getError().getDetail());
     }
 
     @Test
-    void testSubscribeHttp500() {
+    void testSubscribeHttp500() throws Exception {
         when(response.getStatusInfo()).thenReturn(Response.Status.INTERNAL_SERVER_ERROR);
         when(response.readEntity(ArgumentMatchers.<Class<String>>any())).thenThrow(new ProcessingException("test"));
-        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
-                .state(Webhook.State.SUBSCRIBE)));
+        Webhook w = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), "test_topic")
+                .state(Webhook.State.SUBSCRIBE);
+        WebhookException e = assertThrows(WebhookException.class, () -> subscriptions.subscribe(w));
         assertEquals(WebhookError.Code.SUBSCRIPTION_ERROR, e.getError().getCode());
         assertEquals("Failed to subscribe, got error response: WebhookError{status=0, code=UNKNOWN_ERROR, title=Unknown error, detail=test}", e.getError().getDetail());
     }

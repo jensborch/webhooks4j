@@ -108,7 +108,8 @@ class PublisherEventExposureTest {
     void testPutWrongStatus() {
         WebhookEvent event = new WebhookEvent("test", new HashMap<>());
         WebhookEventStatus status = new WebhookEventStatus(event);
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(event.getId().toString(), status, request));
+        String id = event.getId().toString();
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(id, status, request));
         assertNotNull(result);
         assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
     }
@@ -116,8 +117,9 @@ class PublisherEventExposureTest {
     @Test
     void testPutWrongId() {
         WebhookEvent event = new WebhookEvent("test", new HashMap<>());
-        WebhookEventStatus status = new WebhookEventStatus(event);
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(UUID.randomUUID().toString(), status.done(true), request));
+        WebhookEventStatus status = new WebhookEventStatus(event).done(true);
+        String id = UUID.randomUUID().toString();
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(id, status, request));
         assertNotNull(result);
         assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
     }
@@ -125,8 +127,9 @@ class PublisherEventExposureTest {
     @Test
     void testPut404() {
         WebhookEvent event = new WebhookEvent("test", new HashMap<>());
-        WebhookEventStatus status = new WebhookEventStatus(event);
-        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(event.getId().toString(), status.done(true), request));
+        WebhookEventStatus status = new WebhookEventStatus(event).done(true);
+        String id = event.getId().toString();
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(id, status, request));
         assertNotNull(result);
         assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
