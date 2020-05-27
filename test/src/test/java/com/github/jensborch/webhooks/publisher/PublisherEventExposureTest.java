@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventStatus;
+import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.github.jensborch.webhooks.subscriber.WebhookSubscriptions;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.builder.RequestSpecBuilder;
@@ -38,6 +39,10 @@ class PublisherEventExposureTest {
 
     @Inject
     WebhookPublisher publisher;
+
+    @Inject
+    @Publisher
+    WebhookEventStatusRepository repo;
 
     private static final String TEST_TOPIC = PublisherEventExposureTest.class.getName();
     private static Webhook webhook;
@@ -75,27 +80,50 @@ class PublisherEventExposureTest {
     }
 
     @Test
-    void testupdate() {
-        WebhookEventStatus status = given()
+    void testUpdate() {
+        WebhookEventStatus unsuccessful = new WebhookEventStatus(new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(webhook.getId()));
+        repo.save(unsuccessful);
+        given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
+                .log().all()
                 .when()
-                .pathParam("id", event.getId())
-                .get("publisher-events/{id}")
+                .pathParam("id", unsuccessful.getId())
+                .body(unsuccessful.done(true))
+                .put("publisher-events/{id}")
                 .then()
-                .statusCode(200)
-                .extract()
-                .as(WebhookEventStatus.class);
+                .statusCode(200);
+    }
+
+    @Test
+    void testUpdateWrongId() {
+        String random = UUID.randomUUID().toString();
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .log().all()
+                .when()
+                .pathParam("id", random)
+                .body(new WebhookEventStatus(event).done(true))
+                .put("publisher-events/{id}")
+                .then()
+                .statusCode(400)
+                .body("detail", equalTo("Illegal event id for " + event.getId().toString() + " - id must equal " + random));
+    }
+
+    @Test
+    void testUpdateWrongStatus() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
                 .log().all()
                 .when()
                 .pathParam("id", event.getId())
-                .body(status)
+                .body(new WebhookEventStatus(event).done(false))
                 .put("publisher-events/{id}")
                 .then()
-                .statusCode(200);
+                .statusCode(400)
+                .body("detail", equalTo("Illegal event status for " + event.getId().toString() + " - status must be SUCCESS"));
     }
 
     @Test
