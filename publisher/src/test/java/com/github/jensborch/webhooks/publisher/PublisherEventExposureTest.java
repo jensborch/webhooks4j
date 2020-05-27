@@ -87,12 +87,48 @@ class PublisherEventExposureTest {
 
     @Test
     void testGet() {
-        UUID publisher = UUID.randomUUID();
         WebhookEvent event = new WebhookEvent("test", new HashMap<>());
         when(repo.find(any())).thenReturn(Optional.of(new WebhookEventStatus(event)));
         Response result = exposure.get(UUID.randomUUID().toString(), request);
         assertNotNull(result);
         assertEquals(200, result.getStatus());
+    }
+
+    @Test
+    void testPut() {
+        WebhookEvent event = new WebhookEvent("test", new HashMap<>());
+        WebhookEventStatus status = new WebhookEventStatus(event);
+        when(repo.find(any())).thenReturn(Optional.of(status));
+        Response result = exposure.update(event.getId().toString(), status.done(true), request);
+        assertNotNull(result);
+        assertEquals(200, result.getStatus());
+    }
+
+    @Test
+    void testPutWrongStatus() {
+        WebhookEvent event = new WebhookEvent("test", new HashMap<>());
+        WebhookEventStatus status = new WebhookEventStatus(event);
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(event.getId().toString(), status, request));
+        assertNotNull(result);
+        assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
+    }
+
+    @Test
+    void testPutWrongId() {
+        WebhookEvent event = new WebhookEvent("test", new HashMap<>());
+        WebhookEventStatus status = new WebhookEventStatus(event);
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(UUID.randomUUID().toString(), status.done(true), request));
+        assertNotNull(result);
+        assertEquals(Response.Status.BAD_REQUEST, result.getError().getCode().getStatus());
+    }
+
+    @Test
+    void testPut404() {
+        WebhookEvent event = new WebhookEvent("test", new HashMap<>());
+        WebhookEventStatus status = new WebhookEventStatus(event);
+        WebhookException result = assertThrows(WebhookException.class, () -> exposure.update(event.getId().toString(), status.done(true), request));
+        assertNotNull(result);
+        assertEquals(Response.Status.NOT_FOUND, result.getError().getCode().getStatus());
     }
 
 }
