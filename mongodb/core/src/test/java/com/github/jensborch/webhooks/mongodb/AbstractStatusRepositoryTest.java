@@ -68,7 +68,6 @@ class AbstractStatusRepositoryTest {
     @Test
     void testListWithTopics() {
         repository.list(DATE_TIME, "a", "b", "c");
-
         verify(collection, times(1)).find(captor.capture());
         assertEquals(
                 "And Filter{filters=["
@@ -103,8 +102,27 @@ class AbstractStatusRepositoryTest {
         WebhookEvent event = new WebhookEvent("topic", new HashMap<>());
         WebhookEventStatus status = new WebhookEventStatus(event);
         when(iterable.first()).thenReturn(status);
-        UUID id = UUID.randomUUID();
-        Optional<WebhookEventStatus> found = repository.find(id);
+        Optional<WebhookEventStatus> found = repository.find(status.getId());
         assertEquals(status, found.get());
+        verify(collection, times(1)).find(captor.capture());
+        assertEquals(
+                "And Filter{filters=[Filter{fieldName='_id', value=" + event.getId() + "}]}",
+                captor.getValue().toString()
+        );
+    }
+
+    @Test
+    void testFirstFailed() throws Exception {
+        WebhookEvent event = new WebhookEvent("topic", new HashMap<>()).webhook(UUID.randomUUID());
+        WebhookEventStatus status = new WebhookEventStatus(event);
+        lenient().when(iterable.sort(any(Bson.class))).thenReturn(iterable);
+        when(iterable.first()).thenReturn(status);
+        Optional<WebhookEventStatus> found = repository.firstFailed(event.getWebhook());
+        assertEquals(status, found.get());
+        verify(collection, times(1)).find(captor.capture());
+        assertEquals(
+                "And Filter{filters=[Filter{fieldName='webhook', value=" + event.getWebhook() + "}, Filter{fieldName='status', value=FAILED}]}",
+                captor.getValue().toString()
+        );
     }
 }
