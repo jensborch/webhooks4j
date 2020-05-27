@@ -10,6 +10,7 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
@@ -87,7 +88,7 @@ public class WebhookEventConsumer {
                         .queryParam("webhook", webhook.getId())
                         .request(MediaType.APPLICATION_JSON)
                         .buildGet())
-                .success(events -> events.stream().map(WebhookEventStatus::getEvent).map(this::consume).forEach(this::updateStatus))
+                .success(events -> events.stream().map(WebhookEventStatus::getEvent).map(this::consume).forEach(e -> updatePublisherStatus(webhook, e)))
                 .error(this::handleError)
                 .exception(this::handleException)
                 .invoke();
@@ -131,9 +132,22 @@ public class WebhookEventConsumer {
                 .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent)));
     }
 
-    private void updateStatus(final WebhookEventStatus status) {
+    private void updatePublisherStatus(final Webhook webhook, final WebhookEventStatus status) {
         LOG.debug("Updating status for event: {}", status);
-        //TODO
+        if (status.getStatus() == WebhookEventStatus.Status.SUCCESS) {
+            WebhookResponseHandler
+                    .type(WebhookEventStatus.class)
+                    .invocation(client
+                            .target(webhook.publisherEndpoints().getEvents())
+                            .path("{id}")
+                            .resolveTemplate("id", status.getId())
+                            .request(MediaType.APPLICATION_JSON)
+                            .buildPut(Entity.json(status)))
+                    .success(e -> LOG.debug("Updated publisher event {}", e))
+                    .error(e -> LOG.warn("Faild to update publisher event {}", e))
+                    .exception(e -> LOG.warn("Faild to update publisher event", e))
+                    .invoke();
+        }
     }
 
     /**

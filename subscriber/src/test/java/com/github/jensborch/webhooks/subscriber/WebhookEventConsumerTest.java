@@ -1,8 +1,5 @@
 package com.github.jensborch.webhooks.subscriber;
 
-import com.github.jensborch.webhooks.subscriber.WebhookEventConsumer;
-import com.github.jensborch.webhooks.subscriber.WebhookSubscriptions;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,7 +39,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test for {@link com.github.jensborch.webhooks.subscriber.WebhookEventConsumer}.
+ * Test for
+ * {@link com.github.jensborch.webhooks.subscriber.WebhookEventConsumer}.
  */
 @ExtendWith(MockitoExtension.class)
 class WebhookEventConsumerTest {
@@ -92,7 +90,7 @@ class WebhookEventConsumerTest {
         when(repo.find(any()))
                 .thenReturn(Optional.of(new WebhookEventStatus(callbackEvent)
                         .done(true))
-            );
+                );
         consumer.consume(callbackEvent);
         verify(repo, times(0)).save(any());
     }
@@ -126,7 +124,7 @@ class WebhookEventConsumerTest {
         verify(repo, times(2)).save(any());
     }
 
-    void setupSyncResponse(final WebhookEventStatus... status) {
+    WebTarget setupSyncResponse(final WebhookEventStatus... status) {
         WebTarget target = mock(WebTarget.class);
         when(client.target(any(URI.class))).thenReturn(target);
         when(target.queryParam(any(String.class), any())).thenReturn(target);
@@ -145,6 +143,21 @@ class WebhookEventConsumerTest {
             statusSet.addAll(Arrays.asList(status));
         }
         when(response.readEntity(ArgumentMatchers.<GenericType<SortedSet>>any())).thenReturn(statusSet);
+        return target;
+    }
+
+    void setupSyncStatusResponse(WebTarget target) {
+        WebTarget statusTarget = mock(WebTarget.class);
+        when(target.path(any(String.class))).thenReturn(statusTarget);
+        when(statusTarget.resolveTemplate(any(String.class), any())).thenReturn(statusTarget);
+        Invocation.Builder statusBuilder = mock(Invocation.Builder.class);
+        when(statusTarget.request(eq(MediaType.APPLICATION_JSON))).thenReturn(statusBuilder);
+        Response statusResponse = mock(Response.class);
+        when(statusResponse.getStatusInfo()).thenReturn(Response.Status.OK);
+        Invocation statusInvocation = mock(Invocation.class);
+        when(statusBuilder.buildPut(any())).thenReturn(statusInvocation);
+        when(statusInvocation.invoke()).thenReturn(statusResponse);
+        when(statusResponse.readEntity(any(Class.class))).thenReturn(mock(WebhookEventStatus.class));
     }
 
     @Test
@@ -157,7 +170,7 @@ class WebhookEventConsumerTest {
     @Test
     void testSync() {
         WebhookEventStatus status = new WebhookEventStatus(new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(webhook.getId()));
-        setupSyncResponse(status);
+        setupSyncStatusResponse(setupSyncResponse(status));
         consumer.sync(webhook);
         verify(event, times(1)).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));
     }
