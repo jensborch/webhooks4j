@@ -63,7 +63,7 @@ Added the following dependency for a subscriber:
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-subscriber</artifactId>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
 </dependency>
 ```
 
@@ -73,7 +73,7 @@ and
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-subscriber</artifactId>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
 </dependency>
 ```
 
@@ -85,7 +85,7 @@ For MongoDB support add:
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-mongodb-subscriber</artifactId>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
 </dependency>
 ```
 
@@ -95,7 +95,7 @@ and/or
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-mongodb-publisher</artifactId>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
 </dependency>
 ```
 
@@ -144,48 +144,29 @@ public class ClientProducer {
 }
 ```
 
-MongoDB collection producer:
+Mongo database producer:
 
 ```Java
 @ApplicationScoped
-public class WebhookMongoCollectionsProducer {
+public class WebhookMongoDBProducer {
 
     @Inject
-    private MongoDatabase db;
-
-    @Produces
-    @Publisher
-    public MongoCollection<WebhookEventStatus> publisherStatusCollection() {
-        return db.getCollection("PublisherProcessingStatuses", WebhookEventStatus.class);
-    }
-
-    @Produces
-    @Publisher
-    public MongoCollection<Webhook> publisherWebHookCollection() {
-        return db.getCollection("PublisherWebhooks", Webhook.class);
-    }
+    private MongoClient client;
 
     @Produces
     @Subscriber
-    public MongoCollection<WebhookEventStatus> subscriberStatusCollection() {
-        return db.getCollection("SubscriberProcessingStatuses", WebhookEventStatus.class);
-    }
-
-    @Produces
-    @Subscriber
-    public MongoCollection<Webhook> subscriberWebHookCollection() {
-        return db.getCollection("SubscriberWebhooks", Webhook.class);
+    @Publisher
+    public MongoDatabase mongoDatabase() {
+         return client.getDatabase("MyDatabase");
     }
 
 }
 ```
 
-Note, this requires an additional CDI producer for `MongoDatabase`, but it is possible to configure a `MongoDatabase` directly instead. If no codecs for `ZonedDateTime` and `URI` exists, register the following class:
+Note, this requires an additional CDI producer for `MongoClient`, but it is possible to configure a `MongoClient` directly instead. If no codecs for `ZonedDateTime` and `URI` exists, register the following codec class:
 
 - com.github.jensborch.webhooks.mongodb.URICodec
 - com.github.jensborch.webhooks.mongodb.ZonedDateTimeCode
-
-Additionally the [SET_PRIVATE_FIELDS_CONVENTION](https://mongodb.github.io/mongo-java-driver/3.12/javadoc/org/bson/codecs/pojo/Conventions.html#SET_PRIVATE_FIELDS_CONVENTION) convention must be set.
 
 JAX-RS application class:
 
