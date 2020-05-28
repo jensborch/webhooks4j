@@ -12,8 +12,8 @@ import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.ReplaceOptions;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 
 /**
@@ -23,7 +23,7 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
 
     @PostConstruct
     public void init() {
-        collection(WebhookEventStatus.class).createIndex(new Document("event.webhook", 1));
+        collection(WebhookEventStatus.class).createIndex(Indexes.ascending("event.webhook"));
     }
 
     @Override
