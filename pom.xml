@@ -17,6 +17,7 @@
         <module>subscriber</module>
     </modules>
     <properties>
+        <annotation-api.version>1.2</annotation-api.version>
         <api.description>Small, simple and extendable Java library for messaging using webhooks.</api.description>
         <api.version>v1</api.version>
         <cdi-api.version>1.2</cdi-api.version>

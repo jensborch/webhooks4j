@@ -6,17 +6,25 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
+
 import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 
 /**
  * Abstract repository for webhooks statuses.
  */
 public abstract class AbstractStatusRepository extends MongoRepository<WebhookEventStatus> implements WebhookEventStatusRepository {
+
+    @PostConstruct
+    public void init() {
+        collection(WebhookEventStatus.class).createIndex(new Document("event.webhook", 1));
+    }
 
     @Override
     public WebhookEventStatus save(final WebhookEventStatus status) {
