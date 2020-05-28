@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.jensborch.webhooks4j</groupId>
         <artifactId>webhooks4j</artifactId>
-        <version>0.6.2-SNAPSHOT</version>
+        <version>0.6.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>webhook4j-subscriber</artifactId>
