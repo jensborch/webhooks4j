@@ -66,6 +66,20 @@ class AbstractStatusRepositoryTest {
     }
 
     @Test
+    void testListWithWebhook() {
+        UUID id = UUID.randomUUID();
+        repository.list(DATE_TIME, id);
+        verify(collection, times(1)).find(captor.capture());
+        assertEquals(
+                "And Filter{filters=["
+                + "Filter{fieldName='event.webhook', value=" + id + "}, "
+                + "Operator Filter{fieldName='start', operator='$gt', value=2020-01-01T00:00+01:00[Europe/Copenhagen]}"
+                + "]}",
+                captor.getValue().toString()
+        );
+    }
+
+    @Test
     void testListWithTopics() {
         repository.list(DATE_TIME, "a", "b", "c");
         verify(collection, times(1)).find(captor.capture());
@@ -121,7 +135,7 @@ class AbstractStatusRepositoryTest {
         assertEquals(status, found.get());
         verify(collection, times(1)).find(captor.capture());
         assertEquals(
-                "And Filter{filters=[Filter{fieldName='webhook', value=" + event.getWebhook() + "}, Filter{fieldName='status', value=FAILED}]}",
+                "And Filter{filters=[Filter{fieldName='event.webhook', value=" + event.getWebhook() + "}, Filter{fieldName='status', value=FAILED}]}",
                 captor.getValue().toString()
         );
     }
