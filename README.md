@@ -14,7 +14,7 @@ Webhooks4j is currently under development.
 
 Webhooks4j is a simple Java library for implementing messaging using webhooks and event-sourcing, that does not need any infrastructure. It is meant to work for simple use cases where message brokers like [Kafka](https://kafka.apache.org/) are not needed. The library is based on the publish–subscribe pattern.
 
-To subscribe to to a topic, inject `WebhookSubscriptions` and call the subscribe method:
+To subscribe to a topic, inject `WebhookSubscriptions` and call the subscribe method:
 
 ```Java
 import com.github.jensborch.webhooks.Webhook;
@@ -57,23 +57,45 @@ CDI 1.2 is used to be compatible with as many application servers as possible. T
 
 ## Getting started
 
-Added the following dependencies:
+Added the following dependency for a subscriber:
 
 ```xml
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
-    <artifactId>webhooks4j-core</artifactId>
-    <version>0.5.10</version>
+    <artifactId>webhooks4j-subscriber</artifactId>
+    <version>0.6.2</version>
 </dependency>
 ```
 
-For MongoDB support:
+and
 
 ```xml
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
-    <artifactId>webhooks4j-mongodb</artifactId>
-    <version>0.5.10</version>
+    <artifactId>webhooks4j-subscriber</artifactId>
+    <version>0.6.2</version>
+</dependency>
+```
+
+for a publisher.
+
+For MongoDB support add:
+
+```xml
+<dependency>
+    <groupId>com.github.jensborch.webhooks4j</groupId>
+    <artifactId>webhooks4j-mongodb-subscriber</artifactId>
+    <version>0.6.2</version>
+</dependency>
+```
+
+and/or
+
+```xml
+<dependency>
+    <groupId>com.github.jensborch.webhooks4j</groupId>
+    <artifactId>webhooks4j-mongodb-publisher</artifactId>
+    <version>0.6.2</version>
 </dependency>
 ```
 
@@ -122,48 +144,29 @@ public class ClientProducer {
 }
 ```
 
-MongoDB collection producer:
+Mongo database producer:
 
 ```Java
 @ApplicationScoped
-public class WebhookMongoCollectionsProducer {
+public class WebhookMongoDBProducer {
 
     @Inject
-    private MongoDatabase db;
-
-    @Produces
-    @Publisher
-    public MongoCollection<WebhookEventStatus> publisherStatusCollection() {
-        return db.getCollection("PublisherProcessingStatuses", WebhookEventStatus.class);
-    }
-
-    @Produces
-    @Publisher
-    public MongoCollection<Webhook> publisherWebHookCollection() {
-        return db.getCollection("PublisherWebhooks", Webhook.class);
-    }
+    private MongoClient client;
 
     @Produces
     @Subscriber
-    public MongoCollection<WebhookEventStatus> subscriberStatusCollection() {
-        return db.getCollection("SubscriberProcessingStatuses", WebhookEventStatus.class);
-    }
-
-    @Produces
-    @Subscriber
-    public MongoCollection<Webhook> subscriberWebHookCollection() {
-        return db.getCollection("SubscriberWebhooks", Webhook.class);
+    @Publisher
+    public MongoDatabase mongoDatabase() {
+         return client.getDatabase("MyDatabase");
     }
 
 }
 ```
 
-Note, this requires an additional CDI producer for `MongoDatabase`, but it is possible to configure a `MongoDatabase` directly instead. If no codecs for `ZonedDateTime` and `URI` exists, register the following class:
+Note, this requires an additional CDI producer for `MongoClient`, but it is possible to configure a `MongoClient` directly instead. If no codecs for `ZonedDateTime` and `URI` exists, register the following codec class:
 
 - com.github.jensborch.webhooks.mongodb.URICodec
 - com.github.jensborch.webhooks.mongodb.ZonedDateTimeCode
-
-Additionally the [SET_PRIVATE_FIELDS_CONVENTION](https://mongodb.github.io/mongo-java-driver/3.12/javadoc/org/bson/codecs/pojo/Conventions.html#SET_PRIVATE_FIELDS_CONVENTION) convention must be set.
 
 JAX-RS application class:
 
@@ -206,7 +209,7 @@ public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
 ## Security
 
-All endpoints are secured using JAX-RS roles. To access subscriber end-point, the __subscriber__ role is needed. To access publisher endpoints the __publisher__ role is need. The are some exceptions to this, as a __publisher__ is allowed to POST callback events to a subscriber end-point. Refer to [Swagger documentation](../master/swagger.yaml) for details.
+All endpoints are secured using JAX-RS roles. To access subscriber end-point, the __subscriber__ role is needed. To access publisher endpoints the __publisher__ role is need. The are some exceptions to this, as a __publisher__ is allowed to POST callback events to a subscriber end-point. Refer to the Swagger documentation for the [publisher](../master/publisher-swagger.yaml) and [subscriber](../master/subscriber-swagger.yaml) for details.
 
 When creating the JAX-RS Client CDI producer, filters should be added to handle security correctly. A simple HTTP Basic access authentication filter can be found in the Maven test module.
 

@@ -22,13 +22,13 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link WebhookEventStatus}.
  */
-public class WebhookEventStatusTest {
+class WebhookEventStatusTest {
 
     private Webhook webhook;
     private WebhookEventStatus status;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         URI publisherUri = new URI("http://publisher.dk");
         URI subscriberUri = new URI("http://subscriber.dk");
         webhook = new Webhook(publisherUri, subscriberUri, "test");
@@ -36,18 +36,24 @@ public class WebhookEventStatusTest {
     }
 
     @Test
-    public void testDone() {
+    void testNoArgConstuctor() {
+        WebhookEventStatus webhook = new WebhookEventStatus();
+        assertNull(webhook.getId());
+    }
+
+    @Test
+    void testDone() {
         WebhookEventStatus result = status.done(true);
         assertEquals(WebhookEventStatus.Status.SUCCESS, result.getStatus());
     }
 
     @Test
-    public void testEligible() {
+    void testEligible() {
         assertTrue(status.eligible());
     }
 
     @Test
-    public void testCompareTo() throws Exception {
+    void testCompareTo() throws Exception {
         TimeUnit.SECONDS.sleep(1);
         WebhookEventStatus status2 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
         assertTrue(status.compareTo(status2) > 0);
@@ -58,18 +64,18 @@ public class WebhookEventStatusTest {
     }
 
     @Test
-    public void testGetEnd() {
+    void testGetEnd() {
         assertNull(status.getEnd());
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         WebhookEventStatus s = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()).webhook(webhook.getId()));
-        assertThat(s.toString(), startsWith("WebhookEventStatus{end=null, status=STARTED, id=" + s.getId() + ", event=WebhookEvent{id=" + s.getId() + ", webhook=" + s.getEvent().getWebhook().get() + ", topic=test, data={}}"));
+        assertThat(s.toString(), startsWith("WebhookEventStatus{end=null, status=STARTED, id=" + s.getId() + ", event=WebhookEvent{id=" + s.getId() + ", webhook=" + s.getEvent().getWebhook() + ", topic=test, data={}}"));
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         UUID publisher = UUID.randomUUID();
         UUID id = UUID.randomUUID();
         WebhookEvent w1 = new WebhookEvent(id, publisher, "test", Collections.singletonMap("t1", "t2"));
@@ -82,7 +88,7 @@ public class WebhookEventStatusTest {
     }
 
     @Test
-    public void testSet() {
+    void testSet() {
         WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
         SortedSet<WebhookEventStatus> set = new TreeSet<>();
@@ -92,7 +98,7 @@ public class WebhookEventStatusTest {
     }
 
     @Test
-    public void testNotEquals() {
+    void testNotEquals() {
         WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent("test", new HashMap<>()));
         assertNotEquals(s1, s2);

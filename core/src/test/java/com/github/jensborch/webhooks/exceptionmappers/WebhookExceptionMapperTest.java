@@ -12,10 +12,10 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link WebhookExceptionMapper}.
  */
-public class WebhookExceptionMapperTest {
+class WebhookExceptionMapperTest {
 
     @Test
-    public void testToResponse() {
+    void testToResponse() {
         WebhookException e = new WebhookException(new WebhookError(WebhookError.Code.UNKNOWN_ERROR, "test"));
         WebhookExceptionMapper mapper = new WebhookExceptionMapper();
         Response response = mapper.toResponse(e);

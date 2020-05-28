@@ -2,7 +2,6 @@ package com.github.jensborch.webhooks;
 
 import java.beans.ConstructorProperties;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -27,7 +26,7 @@ public class WebhookEvent<D> {
 
     public WebhookEvent() {
         //Needed for MongoDB POJO support
-        this(null, null);
+        this(null, null, null, null);
     }
 
     @ConstructorProperties({"id", "webhook", "topic", "data"})
@@ -46,8 +45,8 @@ public class WebhookEvent<D> {
         return id;
     }
 
-    public Optional<UUID> getWebhook() {
-        return Optional.ofNullable(webhook);
+    public UUID getWebhook() {
+        return webhook;
     }
 
     public String getTopic() {

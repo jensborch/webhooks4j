@@ -14,12 +14,15 @@ import javax.inject.Inject;
 
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.WebhookEvent;
+import com.github.jensborch.webhooks.WebhookEventStatus;
+import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.github.jensborch.webhooks.subscriber.WebhookSubscriptions;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
+import io.restassured.http.Headers;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,13 +33,17 @@ import org.junit.jupiter.api.Test;
  * {@link com.github.jensborch.webhooks.publisher.PublisherEventExposure}
  */
 @QuarkusTest
-public class PublisherEventExposureTest {
+class PublisherEventExposureTest {
 
     @Inject
     WebhookSubscriptions subscriptions;
 
     @Inject
     WebhookPublisher publisher;
+
+    @Inject
+    @Publisher
+    WebhookEventStatusRepository repo;
 
     private static final String TEST_TOPIC = PublisherEventExposureTest.class.getName();
     private static Webhook webhook;
@@ -50,7 +57,7 @@ public class PublisherEventExposureTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         publisher.publish(event);
         spec = new RequestSpecBuilder()
@@ -62,7 +69,7 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testGet() {
+    void testGet() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -74,7 +81,95 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testListTopics() {
+    void testUpdate() {
+        WebhookEventStatus unsuccessful = new WebhookEventStatus(new WebhookEvent(TEST_TOPIC, new HashMap<>()).webhook(webhook.getId()));
+        repo.save(unsuccessful);
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .log().all()
+                .when()
+                .pathParam("id", unsuccessful.getId())
+                .body(unsuccessful.done(true))
+                .put("publisher-events/{id}")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    void testUpdateWrongId() {
+        String random = UUID.randomUUID().toString();
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .log().all()
+                .when()
+                .pathParam("id", random)
+                .body(new WebhookEventStatus(event).done(true))
+                .put("publisher-events/{id}")
+                .then()
+                .statusCode(400)
+                .body("detail", equalTo("Illegal event id for " + event.getId().toString() + " - id must equal " + random));
+    }
+
+    @Test
+    void testUpdateWrongStatus() {
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .log().all()
+                .when()
+                .pathParam("id", event.getId())
+                .body(new WebhookEventStatus(event).done(false))
+                .put("publisher-events/{id}")
+                .then()
+                .statusCode(400)
+                .body("detail", equalTo("Illegal event status for " + event.getId().toString() + " - status must be SUCCESS"));
+    }
+
+    @Test
+    void testUpdatePreconditionsNotFulfilled() {
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .log().all()
+                .when()
+                .header("If-Match", "test")
+                .pathParam("id", event.getId())
+                .body(new WebhookEventStatus(event).done(true))
+                .put("publisher-events/{id}")
+                .then()
+                .statusCode(412);
+    }
+
+    @Test
+    void testUpdatePreconditionsFulfilled() {
+        Headers headers = given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .when()
+                .pathParam("id", event.getId())
+                .get("publisher-events/{id}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .headers();
+        String etag = headers.getValue("etag");
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .log().all()
+                .when()
+                .header("If-Match", etag)
+                .pathParam("id", event.getId())
+                .body(new WebhookEventStatus(event).done(true))
+                .put("publisher-events/{id}")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    void testListTopics() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -88,7 +183,7 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testListWebhook() {
+    void testListWebhook() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -102,7 +197,7 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testListWrongWebhook() {
+    void testListWrongWebhook() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -116,7 +211,7 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testList() {
+    void testList() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -129,7 +224,7 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testListUnknownTopics() {
+    void testListUnknownTopics() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -143,7 +238,7 @@ public class PublisherEventExposureTest {
     }
 
     @Test
-    public void testListFuture() {
+    void testListFuture() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")

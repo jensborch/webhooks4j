@@ -10,17 +10,23 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link WebhookEvent}.
  */
-public class WebhookEventTest {
+class WebhookEventTest {
 
     @Test
-    public void testToString() {
+    void testToString() {
         UUID id = UUID.randomUUID();
         WebhookEvent w = new WebhookEvent("test", Collections.singletonMap("t1", "t2")).webhook(id);
         assertEquals("WebhookEvent{id=" + w.getId() + ", webhook=" + id + ", topic=test, data={t1=t2}}", w.toString());
     }
 
     @Test
-    public void testEquals() {
+    void testNoArgConstuctor() {
+        WebhookEvent event = new WebhookEvent();
+        assertNull(event.getId());
+    }
+
+    @Test
+    void testEquals() {
         UUID publisher = UUID.randomUUID();
         UUID id = UUID.randomUUID();
         WebhookEvent w1 = new WebhookEvent(id, publisher, "test", Collections.singletonMap("t1", "t2"));
@@ -30,7 +36,7 @@ public class WebhookEventTest {
     }
 
     @Test
-    public void testNotEquals() {
+    void testNotEquals() {
         WebhookEvent w1 = new WebhookEvent("test", Collections.singletonMap("t1", "t2"));
         WebhookEvent w2 = new WebhookEvent("test", Collections.singletonMap("t1", "t2"));
         assertNotEquals(w1, w2);

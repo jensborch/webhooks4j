@@ -8,22 +8,22 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link ValidZonedDateTime}.
  */
-public class ValidZonedDateTimeTest {
+class ValidZonedDateTimeTest {
 
     @Test
-    public void testIsNotValid() {
+    void testIsNotValid() {
         ValidZonedDateTime.ZonedDateTimeValidator validator = new ValidZonedDateTime.ZonedDateTimeValidator();
         assertFalse(validator.isValid("", null));
     }
 
     @Test
-    public void testIsValid() {
+    void testIsValid() {
         ValidZonedDateTime.ZonedDateTimeValidator validator = new ValidZonedDateTime.ZonedDateTimeValidator();
         assertTrue(validator.isValid("2007-12-03T10:15:30+01:00", null));
     }
 
     @Test
-    public void testNullIsValid() {
+    void testNullIsValid() {
         ValidZonedDateTime.ZonedDateTimeValidator validator = new ValidZonedDateTime.ZonedDateTimeValidator();
         assertTrue(validator.isValid(null, null));
     }

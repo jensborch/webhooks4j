@@ -1,5 +1,6 @@
 package com.github.jensborch.webhooks.subscriber;
 
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -32,7 +33,7 @@ import org.junit.jupiter.api.TestMethodOrder;
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SubscriberEventExposureTest {
+class SubscriberEventExposureTest {
 
     @Inject
     WebhookSubscriptions subscriptions;
@@ -47,7 +48,7 @@ public class SubscriberEventExposureTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         spec = new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
@@ -59,7 +60,7 @@ public class SubscriberEventExposureTest {
 
     @Test
     @Order(1)
-    public void testPublishEvent() {
+    void testPublishEvent() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -72,7 +73,7 @@ public class SubscriberEventExposureTest {
 
     @Test
     @Order(2)
-    public void testList() {
+    void testList() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -85,7 +86,7 @@ public class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testListUnknownTopic() {
+    void testListUnknownTopic() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -99,7 +100,7 @@ public class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testPublishInvalidEvent() {
+    void testPublishInvalidEvent() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -112,7 +113,7 @@ public class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testPublishEventInvalidPublisher() {
+    void testPublishEventInvalidPublisher() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -125,7 +126,7 @@ public class SubscriberEventExposureTest {
     }
 
     @Test
-    public void testPublishEventUnknownTopic() {
+    void testPublishEventUnknownTopic() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")

@@ -25,14 +25,14 @@ import org.junit.jupiter.api.TestMethodOrder;
  */
 @QuarkusTest
 @TestMethodOrder(OrderAnnotation.class)
-public class PublisherWebhookExposureTest {
+class PublisherWebhookExposureTest {
 
     private static final String TEST_TOPIC = PublisherWebhookExposureTest.class.getName();
     private RequestSpecification spec;
     private Webhook webhook;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TEST_TOPIC)
                 .state(Webhook.State.SUBSCRIBE);
         spec = new RequestSpecBuilder()
@@ -45,7 +45,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(1)
-    public void testCreateWebhook() {
+    void testCreateWebhook() {
         String location = given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -68,7 +68,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(2)
-    public void testDeleteWebhook() {
+    void testDeleteWebhook() {
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")
@@ -81,7 +81,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(2)
-    public void testListWebhooksWithTopics() {
+    void testListWebhooksWithTopics() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -95,7 +95,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(2)
-    public void testListWebhooksUnknownTopic() {
+    void testListWebhooksUnknownTopic() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
@@ -109,7 +109,7 @@ public class PublisherWebhookExposureTest {
 
     @Test
     @Order(2)
-    public void testListWebhooks() {
+    void testListWebhooks() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")

@@ -1,5 +1,6 @@
 package com.github.jensborch.webhooks.publisher;
 
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
@@ -21,7 +22,7 @@ import org.junit.jupiter.api.Test;
  * Integration test for {@link WebhookPublisher}.
  */
 @QuarkusTest
-public class WebhookPublisherTest {
+class WebhookPublisherTest {
 
     @Inject
     WebhookSubscriptions subscriptions;
@@ -33,7 +34,7 @@ public class WebhookPublisherTest {
     WebhookPublisher publisher;
 
     @Test
-    public void testSubscribe() throws Exception {
+    void testSubscribe() throws Exception {
         Webhook webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         Map<String, Object> data = new HashMap<>();

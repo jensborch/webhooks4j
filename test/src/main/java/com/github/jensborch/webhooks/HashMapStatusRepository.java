@@ -2,6 +2,7 @@ package com.github.jensborch.webhooks;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -41,8 +42,14 @@ public abstract class HashMapStatusRepository implements WebhookEventStatusRepos
     public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final UUID webhook) {
         return map.values().stream()
                 .filter(p -> p.getStart().isAfter(from))
-                .filter(p -> p.getEvent().getWebhook().map(w -> w.equals(webhook)).orElse(false))
+                .filter(p -> Optional.ofNullable(p.getEvent().getWebhook()).map(w -> w.equals(webhook)).orElse(false))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
+    public Optional<WebhookEventStatus> lastFailed() {
+        return map.values().stream()
+                .filter(s -> s.getStatus() == WebhookEventStatus.Status.FAILED)
+                .sorted(Comparator.reverseOrder())
+                .findFirst();
+    }
 }
