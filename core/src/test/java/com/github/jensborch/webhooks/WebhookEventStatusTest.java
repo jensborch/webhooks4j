@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
@@ -104,6 +105,14 @@ class WebhookEventStatusTest {
         assertNotEquals(s1, s2);
         assertNotEquals(null, s1);
         assertNotEquals(new Object(), s1);
+    }
+
+    @Test
+    void testStatusFromString() {
+        assertNull(WebhookEventStatus.Status.fromString(null));
+        assertEquals(WebhookEventStatus.Status.SUCCESS, WebhookEventStatus.Status.fromString("SUCCESS"));
+        WebhookException e = assertThrows(WebhookException.class, () -> WebhookEventStatus.Status.fromString("test"));
+        assertEquals(WebhookError.Code.VALIDATION_ERROR, e.getError().getCode());
     }
 
 }

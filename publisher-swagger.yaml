@@ -77,6 +77,10 @@ paths:
         in: query
         schema:
           type: string
+      - name: state
+        in: query
+        schema:
+          type: string
       - name: from
         in: query
         required: true
@@ -91,6 +95,46 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WebhookEventStatus'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+  /publisher-webhooks:
+    get:
+      operationId: list_1
+      parameters:
+      - name: topics
+        in: query
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Webhook information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+    post:
+      operationId: subscribe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+        required: true
+      responses:
+        "201":
+          description: Subscribed to webhook
         "400":
           description: Validation error
           content:
@@ -144,46 +188,6 @@ paths:
                 $ref: '#/components/schemas/WebhookError'
         "404":
           description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
-  /publisher-webhooks:
-    get:
-      operationId: list_1
-      parameters:
-      - name: topics
-        in: query
-        schema:
-          type: string
-      responses:
-        "200":
-          description: Webhook information
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Webhook'
-        "400":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
-    post:
-      operationId: subscribe
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Webhook'
-        required: true
-      responses:
-        "201":
-          description: Subscribed to webhook
-        "400":
-          description: Validation error
           content:
             application/json:
               schema:

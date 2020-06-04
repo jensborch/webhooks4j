@@ -19,8 +19,8 @@ public interface WebhookEventStatusRepository {
 
     Optional<WebhookEventStatus> find(@NotNull UUID eventId);
 
-    SortedSet<WebhookEventStatus> list(@NotNull ZonedDateTime from, @NotNull String... topic);
+    SortedSet<WebhookEventStatus> list(@NotNull ZonedDateTime from, WebhookEventStatus.Status status, @NotNull String... topic);
 
-    SortedSet<WebhookEventStatus> list(@NotNull ZonedDateTime from, @NotNull UUID webhook);
+    SortedSet<WebhookEventStatus> list(@NotNull ZonedDateTime from, WebhookEventStatus.Status status, @NotNull UUID webhook);
 
 }

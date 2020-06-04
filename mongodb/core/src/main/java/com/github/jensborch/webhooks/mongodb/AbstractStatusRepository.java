@@ -41,18 +41,21 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
     }
 
     @Override
-    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final String... topic) {
+    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final WebhookEventStatus.Status status, final String... topic) {
         Bson filter = Filters.gt("start", from);
         filter = topic.length > 0 ? Filters.and(filter, Filters.in("event.topic", topic)) : filter;
+        filter = status == null ? filter : Filters.and(filter, Filters.eq("status", status));
         return collection(WebhookEventStatus.class)
                 .find(filter)
                 .into(new TreeSet<>());
     }
 
     @Override
-    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final UUID webhook) {
+    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final WebhookEventStatus.Status status, final UUID webhook) {
+        Bson filter = Filters.and(Filters.eq("event.webhook", webhook), Filters.gt("start", from));
+        filter = status == null ? filter : Filters.and(filter, Filters.eq("status", status));
         return collection(WebhookEventStatus.class)
-                .find(Filters.and(Filters.eq("event.webhook", webhook), Filters.gt("start", from)))
+                .find(filter)
                 .into(new TreeSet<>());
     }
 

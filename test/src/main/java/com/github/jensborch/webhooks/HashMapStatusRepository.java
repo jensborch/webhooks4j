@@ -31,17 +31,19 @@ public abstract class HashMapStatusRepository implements WebhookEventStatusRepos
     }
 
     @Override
-    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final String... topic) {
+    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final WebhookEventStatus.Status status, final String... topic) {
         return map.values().stream()
                 .filter(p -> p.getStart().isAfter(from))
+                .filter(p -> status == null || p.getStatus() == status)
                 .filter(p -> topic == null || topic.length == 0 || Arrays.binarySearch(topic, p.getEvent().getTopic()) >= 0)
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
     @Override
-    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final UUID webhook) {
+    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final WebhookEventStatus.Status status, final UUID webhook) {
         return map.values().stream()
                 .filter(p -> p.getStart().isAfter(from))
+                .filter(p -> status == null || p.getStatus() == status)
                 .filter(p -> Optional.ofNullable(p.getEvent().getWebhook()).map(w -> w.equals(webhook)).orElse(false))
                 .collect(Collectors.toCollection(TreeSet::new));
     }

@@ -75,21 +75,23 @@ public class PublisherEventExposure {
                 )
         )
     })
+    @SuppressWarnings("PMD.UseObjectForClearerAPI")
     public Response list(
             @QueryParam("topics") final String topics,
             @ValidUUID @QueryParam("webhook") final String webhook,
+            @QueryParam("state") final String state,
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
             @Context final UriInfo uriInfo) {
-        LOG.debug("Listing events using webhook {}, topics {} and from {}", webhook, topics, from);
+        LOG.debug("Listing events using webhook {}, topics {}, from {} and state {}", webhook, topics, from, state);
         if (webhook == null) {
             return WebhookResponseBuilder
                     .create()
-                    .entity(repo.list(ZonedDateTime.parse(from), WebhookEventTopics.parse(topics).getTopics()))
+                    .entity(repo.list(ZonedDateTime.parse(from), WebhookEventStatus.Status.fromString(state), WebhookEventTopics.parse(topics).getTopics()))
                     .build();
         } else {
             return WebhookResponseBuilder
                     .create()
-                    .entity(repo.list(ZonedDateTime.parse(from), UUID.fromString(webhook)))
+                    .entity(repo.list(ZonedDateTime.parse(from), WebhookEventStatus.Status.fromString(state), UUID.fromString(webhook)))
                     .build();
         }
     }

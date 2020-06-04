@@ -147,6 +147,15 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
      * The processing status of the event.
      */
     public enum Status {
-        STARTED, FAILED, SUCCESS
+        STARTED, FAILED, SUCCESS;
+
+        @SuppressWarnings("PMD.PreserveStackTrace")
+        public static Status fromString(final String value) {
+            try {
+                return value == null ? null : Status.valueOf(value);
+            } catch (IllegalArgumentException e) {
+                throw new WebhookException(new WebhookError(WebhookError.Code.VALIDATION_ERROR, "Invalid status value " + value));
+            }
+        }
     }
 }

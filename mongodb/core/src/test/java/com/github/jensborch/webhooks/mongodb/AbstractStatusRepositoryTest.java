@@ -68,7 +68,7 @@ class AbstractStatusRepositoryTest {
     @Test
     void testListWithWebhook() {
         UUID id = UUID.randomUUID();
-        repository.list(DATE_TIME, id);
+        repository.list(DATE_TIME, null, id);
         verify(collection, times(1)).find(captor.capture());
         assertEquals(
                 "And Filter{filters=["
@@ -81,7 +81,7 @@ class AbstractStatusRepositoryTest {
 
     @Test
     void testListWithTopics() {
-        repository.list(DATE_TIME, "a", "b", "c");
+        repository.list(DATE_TIME, null, "a", "b", "c");
         verify(collection, times(1)).find(captor.capture());
         assertEquals(
                 "And Filter{filters=["
@@ -94,7 +94,7 @@ class AbstractStatusRepositoryTest {
 
     @Test
     void testListWithoutTopics() {
-        repository.list(DATE_TIME);
+        repository.list(DATE_TIME, null);
 
         verify(collection, times(1)).find(captor.capture());
         assertEquals(

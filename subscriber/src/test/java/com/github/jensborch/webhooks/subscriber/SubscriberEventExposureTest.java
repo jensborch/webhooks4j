@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -76,18 +77,18 @@ class SubscriberEventExposureTest {
     @Test
     void testListByTopic() {
         ZonedDateTime now = ZonedDateTime.now();
-        Response response = exposure.list("test1, test2", null, now.toString(), uriInfo);
+        Response response = exposure.list("test1, test2", null, null, now.toString(), uriInfo);
         assertNotNull(response);
-        verify(repo).list(eq(now), startsWith("test"), startsWith("test"));
+        verify(repo).list(eq(now), isNull(), startsWith("test"), startsWith("test"));
     }
 
     @Test
     void testListByWebhook() {
         ZonedDateTime now = ZonedDateTime.now();
         UUID id = UUID.randomUUID();
-        Response response = exposure.list(null, id.toString(), now.toString(), uriInfo);
+        Response response = exposure.list(null, id.toString(), null, now.toString(), uriInfo);
         assertNotNull(response);
-        verify(repo).list(eq(now), eq(id));
+        verify(repo).list(eq(now), isNull(), eq(id));
     }
 
     @Test

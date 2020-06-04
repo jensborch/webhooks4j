@@ -55,13 +55,13 @@ class WebhookEventConsumerTest {
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));
         pubStatusRepo.save(s1);
         pubStatusRepo.save(s2);
-        SortedSet<WebhookEventStatus> events = pubStatusRepo.list(ZonedDateTime.now().minusMinutes(1), TestEventListener.TOPIC);
+        SortedSet<WebhookEventStatus> events = pubStatusRepo.list(ZonedDateTime.now().minusMinutes(1), null, TestEventListener.TOPIC);
         assertThat(events.size(), greaterThan(1));
         assertThat(events, hasItems(s2, s1));
         consumer.sync(webhook);
         webhook = subscriptions.find(webhook.getId()).get();
         assertThat(webhook.getUpdated(), after(webhook.getCreated()));
-        assertFalse(subStatusRepo.list(from, webhook.getId()).stream().filter(s -> s.getStatus() == WebhookEventStatus.Status.FAILED).findAny().isPresent());
+        assertFalse(subStatusRepo.list(from, null, webhook.getId()).stream().filter(s -> s.getStatus() == WebhookEventStatus.Status.FAILED).findAny().isPresent());
         assertThat(listener.getEvents().keySet(), hasItems(s2.getId(), s1.getId()));
         assertEquals(WebhookEventStatus.Status.SUCCESS, pubStatusRepo.find(s1.getId()).get().getStatus());
         assertEquals(WebhookEventStatus.Status.SUCCESS, pubStatusRepo.find(s2.getId()).get().getStatus());
