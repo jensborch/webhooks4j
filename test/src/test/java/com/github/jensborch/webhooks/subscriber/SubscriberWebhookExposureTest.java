@@ -18,6 +18,7 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,11 +34,13 @@ class SubscriberWebhookExposureTest {
 
     private static final String TEST_TOPIC = SubscriberWebhookExposureTest.class.getName();
     private static Webhook webhook;
+    private static URI uri;
     private RequestSpecification spec;
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TEST_TOPIC);
+        uri = new URI("http://localhost:" + ConfigProvider.getConfig().getOptionalValue("quarkus.http.test-port", String.class).orElse("8081"));
+        webhook = new Webhook(uri, uri, TEST_TOPIC);
     }
 
     @BeforeEach
@@ -104,7 +107,7 @@ class SubscriberWebhookExposureTest {
 
     @Test
     void testDeleteWebhooks() throws Exception {
-        Webhook toDelete = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), "delete");
+        Webhook toDelete = new Webhook(uri, uri, "delete");
         given()
                 .spec(spec)
                 .auth().basic("subscriber", "concon")

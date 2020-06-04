@@ -21,6 +21,7 @@ import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.publisher.Publisher;
 import com.github.jensborch.webhooks.publisher.PublisherStatusRepository;
 import io.quarkus.test.junit.QuarkusTest;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -49,7 +50,8 @@ class WebhookEventConsumerTest {
     @Test
     void testSync() throws Exception {
         ZonedDateTime from = ZonedDateTime.now();
-        Webhook webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TestEventListener.TOPIC);
+        URI uri = new URI("http://localhost:" + ConfigProvider.getConfig().getOptionalValue("quarkus.http.test-port", String.class).orElse("8081"));
+        Webhook webhook = new Webhook(uri, uri, TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));

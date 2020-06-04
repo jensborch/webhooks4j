@@ -16,6 +16,7 @@ import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.subscriber.TestEventListener;
 import com.github.jensborch.webhooks.subscriber.WebhookSubscriptions;
 import io.quarkus.test.junit.QuarkusTest;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,7 +36,8 @@ class WebhookPublisherTest {
 
     @Test
     void testSubscribe() throws Exception {
-        Webhook webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TestEventListener.TOPIC);
+        String uri = "http://localhost:" + ConfigProvider.getConfig().getOptionalValue("quarkus.http.test-port", String.class).orElse("8081");
+        Webhook webhook = new Webhook(new URI(uri), new URI(uri), TestEventListener.TOPIC);
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         Map<String, Object> data = new HashMap<>();
         WebhookEvent event = new WebhookEvent(TestEventListener.TOPIC, data).webhook(webhook.getId());
