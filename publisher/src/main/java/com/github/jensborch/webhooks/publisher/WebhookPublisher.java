@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.WebhookEvent;
@@ -57,7 +56,7 @@ public class WebhookPublisher {
         LOG.debug("Publishing to {}", webhook);
         WebhookEventStatus status = statusRepo.save(new WebhookEventStatus(event));
         WebhookResponseHandler
-                .type(Response.class)
+                .type(WebhookEventStatus.class)
                 .invocation(client.target(webhook.subscriberEndpoints().getEvents())
                         .request(MediaType.APPLICATION_JSON)
                         .buildPost(Entity.json(event)))
