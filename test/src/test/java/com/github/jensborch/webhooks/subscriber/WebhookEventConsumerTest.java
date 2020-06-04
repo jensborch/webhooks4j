@@ -53,6 +53,8 @@ class WebhookEventConsumerTest {
         subscriptions.subscribe(webhook.state(Webhook.State.SUBSCRIBE));
         WebhookEventStatus s1 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));
         WebhookEventStatus s2 = new WebhookEventStatus(new WebhookEvent(TestEventListener.TOPIC, new HashMap<>()).webhook(webhook.getId()));
+        s1.setStatus(WebhookEventStatus.Status.FAILED);
+        s2.setStatus(WebhookEventStatus.Status.FAILED);
         pubStatusRepo.save(s1);
         pubStatusRepo.save(s2);
         SortedSet<WebhookEventStatus> events = pubStatusRepo.list(ZonedDateTime.now().minusMinutes(1), null, TestEventListener.TOPIC);

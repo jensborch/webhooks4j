@@ -44,7 +44,7 @@ paths:
         in: query
         schema:
           type: string
-      - name: state
+      - name: status
         in: query
         schema:
           type: string

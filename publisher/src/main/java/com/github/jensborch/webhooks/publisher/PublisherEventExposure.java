@@ -79,19 +79,19 @@ public class PublisherEventExposure {
     public Response list(
             @QueryParam("topics") final String topics,
             @ValidUUID @QueryParam("webhook") final String webhook,
-            @QueryParam("state") final String state,
+            @QueryParam("status") final String status,
             @NotNull @ValidZonedDateTime @QueryParam("from") final String from,
             @Context final UriInfo uriInfo) {
-        LOG.debug("Listing events using webhook {}, topics {}, from {} and state {}", webhook, topics, from, state);
+        LOG.debug("Listing events using webhook {}, topics {}, from {} and state {}", webhook, topics, from, status);
         if (webhook == null) {
             return WebhookResponseBuilder
                     .create()
-                    .entity(repo.list(ZonedDateTime.parse(from), WebhookEventStatus.Status.fromString(state), WebhookEventTopics.parse(topics).getTopics()))
+                    .entity(repo.list(ZonedDateTime.parse(from), WebhookEventStatus.Status.fromString(status), WebhookEventTopics.parse(topics).getTopics()))
                     .build();
         } else {
             return WebhookResponseBuilder
                     .create()
-                    .entity(repo.list(ZonedDateTime.parse(from), WebhookEventStatus.Status.fromString(state), UUID.fromString(webhook)))
+                    .entity(repo.list(ZonedDateTime.parse(from), WebhookEventStatus.Status.fromString(status), UUID.fromString(webhook)))
                     .build();
         }
     }

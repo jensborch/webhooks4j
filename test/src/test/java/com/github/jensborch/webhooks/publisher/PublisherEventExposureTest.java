@@ -87,7 +87,6 @@ class PublisherEventExposureTest {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
-                .log().all()
                 .when()
                 .pathParam("id", unsuccessful.getId())
                 .body(unsuccessful.done(true))
@@ -102,7 +101,6 @@ class PublisherEventExposureTest {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
-                .log().all()
                 .when()
                 .pathParam("id", random)
                 .body(new WebhookEventStatus(event).done(true))
@@ -117,7 +115,6 @@ class PublisherEventExposureTest {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
-                .log().all()
                 .when()
                 .pathParam("id", event.getId())
                 .body(new WebhookEventStatus(event).done(false))
@@ -132,7 +129,6 @@ class PublisherEventExposureTest {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
-                .log().all()
                 .when()
                 .header("If-Match", "test")
                 .pathParam("id", event.getId())
@@ -158,7 +154,6 @@ class PublisherEventExposureTest {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
-                .log().all()
                 .when()
                 .header("If-Match", etag)
                 .pathParam("id", event.getId())
@@ -183,13 +178,42 @@ class PublisherEventExposureTest {
     }
 
     @Test
-    void testListWebhook() {
+    void testListWebhookRandomId() {
         given()
                 .spec(spec)
                 .auth().basic("publisher", "pubpub")
                 .when()
                 .queryParam("from", "2007-12-03T10:15:30+01:00")
                 .queryParam("webhook", UUID.randomUUID())
+                .get("publisher-events")
+                .then()
+                .statusCode(200)
+                .body("size()", equalTo(0));
+    }
+
+    @Test
+    void testListWebhook() {
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .when()
+                .queryParam("from", "2007-12-03T10:15:30+01:00")
+                .queryParam("webhook", webhook.getId())
+                .get("publisher-events")
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0));
+    }
+
+    @Test
+    void testListWebhookAndStatus() {
+        given()
+                .spec(spec)
+                .auth().basic("publisher", "pubpub")
+                .when()
+                .queryParam("from", "2007-12-03T10:15:30+01:00")
+                .queryParam("webhook", webhook.getId())
+                .queryParam("status", "SUCCESS")
                 .get("publisher-events")
                 .then()
                 .statusCode(200)
