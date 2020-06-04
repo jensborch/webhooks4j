@@ -72,7 +72,7 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
     public Optional<WebhookEventStatus> firstFailed(final UUID webhook) {
         return Optional.ofNullable(collection(WebhookEventStatus.class)
                 .find(Filters.and(Filters.eq("event.webhook", webhook), Filters.eq("status", WebhookEventStatus.Status.FAILED)))
-                .sort(new BasicDBObject("end", 1))
+                .sort(new BasicDBObject("end", -1))
                 .limit(1)
                 .first());
 
