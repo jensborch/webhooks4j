@@ -1,6 +1,7 @@
 package com.github.jensborch.webhooks.mongodb;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -42,20 +43,29 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
 
     @Override
     public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final WebhookEventStatus.Status status, final String... topic) {
-        Bson filter = Filters.gt("start", from);
-        filter = topic.length > 0 ? Filters.and(filter, Filters.in("event.topic", topic)) : filter;
-        filter = status == null ? filter : Filters.and(filter, Filters.eq("status", status));
+        ArrayList<Bson> filters = new ArrayList<>();
+        filters.add(Filters.gt("start", from));
+        if (topic.length > 0) {
+            filters.add(Filters.in("event.topic", topic));
+        }
+        if (status != null) {
+            filters.add(Filters.eq("status", status));
+        }
         return collection(WebhookEventStatus.class)
-                .find(filter)
+                .find(Filters.and(filters.toArray(new Bson[0])))
                 .into(new TreeSet<>());
     }
 
     @Override
     public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final WebhookEventStatus.Status status, final UUID webhook) {
-        Bson filter = Filters.and(Filters.eq("event.webhook", webhook), Filters.gt("start", from));
-        filter = status == null ? filter : Filters.and(filter, Filters.eq("status", status));
+        ArrayList<Bson> filters = new ArrayList<>();
+        filters.add(Filters.eq("event.webhook", webhook));
+        filters.add(Filters.gt("start", from));
+        if (status != null) {
+            filters.add(Filters.eq("status", status));
+        }
         return collection(WebhookEventStatus.class)
-                .find(filter)
+                .find(Filters.and(filters.toArray(new Bson[0])))
                 .into(new TreeSet<>());
     }
 
