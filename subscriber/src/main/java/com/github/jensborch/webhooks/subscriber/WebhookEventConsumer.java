@@ -86,6 +86,7 @@ public class WebhookEventConsumer {
                         .target(webhook.publisherEndpoints().getEvents())
                         .queryParam("from", webhook.getUpdated())
                         .queryParam("webhook", webhook.getId())
+                        .queryParam("status", WebhookEventStatus.Status.FAILED.toString())
                         .request(MediaType.APPLICATION_JSON)
                         .buildGet())
                 .success(events -> events.stream().map(WebhookEventStatus::getEvent).map(this::consume).forEach(e -> updatePublisherStatus(webhook, e)))
