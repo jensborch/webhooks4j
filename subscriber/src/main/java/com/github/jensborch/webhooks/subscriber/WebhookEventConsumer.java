@@ -57,19 +57,22 @@ public class WebhookEventConsumer {
         LOG.debug("Receiving event {}", callbackEvent);
         Webhook webhook = findPublisher(callbackEvent);
         WebhookEventStatus status = findOrCreate(callbackEvent);
-        if (status.eligible()) {
-            try {
+        try {
+            if (status.eligible()) {
+                LOG.debug("Processing event {}", callbackEvent);
                 event
                         .select(WebhookEvent.class, new EventTopicLiteral(callbackEvent.getTopic()))
                         .fire(callbackEvent);
                 repo.save(status.done(true));
-                subscriptions.touch(webhook.getId());
                 LOG.debug("Done processing event {}", callbackEvent);
-            } catch (ObserverException e) {
-                LOG.warn("Error processing event {}", callbackEvent, e);
-                repo.save(status.done(false));
             }
+            LOG.debug("Updating timestamp on webhook {}", webhook.getId());
+            subscriptions.touch(webhook.getId());
+        } catch (ObserverException e) {
+            LOG.warn("Error processing event {}", callbackEvent, e);
+            repo.save(status.done(false));
         }
+
         return status;
     }
 

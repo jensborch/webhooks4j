@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 
@@ -38,8 +37,7 @@ class WebhookTest {
     @Test
     void testTouchNull() throws Exception {
         Webhook w = new Webhook(new URI("http://pub.dk"), new URI("http://sub.dk"), "test");
-        ZonedDateTime old = w.getUpdated();
-        TimeUnit.SECONDS.sleep(1);
+        ZonedDateTime old = w.getUpdated().minusMinutes(5).minusSeconds(1);
         assertTrue(old.isBefore(w.touch(null).getUpdated()));
     }
 

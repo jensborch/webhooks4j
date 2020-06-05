@@ -64,7 +64,7 @@ class WebhookEventConsumerTest {
         assertThat(events, hasItems(s2, s1));
         consumer.sync(webhook);
         webhook = subscriptions.find(webhook.getId()).get();
-        assertThat(webhook.getUpdated(), after(webhook.getCreated()));
+        assertThat(webhook.getUpdated().plusMinutes(5), after(webhook.getCreated()));
         assertFalse(subStatusRepo.list(from, null, webhook.getId()).stream().filter(s -> s.getStatus() == WebhookEventStatus.Status.FAILED).findAny().isPresent());
         assertThat(listener.getEvents().keySet(), hasItems(s2.getId(), s1.getId()));
         assertEquals(WebhookEventStatus.Status.SUCCESS, pubStatusRepo.find(s1.getId()).get().getStatus());
