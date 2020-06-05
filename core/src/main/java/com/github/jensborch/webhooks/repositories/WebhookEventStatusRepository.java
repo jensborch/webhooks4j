@@ -2,13 +2,13 @@ package com.github.jensborch.webhooks.repositories;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.SortedSet;
 import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.github.jensborch.webhooks.WebhookEventStatus;
+import com.github.jensborch.webhooks.WebhookEventStatuses;
 
 /**
  * Repository for manipulating webhook event statuses.
@@ -19,8 +19,8 @@ public interface WebhookEventStatusRepository {
 
     Optional<WebhookEventStatus> find(@NotNull UUID eventId);
 
-    SortedSet<WebhookEventStatus> list(@NotNull ZonedDateTime from, WebhookEventStatus.Status status, @NotNull String... topic);
+    WebhookEventStatuses list(@NotNull ZonedDateTime from, WebhookEventStatus.Status status, @NotNull String... topic);
 
-    SortedSet<WebhookEventStatus> list(@NotNull ZonedDateTime from, WebhookEventStatus.Status status, @NotNull UUID webhook);
+    WebhookEventStatuses list(@NotNull ZonedDateTime from, WebhookEventStatus.Status status, @NotNull UUID webhook);
 
 }

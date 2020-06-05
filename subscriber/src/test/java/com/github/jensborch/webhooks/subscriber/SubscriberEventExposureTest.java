@@ -16,6 +16,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.ws.rs.core.Request;
@@ -25,6 +26,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventStatus;
+import com.github.jensborch.webhooks.WebhookEventStatuses;
 import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,6 +78,7 @@ class SubscriberEventExposureTest {
 
     @Test
     void testListByTopic() {
+        when(repo.list(any(ZonedDateTime.class), isNull(), any(String.class))).thenReturn(new WebhookEventStatuses(new TreeSet<>()));
         ZonedDateTime now = ZonedDateTime.now();
         Response response = exposure.list("test1, test2", null, null, now.toString(), uriInfo);
         assertNotNull(response);
@@ -84,6 +87,7 @@ class SubscriberEventExposureTest {
 
     @Test
     void testListByWebhook() {
+        when(repo.list(any(ZonedDateTime.class), isNull(), any(UUID.class))).thenReturn(new WebhookEventStatuses(new TreeSet<>()));
         ZonedDateTime now = ZonedDateTime.now();
         UUID id = UUID.randomUUID();
         Response response = exposure.list(null, id.toString(), null, now.toString(), uriInfo);

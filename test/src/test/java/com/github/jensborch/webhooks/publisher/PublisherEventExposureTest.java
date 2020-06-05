@@ -176,7 +176,7 @@ class PublisherEventExposureTest {
                 .get("publisher-events")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(0));
+                .body("statuses.size()", greaterThan(0));
     }
 
     @Test
@@ -190,7 +190,7 @@ class PublisherEventExposureTest {
                 .get("publisher-events")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(0));
+                .body("statuses.size()", equalTo(0));
     }
 
     @Test
@@ -204,7 +204,7 @@ class PublisherEventExposureTest {
                 .get("publisher-events")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(0));
+                .body("statuses.size()", greaterThan(0));
     }
 
     @Test
@@ -219,7 +219,7 @@ class PublisherEventExposureTest {
                 .get("publisher-events")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(0));
+                .body("statuses.size()", greaterThan(0));
     }
 
     @Test
@@ -246,7 +246,7 @@ class PublisherEventExposureTest {
                 .get("publisher-events")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(0));
+                .body("statuses.size()", greaterThan(0));
     }
 
     @Test
@@ -260,7 +260,7 @@ class PublisherEventExposureTest {
                 .get("publisher-events")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(0));
+                .body("statuses.size()", equalTo(0));
     }
 
     @Test
@@ -273,7 +273,7 @@ class PublisherEventExposureTest {
                 .get("publisher-events")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(0));
+                .body("statuses.size()", equalTo(0));
     }
 
 }

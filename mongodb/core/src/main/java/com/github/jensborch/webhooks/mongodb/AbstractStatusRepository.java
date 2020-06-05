@@ -3,13 +3,13 @@ package com.github.jensborch.webhooks.mongodb;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
 import com.github.jensborch.webhooks.WebhookEventStatus;
+import com.github.jensborch.webhooks.WebhookEventStatuses;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
@@ -42,7 +42,7 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
     }
 
     @Override
-    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final WebhookEventStatus.Status status, final String... topic) {
+    public WebhookEventStatuses list(final ZonedDateTime from, final WebhookEventStatus.Status status, final String... topic) {
         ArrayList<Bson> filters = new ArrayList<>();
         filters.add(Filters.gt("start", from));
         if (topic.length > 0) {
@@ -51,22 +51,22 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
         if (status != null) {
             filters.add(Filters.eq("status", status.toString()));
         }
-        return collection(WebhookEventStatus.class)
+        return new WebhookEventStatuses(collection(WebhookEventStatus.class)
                 .find(Filters.and(filters.toArray(new Bson[0])))
-                .into(new TreeSet<>());
+                .into(new TreeSet<>()));
     }
 
     @Override
-    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final WebhookEventStatus.Status status, final UUID webhook) {
+    public WebhookEventStatuses list(final ZonedDateTime from, final WebhookEventStatus.Status status, final UUID webhook) {
         ArrayList<Bson> filters = new ArrayList<>();
         filters.add(Filters.eq("event.webhook", webhook));
         filters.add(Filters.gt("start", from));
         if (status != null) {
             filters.add(Filters.eq("status", status.toString()));
         }
-        return collection(WebhookEventStatus.class)
+        return new WebhookEventStatuses(collection(WebhookEventStatus.class)
                 .find(Filters.and(filters.toArray(new Bson[0])))
-                .into(new TreeSet<>());
+                .into(new TreeSet<>()));
     }
 
     public Optional<WebhookEventStatus> firstFailed(final UUID webhook) {

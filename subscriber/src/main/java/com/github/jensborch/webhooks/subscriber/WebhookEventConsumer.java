@@ -1,7 +1,6 @@
 package com.github.jensborch.webhooks.subscriber;
 
 import java.util.Optional;
-import java.util.SortedSet;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -11,13 +10,13 @@ import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventStatus;
+import com.github.jensborch.webhooks.WebhookEventStatuses;
 import com.github.jensborch.webhooks.WebhookEventTopic;
 import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.WebhookResponseHandler;
@@ -83,8 +82,7 @@ public class WebhookEventConsumer {
      */
     public Webhook sync(final Webhook webhook) {
         WebhookResponseHandler
-                .type(new GenericType<SortedSet<WebhookEventStatus>>() {
-                })
+                .type(WebhookEventStatuses.class)
                 .invocation(client
                         .target(webhook.publisherEndpoints().getEvents())
                         .queryParam("from", webhook.getUpdated())
@@ -92,7 +90,7 @@ public class WebhookEventConsumer {
                         .queryParam("status", WebhookEventStatus.Status.FAILED.toString())
                         .request(MediaType.APPLICATION_JSON)
                         .buildGet())
-                .success(events -> events.stream().map(WebhookEventStatus::getEvent).map(this::consume).forEach(e -> updatePublisherStatus(webhook, e)))
+                .success(s -> s.getStatuses().stream().map(WebhookEventStatus::getEvent).map(this::consume).forEach(e -> updatePublisherStatus(webhook, e)))
                 .error(this::handleError)
                 .exception(this::handleException)
                 .invoke();

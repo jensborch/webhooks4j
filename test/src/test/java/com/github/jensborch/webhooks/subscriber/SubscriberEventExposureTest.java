@@ -84,7 +84,7 @@ class SubscriberEventExposureTest {
                 .get("subscriber-events")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(0));
+                .body("statuses.size()", greaterThan(0));
     }
 
     @Test
@@ -98,7 +98,7 @@ class SubscriberEventExposureTest {
                 .get("subscriber-events")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(0));
+                .body("statuses.size()", equalTo(0));
     }
 
     @Test

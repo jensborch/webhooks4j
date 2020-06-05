@@ -19,7 +19,6 @@ import javax.enterprise.event.ObserverException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -27,6 +26,7 @@ import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventStatus;
+import com.github.jensborch.webhooks.WebhookEventStatuses;
 import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.github.jensborch.webhooks.subscriber.WebhookEventConsumer.EventTopicLiteral;
@@ -142,7 +142,7 @@ class WebhookEventConsumerTest {
             doReturn(cdiEvent).when(event).select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class));
             statusSet.addAll(Arrays.asList(status));
         }
-        when(response.readEntity(ArgumentMatchers.<GenericType<SortedSet>>any())).thenReturn(statusSet);
+        when(response.readEntity(ArgumentMatchers.<Class<WebhookEventStatuses>>any())).thenReturn(new WebhookEventStatuses(statusSet));
         return target;
     }
 
