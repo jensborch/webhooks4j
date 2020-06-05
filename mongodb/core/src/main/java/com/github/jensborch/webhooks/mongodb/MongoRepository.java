@@ -6,10 +6,13 @@ import java.util.Collections;
 import java.util.List;
 
 import com.github.jensborch.webhooks.Webhook;
+import com.github.jensborch.webhooks.WebhookEvent;
+import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.Convention;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
@@ -23,10 +26,11 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 public abstract class MongoRepository<T> {
 
     private static final List<Convention> CONVENTIONS = Collections.singletonList(SET_PRIVATE_FIELDS_CONVENTION);
-    private static final PojoCodecProvider PROVIDER = PojoCodecProvider
-            .builder()
-            .register(Webhook.class.getName().substring(0, Webhook.class.getName().lastIndexOf('.')))
-            .conventions(CONVENTIONS).build();
+    private static final PojoCodecProvider PROVIDER = PojoCodecProvider.builder().register(
+            ClassModel.builder(Webhook.class).conventions(CONVENTIONS).build(),
+            ClassModel.builder(WebhookEvent.class).conventions(CONVENTIONS).build(),
+            ClassModel.builder(WebhookEventStatus.class).conventions(CONVENTIONS).build()
+    ).build();
 
     private CodecRegistry registry() {
         return CodecRegistries.fromRegistries(CodecRegistries.fromProviders(PROVIDER), db().getCodecRegistry());

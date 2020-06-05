@@ -49,7 +49,7 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
             filters.add(Filters.in("event.topic", topic));
         }
         if (status != null) {
-            filters.add(Filters.eq("status", status));
+            filters.add(Filters.eq("status", status.toString()));
         }
         return collection(WebhookEventStatus.class)
                 .find(Filters.and(filters.toArray(new Bson[0])))
@@ -62,7 +62,7 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
         filters.add(Filters.eq("event.webhook", webhook));
         filters.add(Filters.gt("start", from));
         if (status != null) {
-            filters.add(Filters.eq("status", status));
+            filters.add(Filters.eq("status", status.toString()));
         }
         return collection(WebhookEventStatus.class)
                 .find(Filters.and(filters.toArray(new Bson[0])))
@@ -71,7 +71,7 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
 
     public Optional<WebhookEventStatus> firstFailed(final UUID webhook) {
         return Optional.ofNullable(collection(WebhookEventStatus.class)
-                .find(Filters.and(Filters.eq("event.webhook", webhook), Filters.eq("status", WebhookEventStatus.Status.FAILED)))
+                .find(Filters.and(Filters.eq("event.webhook", webhook), Filters.eq("status", WebhookEventStatus.Status.FAILED.toString())))
                 .sort(new BasicDBObject("end", -1))
                 .limit(1)
                 .first());
