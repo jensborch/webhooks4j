@@ -137,9 +137,9 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
     public int compareTo(final WebhookEventStatus other) {
         Objects.requireNonNull(other, "WebhookEventStatus can not be null");
         return Comparator
-                .comparing(WebhookEventStatus::getStart)
+                .comparing(WebhookEventStatus::getStart, Comparator.nullsLast(Comparator.naturalOrder()))
                 .reversed()
-                .thenComparing(WebhookEventStatus::getId)
+                .thenComparing(WebhookEventStatus::getId, Comparator.nullsLast(Comparator.naturalOrder()))
                 .compare(this, other);
     }
 

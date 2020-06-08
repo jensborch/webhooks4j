@@ -1,6 +1,8 @@
 package com.github.jensborch.webhooks;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -17,10 +19,11 @@ public class WebhookEventStatuses {
     @SuppressWarnings("PMD.NullAssignment")
     protected WebhookEventStatuses() {
         //Needed by Jackson
-        this.statuses = null;
+        this.statuses = new TreeSet<>();
     }
 
-    public WebhookEventStatuses(final SortedSet<WebhookEventStatus> statuses) {
+    public WebhookEventStatuses(final Collection<WebhookEventStatus> statuses) {
+        Objects.requireNonNull(statuses, "Statuses should not be null");
         this.statuses = new TreeSet<>(statuses);
     }
 

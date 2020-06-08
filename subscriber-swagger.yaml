@@ -4,6 +4,34 @@ info:
   description: Small, simple and extendable Java library for messaging using webhooks.
   version: v1
 paths:
+  /subscriber-events/{id}:
+    get:
+      operationId: get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Webhook event status information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventStatus'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
   /subscriber-events:
     get:
       operationId: list
@@ -51,74 +79,6 @@ paths:
       responses:
         "201":
           description: Webhook event received
-        "400":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
-  /subscriber-events/{id}:
-    get:
-      operationId: get
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: Webhook event status information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookEventStatus'
-        "400":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
-        "404":
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
-  /subscriber-webhooks:
-    get:
-      operationId: list_1
-      parameters:
-      - name: topics
-        in: query
-        schema:
-          type: string
-      responses:
-        "200":
-          description: Webhook information
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Webhook'
-        "400":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
-    post:
-      operationId: subscribe
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Webhook'
-        required: true
-      responses:
-        "201":
-          description: Subscribed to webhook
         "400":
           description: Validation error
           content:
@@ -209,38 +169,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
+  /subscriber-webhooks:
+    get:
+      operationId: list_1
+      parameters:
+      - name: topics
+        in: query
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Webhook information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+    post:
+      operationId: subscribe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+        required: true
+      responses:
+        "201":
+          description: Subscribed to webhook
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
 components:
   schemas:
-    WebhookError:
-      required:
-      - code
-      - detail
-      - status
-      - title
-      type: object
-      properties:
-        status:
-          type: integer
-          format: int32
-        code:
-          type: string
-          enum:
-          - AUTHORIZATION_ERROR
-          - AUTHENTICATION_ERROR
-          - VALIDATION_ERROR
-          - UNKNOWN_PUBLISHER
-          - UNKNOWN_ERROR
-          - SUBSCRIPTION_ERROR
-          - NOT_FOUND
-          - SYNC_ERROR
-          - ILLEGAL_STATUS
-        title:
-          type: string
-        details:
-          type: string
-          writeOnly: true
-        detail:
-          type: string
     WebhookEvent:
       required:
       - data
@@ -285,6 +255,36 @@ components:
           - STARTED
           - FAILED
           - SUCCESS
+    WebhookError:
+      required:
+      - code
+      - detail
+      - status
+      - title
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        code:
+          type: string
+          enum:
+          - AUTHORIZATION_ERROR
+          - AUTHENTICATION_ERROR
+          - VALIDATION_ERROR
+          - UNKNOWN_PUBLISHER
+          - UNKNOWN_ERROR
+          - SUBSCRIPTION_ERROR
+          - NOT_FOUND
+          - SYNC_ERROR
+          - ILLEGAL_STATUS
+        title:
+          type: string
+        details:
+          type: string
+          writeOnly: true
+        detail:
+          type: string
     Webhook:
       required:
       - created
