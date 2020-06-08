@@ -20,6 +20,7 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -44,7 +45,8 @@ class SubscriberEventExposureTest {
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        webhook = new Webhook(new URI("http://localhost:8081/"), new URI("http://localhost:8081/"), TEST_TOPIC);
+        URI uri = new URI("http://localhost:" + ConfigProvider.getConfig().getOptionalValue("quarkus.http.test-port", String.class).orElse("8081"));
+        webhook = new Webhook(uri, uri, TEST_TOPIC);
     }
 
     @BeforeEach
@@ -82,7 +84,7 @@ class SubscriberEventExposureTest {
                 .get("subscriber-events")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(0));
+                .body("statuses.size()", greaterThan(0));
     }
 
     @Test
@@ -96,7 +98,7 @@ class SubscriberEventExposureTest {
                 .get("subscriber-events")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(0));
+                .body("statuses.size()", equalTo(0));
     }
 
     @Test

@@ -116,7 +116,7 @@ public class Webhook {
     }
 
     public Webhook touch(final ZonedDateTime max) {
-        this.updated = max == null ? ZonedDateTime.now() : max;
+        this.updated = max == null ? ZonedDateTime.now().minusMinutes(5) : max;
         return this;
     }
 

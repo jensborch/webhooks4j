@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,19 +30,21 @@ public abstract class HashMapStatusRepository implements WebhookEventStatusRepos
     }
 
     @Override
-    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final String... topic) {
-        return map.values().stream()
+    public WebhookEventStatuses list(final ZonedDateTime from, final WebhookEventStatus.Status status, final String... topic) {
+        return new WebhookEventStatuses(map.values().stream()
                 .filter(p -> p.getStart().isAfter(from))
+                .filter(p -> status == null || p.getStatus() == status)
                 .filter(p -> topic == null || topic.length == 0 || Arrays.binarySearch(topic, p.getEvent().getTopic()) >= 0)
-                .collect(Collectors.toCollection(TreeSet::new));
+                .collect(Collectors.toCollection(TreeSet::new)));
     }
 
     @Override
-    public SortedSet<WebhookEventStatus> list(final ZonedDateTime from, final UUID webhook) {
-        return map.values().stream()
+    public WebhookEventStatuses list(final ZonedDateTime from, final WebhookEventStatus.Status status, final UUID webhook) {
+        return new WebhookEventStatuses(map.values().stream()
                 .filter(p -> p.getStart().isAfter(from))
+                .filter(p -> status == null || p.getStatus() == status)
                 .filter(p -> Optional.ofNullable(p.getEvent().getWebhook()).map(w -> w.equals(webhook)).orElse(false))
-                .collect(Collectors.toCollection(TreeSet::new));
+                .collect(Collectors.toCollection(TreeSet::new)));
     }
 
     public Optional<WebhookEventStatus> lastFailed() {
