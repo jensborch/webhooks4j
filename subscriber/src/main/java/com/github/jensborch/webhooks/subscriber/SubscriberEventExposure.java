@@ -27,13 +27,13 @@ import com.github.jensborch.webhooks.WebhookDocumentation;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventStatus;
+import com.github.jensborch.webhooks.WebhookEventStatuses;
 import com.github.jensborch.webhooks.WebhookEventTopics;
 import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.WebhookResponseBuilder;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.github.jensborch.webhooks.validation.ValidUUID;
 import com.github.jensborch.webhooks.validation.ValidZonedDateTime;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -94,9 +94,9 @@ public class SubscriberEventExposure {
         @ApiResponse(
                 description = WebhookDocumentation.EVENT_STATUS,
                 responseCode = "200",
-                content = @Content(array = @ArraySchema(
-                        schema = @Schema(implementation = WebhookEventStatus.class)
-                ))
+                content = @Content(
+                        schema = @Schema(implementation = WebhookEventStatuses.class)
+                )
         ),
         @ApiResponse(
                 description = WebhookDocumentation.VALIDATION_ERROR,

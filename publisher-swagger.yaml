@@ -92,9 +92,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WebhookEventStatus'
+                $ref: '#/components/schemas/WebhookEventStatuses'
         "400":
           description: Validation error
           content:
@@ -268,6 +266,18 @@ components:
           writeOnly: true
         detail:
           type: string
+    WebhookEventStatuses:
+      type: object
+      properties:
+        statuses:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEventStatus'
+        size:
+          type: integer
+          format: int32
+          readOnly: true
     Webhook:
       required:
       - created
