@@ -164,9 +164,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Webhook'
+                $ref: '#/components/schemas/Webhooks'
         "400":
           description: Validation error
           content:
@@ -323,3 +321,15 @@ components:
         updated:
           type: string
           format: date-time
+    Webhooks:
+      type: object
+      properties:
+        webhooks:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Webhook'
+        size:
+          type: integer
+          format: int32
+          readOnly: true

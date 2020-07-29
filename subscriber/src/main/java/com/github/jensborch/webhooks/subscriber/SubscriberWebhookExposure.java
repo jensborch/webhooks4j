@@ -29,8 +29,8 @@ import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEventTopics;
 import com.github.jensborch.webhooks.WebhookException;
 import com.github.jensborch.webhooks.WebhookResponseBuilder;
+import com.github.jensborch.webhooks.Webhooks;
 import com.github.jensborch.webhooks.validation.ValidUUID;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -172,9 +172,7 @@ public class SubscriberWebhookExposure {
         @ApiResponse(
                 description = WebhookDocumentation.WEBHOOK,
                 responseCode = "200",
-                content = @Content(array = @ArraySchema(
-                        schema = @Schema(implementation = Webhook.class)
-                ))
+                content = @Content(schema = @Schema(implementation = Webhooks.class))
         ),
         @ApiResponse(
                 description = WebhookDocumentation.VALIDATION_ERROR,
@@ -187,7 +185,7 @@ public class SubscriberWebhookExposure {
     public Response list(@QueryParam("topics") final String topics) {
         return WebhookResponseBuilder
                 .create()
-                .entity(subscriptions.list(WebhookEventTopics.parse(topics).getTopics()))
+                .entity(new Webhooks(subscriptions.list(WebhookEventTopics.parse(topics).getTopics())))
                 .build();
     }
 

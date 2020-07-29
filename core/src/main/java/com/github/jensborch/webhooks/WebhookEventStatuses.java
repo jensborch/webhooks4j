@@ -16,7 +16,6 @@ public class WebhookEventStatuses {
 
     private final SortedSet<WebhookEventStatus> statuses;
 
-    @SuppressWarnings("PMD.NullAssignment")
     protected WebhookEventStatuses() {
         //Needed by Jackson
         this.statuses = new TreeSet<>();

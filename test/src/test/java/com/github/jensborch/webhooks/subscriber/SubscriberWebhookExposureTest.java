@@ -77,7 +77,7 @@ class SubscriberWebhookExposureTest {
                 .get("subscriber-webhooks")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(1));
+                .body("webhooks.size()", equalTo(1));
     }
 
     @Test
@@ -90,7 +90,7 @@ class SubscriberWebhookExposureTest {
                 .get("subscriber-webhooks")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(0));
+                .body("webhooks.size()", equalTo(0));
     }
 
     @Test
@@ -102,7 +102,7 @@ class SubscriberWebhookExposureTest {
                 .get("subscriber-webhooks")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(0));
+                .body("webhooks.size()", greaterThan(0));
     }
 
     @Test

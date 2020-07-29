@@ -5,6 +5,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * This class defines a Webhook with a publisher and subscribe URI.
  */
-public class Webhook {
+public class Webhook implements Comparable<Webhook> {
 
     @NotNull
     private final UUID id;
@@ -155,6 +156,17 @@ public class Webhook {
         final Webhook other = (Webhook) obj;
         return Objects.equals(this.publisher, other.publisher)
                 && Objects.equals(this.subscriber, other.subscriber);
+    }
+
+    @Override
+    public int compareTo(final Webhook other) {
+        Objects.requireNonNull(other, "WebhookEventStatus can not be null");
+        return Comparator
+                .comparing(Webhook::getCreated)
+                .reversed()
+                .thenComparing(Webhook::getPublisher, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(Webhook::getSubscriber, Comparator.nullsLast(Comparator.naturalOrder()))
+                .compare(this, other);
     }
 
     /**

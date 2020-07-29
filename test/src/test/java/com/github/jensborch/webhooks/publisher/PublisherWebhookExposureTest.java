@@ -92,7 +92,7 @@ class PublisherWebhookExposureTest {
                 .get("publisher-webhooks")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(1));
+                .body("webhooks.size()", equalTo(1));
     }
 
     @Test
@@ -106,7 +106,7 @@ class PublisherWebhookExposureTest {
                 .get("publisher-webhooks")
                 .then()
                 .statusCode(200)
-                .body("size()", equalTo(0));
+                .body("webhooks.size()", equalTo(0));
     }
 
     @Test
@@ -119,7 +119,7 @@ class PublisherWebhookExposureTest {
                 .get("publisher-webhooks")
                 .then()
                 .statusCode(200)
-                .body("size()", greaterThan(0));
+                .body("webhooks.size()", greaterThan(0));
     }
 
 }
