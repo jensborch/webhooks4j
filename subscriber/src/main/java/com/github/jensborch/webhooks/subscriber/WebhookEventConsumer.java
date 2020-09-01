@@ -134,6 +134,7 @@ public class WebhookEventConsumer {
                 .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent)));
     }
 
+    @SuppressWarnings("PMD.InvalidLogMessageFormat")
     private void updatePublisherStatus(final Webhook webhook, final WebhookEventStatus status) {
         LOG.debug("Updating status for event: {}", status);
         if (status.getStatus() == WebhookEventStatus.Status.SUCCESS) {
