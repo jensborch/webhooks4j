@@ -32,7 +32,7 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
     @PostConstruct
     public void init() {
         collection(WebhookEventStatus.class).createIndex(Indexes.ascending("event.webhook"));
-        collection(WebhookEventStatus.class).createIndex(new Document("end", 1), new IndexOptions().expireAfter(conf.getTimeToLive(), conf.getTimeToLiveTimeUnit()));
+        collection(WebhookEventStatus.class).createIndex(new Document("end", 1), new IndexOptions().expireAfter(conf.getTimeToLive(), conf.getTimeToLiveUnit()));
     }
 
     @Override

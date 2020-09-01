@@ -24,7 +24,7 @@ class WebhookConfigurationTest {
             }
 
             @Override
-            public TimeUnit getTimeToLiveTimeUnit() {
+            public TimeUnit getTimeToLiveUnit() {
                 return TimeUnit.MINUTES;
             }
 

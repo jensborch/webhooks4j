@@ -27,7 +27,7 @@ public interface WebhookConfiguration {
      *
      * @return the time unit
      */
-    TimeUnit getTimeToLiveTimeUnit();
+    TimeUnit getTimeToLiveUnit();
 
     /**
      * The synchronisation offset to use when synchronizing old events.

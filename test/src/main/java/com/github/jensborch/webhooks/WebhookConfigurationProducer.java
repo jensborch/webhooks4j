@@ -22,7 +22,7 @@ public class WebhookConfigurationProducer {
             }
 
             @Override
-            public TimeUnit getTimeToLiveTimeUnit() {
+            public TimeUnit getTimeToLiveUnit() {
                 return TimeUnit.DAYS;
             }
 
