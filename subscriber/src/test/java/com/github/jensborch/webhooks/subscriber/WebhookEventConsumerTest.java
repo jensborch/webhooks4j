@@ -41,8 +41,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test for
- * {@link com.github.jensborch.webhooks.subscriber.WebhookEventConsumer}.
+ * Test for {@link WebhookEventConsumer}.
  */
 @ExtendWith(MockitoExtension.class)
 class WebhookEventConsumerTest {

@@ -6,17 +6,17 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Configuration for Webhooks4j. Users of Webhooks4j must implement a CDI
- * producer to create a implementation of this class.
+ * producer that returns implementation of this interface.
  * <p>
- * Note: The TTL values are only needed by the MongoDB modules, but could be
- * used by additional persistence implementations. modules.
+ * Note: The TTL values are only used by the MongoDB modules, but could be used
+ * by additional persistence implementations.
  * </p>
  *
  */
 public interface WebhookConfiguration {
 
     /**
-     * Time to live (TTL) for webhook events in the events.
+     * Time to live (TTL) for webhook events in the events repository.
      *
      * @return the TTL
      */
@@ -37,7 +37,7 @@ public interface WebhookConfiguration {
     long getSyncOffset();
 
     /**
-     * The temporal unit to use for synchronisation offset.
+     * The temporal unit to use for the synchronisation offset.
      *
      * @return synchronisation offset temporal unit
      */
