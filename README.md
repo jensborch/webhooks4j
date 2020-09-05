@@ -106,7 +106,8 @@ The MongoDB dependency requires [POJO](https://mongodb.github.io/mongo-java-driv
 CDI producers must be defined for:
 
 - javax.ws.rs.client.Client
-- com.github.jensborch.webhooks.WebhookConfiguration (for configuration)
+- com.github.jensborch.webhooks.WebhookTTLConfiguration (required for MongoDB, otherwise optional)
+- com.github.jensborch.webhooks.subscriber.WebhookSyncConfiguration (required only by subscriber module)
 - com.mongodb.client.MongoDatabase (for MongoDB support)
 
 and the following REST exposure classes:

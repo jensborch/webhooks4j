@@ -1,4 +1,4 @@
-package com.github.jensborch.webhooks;
+package com.github.jensborch.webhooks.subscriber;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,27 +6,18 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.concurrent.TimeUnit;
 
+import com.github.jensborch.webhooks.Webhook;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link WebhookConfiguration}.
+ * Test for {@link WebhookSyncConfiguration}.
  */
-class WebhookConfigurationTest {
+class WebhookSyncConfigurationTest {
 
     @Test
     void testSyncFrom() throws Exception {
-        WebhookConfiguration configuration = new WebhookConfiguration() {
-            @Override
-            public long getTimeToLive() {
-                return 1;
-            }
-
-            @Override
-            public TimeUnit getTimeToLiveUnit() {
-                return TimeUnit.MINUTES;
-            }
+        WebhookSyncConfiguration configuration = new WebhookSyncConfiguration() {
 
             @Override
             public long getSyncOffset() {

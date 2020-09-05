@@ -24,7 +24,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.github.jensborch.webhooks.Webhook;
-import com.github.jensborch.webhooks.WebhookConfiguration;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventStatus;
@@ -61,7 +60,7 @@ class WebhookEventConsumerTest {
     private WebhookEventStatusRepository repo;
 
     @Mock
-    private WebhookConfiguration conf;
+    private WebhookSyncConfiguration conf;
 
     @InjectMocks
     private WebhookEventConsumer consumer;

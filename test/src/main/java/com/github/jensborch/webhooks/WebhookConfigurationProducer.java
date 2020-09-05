@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
+import com.github.jensborch.webhooks.subscriber.WebhookSyncConfiguration;
+
 /**
  * Webhooks test configuration.
  */
@@ -14,17 +16,8 @@ import javax.enterprise.inject.Produces;
 public class WebhookConfigurationProducer {
 
     @Produces
-    public WebhookConfiguration getWebhookConfiguration() {
-        return new WebhookConfiguration() {
-            @Override
-            public long getTimeToLive() {
-                return 100L;
-            }
-
-            @Override
-            public TimeUnit getTimeToLiveUnit() {
-                return TimeUnit.DAYS;
-            }
+    public WebhookSyncConfiguration getSyncConfiguration() {
+        return new WebhookSyncConfiguration() {
 
             @Override
             public long getSyncOffset() {
@@ -35,7 +28,21 @@ public class WebhookConfigurationProducer {
             public TemporalUnit getSyncOffsetUnit() {
                 return ChronoUnit.DAYS;
             }
+        };
+    }
 
+    @Produces
+    public WebhookTTLConfiguration getTTLConfiguration() {
+        return new WebhookTTLConfiguration() {
+            @Override
+            public long getAmount() {
+                return 100L;
+            }
+
+            @Override
+            public TimeUnit getUnit() {
+                return TimeUnit.DAYS;
+            }
         };
     }
 

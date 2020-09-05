@@ -9,7 +9,6 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import com.github.jensborch.webhooks.WebhookConfiguration;
 import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.WebhookEventStatuses;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
@@ -20,6 +19,7 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.ReplaceOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import com.github.jensborch.webhooks.WebhookTTLConfiguration;
 
 /**
  * Abstract repository for webhooks statuses.
@@ -27,12 +27,12 @@ import org.bson.conversions.Bson;
 public abstract class AbstractStatusRepository extends MongoRepository<WebhookEventStatus> implements WebhookEventStatusRepository {
 
     @Inject
-    WebhookConfiguration conf;
+    WebhookTTLConfiguration conf;
 
     @PostConstruct
     public void init() {
         collection(WebhookEventStatus.class).createIndex(Indexes.ascending("event.webhook"));
-        collection(WebhookEventStatus.class).createIndex(new Document("end", 1), new IndexOptions().expireAfter(conf.getTimeToLive(), conf.getTimeToLiveUnit()));
+        collection(WebhookEventStatus.class).createIndex(new Document("end", 1), new IndexOptions().expireAfter(conf.getAmount(), conf.getUnit()));
     }
 
     @Override

@@ -13,7 +13,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
 import com.github.jensborch.webhooks.Webhook;
-import com.github.jensborch.webhooks.WebhookConfiguration;
 import com.github.jensborch.webhooks.WebhookError;
 import com.github.jensborch.webhooks.WebhookEvent;
 import com.github.jensborch.webhooks.WebhookEventStatus;
@@ -34,7 +33,7 @@ public class WebhookEventConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(WebhookEventConsumer.class);
 
     @Inject
-    WebhookConfiguration conf;
+    WebhookSyncConfiguration conf;
 
     @Inject
     Event<WebhookEvent> event;
