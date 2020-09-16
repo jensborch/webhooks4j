@@ -33,6 +33,9 @@ public class WebhookEventConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(WebhookEventConsumer.class);
 
     @Inject
+    WebhookSyncConfiguration conf;
+
+    @Inject
     Event<WebhookEvent> event;
 
     @Inject
@@ -85,7 +88,7 @@ public class WebhookEventConsumer {
                 .type(WebhookEventStatuses.class)
                 .invocation(client
                         .target(webhook.publisherEndpoints().getEvents())
-                        .queryParam("from", webhook.getUpdated())
+                        .queryParam("from", conf.syncFrom(webhook))
                         .queryParam("webhook", webhook.getId())
                         .queryParam("status", WebhookEventStatus.Status.FAILED.toString())
                         .request(MediaType.APPLICATION_JSON)
@@ -134,6 +137,7 @@ public class WebhookEventConsumer {
                 .orElseGet(() -> repo.save(new WebhookEventStatus(callbackEvent)));
     }
 
+    @SuppressWarnings("PMD.InvalidLogMessageFormat")
     private void updatePublisherStatus(final Webhook webhook, final WebhookEventStatus status) {
         LOG.debug("Updating status for event: {}", status);
         if (status.getStatus() == WebhookEventStatus.Status.SUCCESS) {

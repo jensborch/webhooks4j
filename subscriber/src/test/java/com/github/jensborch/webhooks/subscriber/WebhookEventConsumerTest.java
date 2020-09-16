@@ -7,6 +7,7 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
 import java.net.URI;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
@@ -39,8 +40,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test for
- * {@link com.github.jensborch.webhooks.subscriber.WebhookEventConsumer}.
+ * Test for {@link WebhookEventConsumer}.
  */
 @ExtendWith(MockitoExtension.class)
 class WebhookEventConsumerTest {
@@ -59,6 +59,9 @@ class WebhookEventConsumerTest {
     @Mock
     private WebhookEventStatusRepository repo;
 
+    @Mock
+    private WebhookSyncConfiguration conf;
+
     @InjectMocks
     private WebhookEventConsumer consumer;
 
@@ -66,6 +69,8 @@ class WebhookEventConsumerTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        lenient().when(conf.getSyncOffset()).thenReturn(5L);
+        lenient().when(conf.getSyncOffsetUnit()).thenReturn(ChronoUnit.MINUTES);
         webhook = new Webhook(new URI("http://publisher.dk"), new URI("http://subscriber.dk"), TEST_TOPIC);
         lenient().when(subscriptions.find(any())).thenReturn(Optional.of(webhook));
         lenient().when(event.select(ArgumentMatchers.<Class<WebhookEvent>>any(), any(EventTopicLiteral.class))).thenReturn(event);

@@ -117,7 +117,7 @@ public class Webhook implements Comparable<Webhook> {
     }
 
     public Webhook touch(final ZonedDateTime max) {
-        this.updated = max == null ? ZonedDateTime.now().minusMinutes(5) : max;
+        this.updated = max == null ? ZonedDateTime.now() : max;
         return this;
     }
 

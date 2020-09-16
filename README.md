@@ -63,7 +63,7 @@ Added the following dependency for a subscriber:
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-subscriber</artifactId>
-    <version>0.6.4</version>
+    <version>0.6.5</version>
 </dependency>
 ```
 
@@ -73,7 +73,7 @@ and
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-subscriber</artifactId>
-    <version>0.6.4</version>
+    <version>0.6.5</version>
 </dependency>
 ```
 
@@ -85,7 +85,7 @@ For MongoDB support add:
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-mongodb-subscriber</artifactId>
-    <version>0.6.4</version>
+    <version>0.6.5</version>
 </dependency>
 ```
 
@@ -95,7 +95,7 @@ and/or
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-mongodb-publisher</artifactId>
-    <version>0.6.4</version>
+    <version>0.6.5</version>
 </dependency>
 ```
 
@@ -106,6 +106,8 @@ The MongoDB dependency requires [POJO](https://mongodb.github.io/mongo-java-driv
 CDI producers must be defined for:
 
 - javax.ws.rs.client.Client
+- com.github.jensborch.webhooks.WebhookTTLConfiguration (required for MongoDB, otherwise optional)
+- com.github.jensborch.webhooks.subscriber.WebhookSyncConfiguration (required only by subscriber module)
 - com.mongodb.client.MongoDatabase (for MongoDB support)
 
 and the following REST exposure classes:

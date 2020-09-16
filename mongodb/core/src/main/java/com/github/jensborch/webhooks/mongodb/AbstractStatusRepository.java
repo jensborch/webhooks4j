@@ -7,24 +7,32 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.WebhookEventStatuses;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.ReplaceOptions;
+import org.bson.Document;
 import org.bson.conversions.Bson;
+import com.github.jensborch.webhooks.WebhookTTLConfiguration;
 
 /**
  * Abstract repository for webhooks statuses.
  */
 public abstract class AbstractStatusRepository extends MongoRepository<WebhookEventStatus> implements WebhookEventStatusRepository {
 
+    @Inject
+    WebhookTTLConfiguration conf;
+
     @PostConstruct
     public void init() {
         collection(WebhookEventStatus.class).createIndex(Indexes.ascending("event.webhook"));
+        collection(WebhookEventStatus.class).createIndex(new Document("end", 1), new IndexOptions().expireAfter(conf.getAmount(), conf.getUnit()));
     }
 
     @Override
