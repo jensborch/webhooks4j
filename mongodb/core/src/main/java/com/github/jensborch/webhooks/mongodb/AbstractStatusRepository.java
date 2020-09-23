@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.WebhookEventStatuses;
+import com.github.jensborch.webhooks.WebhookTTLConfiguration;
 import com.github.jensborch.webhooks.repositories.WebhookEventStatusRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
@@ -19,12 +20,16 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.ReplaceOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import com.github.jensborch.webhooks.WebhookTTLConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Abstract repository for webhooks statuses.
  */
 public abstract class AbstractStatusRepository extends MongoRepository<WebhookEventStatus> implements WebhookEventStatusRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractStatusRepository.class);
 
     @Inject
     WebhookTTLConfiguration conf;
@@ -32,7 +37,8 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
     @PostConstruct
     public void init() {
         collection(WebhookEventStatus.class).createIndex(Indexes.ascending("event.webhook"));
-        collection(WebhookEventStatus.class).createIndex(new Document("end", 1), new IndexOptions().expireAfter(conf.getAmount(), conf.getUnit()));
+        LOG.info("Creating TTL index using {} and {}", conf.getAmount(), conf.getUnit());
+        collection(WebhookEventStatus.class).createIndex(new Document("end", 1), new IndexOptions().name("ttl").expireAfter(conf.getAmount(), conf.getUnit()));
     }
 
     @Override
