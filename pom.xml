@@ -27,32 +27,32 @@
         <gpg-plugin.version>1.6</gpg-plugin.version>
         <hamcrest-date.version>2.0.7</hamcrest-date.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <jacoco-plugin.version>0.8.5</jacoco-plugin.version>
+        <jacoco-plugin.version>0.8.6</jacoco-plugin.version>
         <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
         <javax.annotation-api.version>1.2</javax.annotation-api.version>
         <jersey.version>2.30</jersey.version>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <mockito.version>3.5.7</mockito.version>
+        <mockito.version>3.6.28</mockito.version>
         <mongo-driver.version>3.12.7</mongo-driver.version>
         <pitest-junit5-plugin.version>0.12</pitest-junit5-plugin.version>
         <pitest-plugin.version>1.3.7</pitest-plugin.version>
-        <pmd-plugin.version>3.13.0</pmd-plugin.version>
+        <pmd-plugin.version>3.14.0</pmd-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus-plugin.version>1.8.1.Final</quarkus-plugin.version>
+        <quarkus-plugin.version>1.10.5.Final</quarkus-plugin.version>
         <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-        <quarkus.platform.version>1.8.1.Final</quarkus.platform.version>
+        <quarkus.platform.version>1.10.5.Final</quarkus.platform.version>
         <release-plugin.version>2.5.3</release-plugin.version>
         <rs-api.version>2.0.1</rs-api.version>
-        <sonar-plugin.version>3.6.0.1398</sonar-plugin.version>
-        <sortpom.version>2.8.0</sortpom.version>
+        <sonar-plugin.version>3.7.0.1746</sonar-plugin.version>
+        <sortpom.version>2.12.0</sortpom.version>
         <source-plugin.version>3.0.1</source-plugin.version>
-        <spotbugs-plugin.version>4.0.4</spotbugs-plugin.version>
+        <spotbugs-plugin.version>4.1.4</spotbugs-plugin.version>
         <spotbugs.version>4.1.2</spotbugs.version>
         <surefire-plugin.version>2.22.1</surefire-plugin.version>
         <swagger-plugin.version>2.1.2</swagger-plugin.version>
