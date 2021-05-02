@@ -6,6 +6,8 @@ Small, simple and extendable Java library for messaging using webhooks and CDI e
 
 [![Java CI with Maven](https://github.com/jensborch/webhooks4j/actions/workflows/maven.yml/badge.svg)](https://github.com/jensborch/webhooks4j/actions/workflows/maven.yml)
 
+[![codecov](https://codecov.io/gh/jensborch/webhooks4j/branch/master/graph/badge.svg)](https://codecov.io/gh/jensborch/webhooks4j)
+
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.github.jensborch.webhooks4j%3Awebhooks4j&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.github.jensborch.webhooks4j%3Awebhooks4j)
 
 Webhooks4j is currently under development.
