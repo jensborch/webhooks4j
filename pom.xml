@@ -50,6 +50,9 @@
         <release-plugin.version>2.5.3</release-plugin.version>
         <rs-api.version>2.0.1</rs-api.version>
         <sonar-plugin.version>3.7.0.1746</sonar-plugin.version>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>jensborch-github</sonar.organization>
+        <sonar.projectKey>com.github.jensborch.webhooks4j:webhooks4j</sonar.projectKey>
         <sortpom.version>2.12.0</sortpom.version>
         <source-plugin.version>3.0.1</source-plugin.version>
         <spotbugs-plugin.version>4.1.4</spotbugs-plugin.version>
