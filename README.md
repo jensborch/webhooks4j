@@ -217,6 +217,10 @@ All endpoints are secured using JAX-RS roles. To access subscriber end-point, th
 
 When creating the JAX-RS Client CDI producer, filters should be added to handle security correctly. A simple HTTP Basic access authentication filter can be found in the Maven test module.
 
+## Visualization of the codebase
+
+![Visualization of the codebase](./diagram.svg)
+
 ## Building
 
 The Webhooks4j is build using Maven.
