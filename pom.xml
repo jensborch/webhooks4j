@@ -20,7 +20,7 @@
         <annotation-api.version>1.2</annotation-api.version>
         <api.description>Small, simple and extendable Java library for messaging using webhooks.</api.description>
         <api.version>v1</api.version>
-        <cdi-api.version>1.2</cdi-api.version>
+        <cdi-api.version>2.0</cdi-api.version>
         <checkstyle-plugin.version>3.1.0</checkstyle-plugin.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <deploy-plugin.version>2.8.2</deploy-plugin.version>
@@ -28,7 +28,7 @@
         <hamcrest-date.version>2.0.7</hamcrest-date.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jacoco-plugin.version>0.8.7</jacoco-plugin.version>
-        <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
+        <javadoc-plugin.version>3.3.0</javadoc-plugin.version>
         <javax.annotation-api.version>1.2</javax.annotation-api.version>
         <jersey.version>2.30</jersey.version>
         <maven.compiler.parameters>true</maven.compiler.parameters>
