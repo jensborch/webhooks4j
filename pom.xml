@@ -56,7 +56,7 @@
         <source-plugin.version>3.2.1</source-plugin.version>
         <spotbugs-plugin.version>4.1.4</spotbugs-plugin.version>
         <spotbugs.version>4.1.2</spotbugs.version>
-        <surefire-plugin.version>2.22.1</surefire-plugin.version>
+        <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <swagger-plugin.version>2.1.2</swagger-plugin.version>
         <swagger.version>2.1.4</swagger.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
@@ -191,11 +191,6 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-plugin.version}</version>
-                <configuration>
-                    <systemProperties>
-                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                    </systemProperties>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
