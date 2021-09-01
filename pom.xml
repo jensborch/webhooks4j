@@ -53,7 +53,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>jensborch-github</sonar.organization>
         <sortpom.version>3.0.0</sortpom.version>
-        <source-plugin.version>3.0.1</source-plugin.version>
+        <source-plugin.version>3.2.1</source-plugin.version>
         <spotbugs-plugin.version>4.1.4</spotbugs-plugin.version>
         <spotbugs.version>4.1.2</spotbugs.version>
         <surefire-plugin.version>2.22.1</surefire-plugin.version>
