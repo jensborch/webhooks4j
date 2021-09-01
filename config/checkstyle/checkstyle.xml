@@ -4,19 +4,13 @@
           "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
 <!--
-   Checkstyle configuration derived from Google coding conventions that can be 
+   Checkstyle configuration derived from Google coding conventions that can be
    found at https://google.github.io/styleguide/javaguide.html.
 -->
 
 <module name = "Checker">
-         
-    <property name="charset" value="UTF-8"/>
 
-    <!-- Checks whether files end with a new line.                        -->
-    <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
-    <module name="NewlineAtEndOfFile">
-        <property name="lineSeparator" value="lf" />
-    </module>
+    <property name="charset" value="UTF-8"/>
 
     <!-- Checks that property files contain the same keys.         -->
     <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
@@ -39,6 +33,11 @@
         <property name="message" value="Line has trailing spaces."/>
     </module>
 
+    <module name="LineLength">
+        <property name="max" value="180"/>
+        <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+    </module>
+
     <!-- Checks for Headers                                -->
     <!-- See http://checkstyle.sf.net/config_header.html   -->
     <!-- <module name="Header"> -->
@@ -46,11 +45,7 @@
     <!--   <property name="fileExtensions" value="java"/> -->
     <!-- </module> -->
     <module name="TreeWalker">
-        <module name="LineLength">
-            <property name="max" value="180"/>
-            <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
-        </module>
-        
+
         <module name="DeclarationOrderCheck"/>
 
         <module name="Indentation"/>
@@ -169,4 +164,3 @@
     </module>
     <module name="SuppressWarningsFilter"/>
 </module>
- 
