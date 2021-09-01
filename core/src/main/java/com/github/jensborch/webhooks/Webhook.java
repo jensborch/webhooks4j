@@ -17,6 +17,7 @@ import javax.validation.constraints.Size;
 import javax.ws.rs.core.UriBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * This class defines a Webhook with a publisher and subscribe URI.
@@ -74,6 +75,7 @@ public class Webhook implements Comparable<Webhook> {
         return state;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public ZonedDateTime getUpdated() {
         return updated;
     }
@@ -86,14 +88,17 @@ public class Webhook implements Comparable<Webhook> {
         return id;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public URI getPublisher() {
         return publisher;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public URI getSubscriber() {
         return subscriber;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public ZonedDateTime getCreated() {
         return created;
     }
@@ -111,6 +116,7 @@ public class Webhook implements Comparable<Webhook> {
         return this;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public Webhook updated(final ZonedDateTime updated) {
         this.updated = updated;
         return this;
@@ -184,15 +190,18 @@ public class Webhook implements Comparable<Webhook> {
         private final URI webhooks;
         private final URI events;
 
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
         public Endpoints(final URI webhooks, final URI events) {
             this.webhooks = webhooks;
             this.events = events;
         }
 
+        @SuppressFBWarnings("EI_EXPOSE_REP")
         public URI getEvents() {
             return events;
         }
 
+        @SuppressFBWarnings("EI_EXPOSE_REP")
         public URI getWebhooks() {
             return webhooks;
         }

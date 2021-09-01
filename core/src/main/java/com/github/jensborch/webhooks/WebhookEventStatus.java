@@ -59,6 +59,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
         this(event.getId(), event, ZonedDateTime.now(), null, Status.STARTED);
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public void setEnd(final ZonedDateTime end) {
         this.end = end;
     }
@@ -67,6 +68,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
         this.status = status;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public ZonedDateTime getEnd() {
         return end;
     }
@@ -83,6 +85,7 @@ public class WebhookEventStatus implements Comparable<WebhookEventStatus> {
         return event;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public ZonedDateTime getStart() {
         return start;
     }
