@@ -1,37 +1,9 @@
 openapi: 3.0.1
 info:
   title: Webhooks4j
-  description: Small, simple and extendable Java library for messaging using webhooks.
+  description: "Small, simple and extendable Java library for messaging using webhooks."
   version: v1
 paths:
-  /subscriber-events/{id}:
-    get:
-      operationId: get
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: Webhook event status information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookEventStatus'
-        "400":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
-        "404":
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
   /subscriber-events:
     get:
       operationId: list
@@ -77,6 +49,72 @@ paths:
       responses:
         "201":
           description: Webhook event received
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+  /subscriber-events/{id}:
+    get:
+      operationId: get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Webhook event status information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventStatus'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+  /subscriber-webhooks:
+    get:
+      operationId: list_1
+      parameters:
+      - name: topics
+        in: query
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Webhook information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhooks'
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+    post:
+      operationId: subscribe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+        required: true
+      responses:
+        "201":
+          description: Subscribed to webhook
         "400":
           description: Validation error
           content:
@@ -167,132 +205,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebhookError'
-  /subscriber-webhooks:
-    get:
-      operationId: list_1
-      parameters:
-      - name: topics
-        in: query
-        schema:
-          type: string
-      responses:
-        "200":
-          description: Webhook information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Webhooks'
-        "400":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
-    post:
-      operationId: subscribe
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Webhook'
-        required: true
-      responses:
-        "201":
-          description: Subscribed to webhook
-        "400":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebhookError'
 components:
   schemas:
-    WebhookEvent:
-      required:
-      - data
-      - id
-      - topic
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        webhook:
-          type: string
-          format: uuid
-        topic:
-          type: string
-        data:
-          type: object
-          additionalProperties:
-            type: object
-    WebhookEventStatus:
-      required:
-      - event
-      - id
-      - start
-      - status
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        event:
-          $ref: '#/components/schemas/WebhookEvent'
-        start:
-          type: string
-          format: date-time
-        end:
-          type: string
-          format: date-time
-        status:
-          type: string
-          enum:
-          - STARTED
-          - FAILED
-          - SUCCESS
-    WebhookError:
-      required:
-      - code
-      - detail
-      - status
-      - title
-      type: object
-      properties:
-        status:
-          type: integer
-          format: int32
-        code:
-          type: string
-          enum:
-          - AUTHORIZATION_ERROR
-          - AUTHENTICATION_ERROR
-          - VALIDATION_ERROR
-          - UNKNOWN_PUBLISHER
-          - UNKNOWN_ERROR
-          - SUBSCRIPTION_ERROR
-          - NOT_FOUND
-          - SYNC_ERROR
-          - ILLEGAL_STATUS
-        title:
-          type: string
-        details:
-          type: string
-          writeOnly: true
-        detail:
-          type: string
-    WebhookEventStatuses:
-      type: object
-      properties:
-        statuses:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/WebhookEventStatus'
-        size:
-          type: integer
-          format: int32
-          readOnly: true
     Webhook:
       required:
       - created
@@ -304,13 +218,13 @@ components:
       - updated
       type: object
       properties:
+        created:
+          type: string
+          format: date-time
         id:
           type: string
           format: uuid
         publisher:
-          type: string
-          format: uri
-        subscriber:
           type: string
           format: uri
         state:
@@ -325,6 +239,9 @@ components:
           - UNSUBSCRIBE
           - UNSUBSCRIBING
           - FAILED
+        subscriber:
+          type: string
+          format: uri
         topics:
           maxItems: 2147483647
           minItems: 1
@@ -332,21 +249,104 @@ components:
           type: array
           items:
             type: string
-        created:
-          type: string
-          format: date-time
         updated:
           type: string
           format: date-time
+    WebhookError:
+      required:
+      - code
+      - detail
+      - status
+      - title
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+          - AUTHORIZATION_ERROR
+          - AUTHENTICATION_ERROR
+          - VALIDATION_ERROR
+          - UNKNOWN_PUBLISHER
+          - UNKNOWN_ERROR
+          - SUBSCRIPTION_ERROR
+          - NOT_FOUND
+          - SYNC_ERROR
+          - ILLEGAL_STATUS
+        detail:
+          type: string
+        details:
+          type: string
+          writeOnly: true
+        status:
+          type: integer
+          format: int32
+        title:
+          type: string
+    WebhookEvent:
+      required:
+      - data
+      - id
+      - topic
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties:
+            type: object
+        id:
+          type: string
+          format: uuid
+        topic:
+          type: string
+        webhook:
+          type: string
+          format: uuid
+    WebhookEventStatus:
+      required:
+      - event
+      - id
+      - start
+      - status
+      type: object
+      properties:
+        end:
+          type: string
+          format: date-time
+        event:
+          $ref: '#/components/schemas/WebhookEvent'
+        id:
+          type: string
+          format: uuid
+        start:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - STARTED
+          - FAILED
+          - SUCCESS
+    WebhookEventStatuses:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int32
+          readOnly: true
+        statuses:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEventStatus'
     Webhooks:
       type: object
       properties:
+        size:
+          type: integer
+          format: int32
+          readOnly: true
         webhooks:
           uniqueItems: true
           type: array
           items:
             $ref: '#/components/schemas/Webhook'
-        size:
-          type: integer
-          format: int32
-          readOnly: true

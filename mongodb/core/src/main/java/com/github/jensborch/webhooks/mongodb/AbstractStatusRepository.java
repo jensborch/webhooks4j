@@ -23,7 +23,6 @@ import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Abstract repository for webhooks statuses.
  */
@@ -37,7 +36,9 @@ public abstract class AbstractStatusRepository extends MongoRepository<WebhookEv
     @PostConstruct
     public void init() {
         collection(WebhookEventStatus.class).createIndex(Indexes.ascending("event.webhook"));
-        LOG.info("Creating TTL index using {} and {}", conf.getAmount(), conf.getUnit());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Creating TTL index using {} and {}", conf.getAmount(), conf.getUnit());
+        }
         collection(WebhookEventStatus.class).createIndex(new Document("end", 1), new IndexOptions().name("ttl").expireAfter(conf.getAmount(), conf.getUnit()));
     }
 

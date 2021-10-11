@@ -28,7 +28,7 @@ public interface WebhookSyncConfiguration {
      */
     TemporalUnit getSyncOffsetUnit();
 
-    default ZonedDateTime syncFrom(Webhook webhook) {
+    default ZonedDateTime syncFrom(final Webhook webhook) {
         return webhook.getUpdated().minus(getSyncOffset(), getSyncOffsetUnit());
     }
 

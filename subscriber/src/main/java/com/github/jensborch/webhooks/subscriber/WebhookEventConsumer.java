@@ -68,7 +68,7 @@ public class WebhookEventConsumer {
                 repo.save(status.done(true));
                 LOG.debug("Done processing event {}", callbackEvent);
             }
-            LOG.debug("Updating timestamp on webhook {}", webhook.getId());
+            LOG.debug("Updating timestamp on webhook {}", webhook);
             subscriptions.touch(webhook.getId());
         } catch (ObserverException e) {
             LOG.warn("Error processing event {}", callbackEvent, e);
