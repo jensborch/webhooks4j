@@ -23,7 +23,7 @@
         <cdi-api.version>1.2</cdi-api.version>
         <checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
         <checkstyle.version>9.2.1</checkstyle.version>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <compiler-plugin.version>3.9.0</compiler-plugin.version>
         <deploy-plugin.version>2.8.2</deploy-plugin.version>
         <gpg-plugin.version>3.0.1</gpg-plugin.version>
         <hamcrest-date.version>2.0.8</hamcrest-date.version>
