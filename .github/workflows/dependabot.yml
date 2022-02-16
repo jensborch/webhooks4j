@@ -1,6 +1,11 @@
 name: "Dependabot Automerge"
 on:
-  pull_request
+  pull_request:
+  workflow_run:
+    workflows: ["Java CI with Maven", "CodeQL"]
+    types:
+      - completed
+
   
 permissions:
   pull-requests: write
