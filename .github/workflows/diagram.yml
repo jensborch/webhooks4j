@@ -5,7 +5,7 @@ on:
     branches: [ master ]
     
 jobs:
-  get_data:
+  diagrams:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

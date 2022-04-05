@@ -1,13 +1,17 @@
 name: "Dependabot Automerge"
+
 on:
-  pull_request
-  
+  workflow_run:
+    workflows: ["Pull request"]
+    types:
+      - completed
+
 permissions:
   pull-requests: write
   contents: write
-  
+
 jobs:
-  worker:
+  automerge:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
     steps:

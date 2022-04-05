@@ -17,3 +17,5 @@ target
 *.iml
 .factorypath
 socomo.html
+pom.xml.versionsBackup
+nb-configuration.xml
