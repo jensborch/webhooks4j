@@ -5,5 +5,5 @@ on:
 
 jobs:
   build:
-    uses: jensborch/webhooks4j/.github/workflows/maven.yml@main
+    uses: ./.github/workflows/maven.yml
 
