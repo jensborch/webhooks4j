@@ -1,9 +1,0 @@
-name: "Pull request"
-
-on:
-  pull_request
-
-jobs:
-  build:
-    uses: ./.github/workflows/maven.yml
-
