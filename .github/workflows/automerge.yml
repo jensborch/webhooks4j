@@ -2,7 +2,7 @@ name: "Dependabot Automerge"
 
 on:
   workflow_run:
-    workflows: ["Pull request"]
+    workflows: ["Java CI with Maven"]
     types:
       - completed
 
