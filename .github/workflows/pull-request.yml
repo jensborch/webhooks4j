@@ -8,7 +8,8 @@ jobs:
   maven:
     uses: ./.github/workflows/maven.yml
     secrets:
-      token: ${{ secrets.SONAR_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   automerge:
     needs: maven
     uses: ./.github/workflows/automerge.yml
