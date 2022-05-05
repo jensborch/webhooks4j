@@ -7,6 +7,13 @@ on:
   push:
     branches: [ master ]
   workflow_call:
+    secrets:
+      GITHUB_TOKEN:
+        description: 'Github token passed from the caller workflow'
+        required: true          
+      SONAR_TOKEN:
+        description: 'Sonar token passed from the caller workflow'
+        required: true  
 
 jobs:
   build:
