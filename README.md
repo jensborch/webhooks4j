@@ -251,7 +251,7 @@ Run mutation tests:
 ./mvnw eu.stamp-project:pitmp-maven-plugin:run
 ```
 
-Release to Maven central:
+Release to Maven central, see https://central.sonatype.org/publish/publish-maven/ for details:
 
 ```sh
 ./mvnw release:clean release:prepare -Prelease
