@@ -65,7 +65,7 @@ Added the following dependency for a subscriber:
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-subscriber</artifactId>
-    <version>0.6.5</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -75,7 +75,7 @@ and
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-subscriber</artifactId>
-    <version>0.6.5</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -87,7 +87,7 @@ For MongoDB support add:
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-mongodb-subscriber</artifactId>
-    <version>0.6.5</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -97,7 +97,7 @@ and/or
 <dependency>
     <groupId>com.github.jensborch.webhooks4j</groupId>
     <artifactId>webhooks4j-mongodb-publisher</artifactId>
-    <version>0.6.5</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
