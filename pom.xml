@@ -20,7 +20,7 @@
         <annotation-api.version>1.2</annotation-api.version>
         <api.description>Small, simple and extendable Java library for messaging using webhooks.</api.description>
         <api.version>v1</api.version>
-        <cdi-api.version>1.2</cdi-api.version>
+        <cdi-api.version>2.0</cdi-api.version>
         <checkstyle-plugin.version>3.2.1</checkstyle-plugin.version>
         <checkstyle.version>10.8.1</checkstyle.version>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
@@ -33,8 +33,8 @@
         <javax.annotation-api.version>1.2</javax.annotation-api.version>
         <jersey.version>2.30</jersey.version>
         <maven.compiler.parameters>true</maven.compiler.parameters>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <mockito.version>3.6.28</mockito.version>
         <mongo-driver.version>3.12.12</mongo-driver.version>
         <pitest-junit5-plugin.version>1.1.2</pitest-junit5-plugin.version>
