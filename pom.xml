@@ -55,7 +55,7 @@
         <sonar.organization>jensborch-github</sonar.organization>
         <sortpom.version>3.2.1</sortpom.version>
         <source-plugin.version>3.2.1</source-plugin.version>
-        <spotbugs-plugin.version>4.7.3.3</spotbugs-plugin.version>
+        <spotbugs-plugin.version>4.7.3.4</spotbugs-plugin.version>
         <spotbugs.version>4.7.3</spotbugs.version>
         <surefire-plugin.version>3.0.0</surefire-plugin.version>
         <swagger-plugin.version>2.1.6</swagger-plugin.version>
