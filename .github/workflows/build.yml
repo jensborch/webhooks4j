@@ -1,0 +1,13 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build:
+    uses: jensborch/workflows/.github/workflows/maven-build.yml@main
+    with:
+      java-version: 11
