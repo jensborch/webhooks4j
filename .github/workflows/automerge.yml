@@ -1,7 +1,8 @@
 name: "Dependabot Automerge"
 
 on:
-  workflow_call:
+  pull_request:
+    branches: [master]
 
 jobs:
   automerge:
