@@ -4,7 +4,7 @@ Small, simple and extendable Java library for messaging using webhooks and CDI e
 
 ## Status
 
-[![Java CI with Maven](https://github.com/jensborch/webhooks4j/actions/workflows/maven.yml/badge.svg)](https://github.com/jensborch/webhooks4j/actions/workflows/maven.yml)
+[![Build](https://github.com/jensborch/webhooks4j/actions/workflows/build.yml/badge.svg)](https://github.com/jensborch/webhooks4j/actions/workflows/build.yml)
 
 [![codecov](https://codecov.io/gh/jensborch/webhooks4j/branch/master/graph/badge.svg)](https://codecov.io/gh/jensborch/webhooks4j)
 
