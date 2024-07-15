@@ -6,7 +6,7 @@ on:
 
 jobs:
   automerge:
-    uses: jensborch/workflows/.github/workflows/dependabot-automerge.yml.yml@main
+    uses: jensborch/workflows/.github/workflows/dependabot-automerge.yml@main
     permissions:
       pull-requests: write
       contents: write
