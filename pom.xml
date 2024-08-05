@@ -27,7 +27,7 @@
         <deploy-plugin.version>3.1.2</deploy-plugin.version>
         <gpg-plugin.version>3.2.4</gpg-plugin.version>
         <hamcrest-date.version>2.0.8</hamcrest-date.version>
-        <hamcrest.version>2.2</hamcrest.version>
+        <hamcrest.version>3.0</hamcrest.version>
         <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
         <javadoc-plugin.version>3.8.0</javadoc-plugin.version>
         <javax.annotation-api.version>1.2</javax.annotation-api.version>
