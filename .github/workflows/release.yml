@@ -7,7 +7,7 @@ on:
 
 jobs:
   call-workflow:
-    uses: jensborch/workflows/.github/release-release.yml@main
+    uses: jensborch/workflows/.github/workflows/maven-release.yml@main
     secrets: inherit
     permissions:
       contents: write
