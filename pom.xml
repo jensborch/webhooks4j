@@ -22,7 +22,7 @@
         <api.version>v1</api.version>
         <cdi-api.version>2.0</cdi-api.version>
         <checkstyle-plugin.version>3.5.0</checkstyle-plugin.version>
-        <checkstyle.version>10.18.0</checkstyle.version>
+        <checkstyle.version>10.18.1</checkstyle.version>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <deploy-plugin.version>3.1.3</deploy-plugin.version>
         <gpg-plugin.version>3.2.5</gpg-plugin.version>
