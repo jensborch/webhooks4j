@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.jensborch.webhooks4j</groupId>
         <artifactId>webhook4j-mongodb</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>webhook4j-mongodb-subscriber</artifactId>
