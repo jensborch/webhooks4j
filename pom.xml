@@ -303,6 +303,7 @@
                                 <goals>
                                     <goal>jar-no-fork</goal>
                                 </goals>
+                                <phase>package</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -316,6 +317,7 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <phase>package</phase>
                             </execution>
                         </executions>
                     </plugin>
