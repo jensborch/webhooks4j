@@ -328,6 +328,7 @@
                             <tagNameFormat>v@{project.version}</tagNameFormat>
                             <useReleaseProfile>false</useReleaseProfile>
                             <releaseProfiles>release</releaseProfiles>
+                            <preparationGoals>clean verify</preparationGoals>
                             <goals>deploy</goals>
                         </configuration>
                     </plugin>
