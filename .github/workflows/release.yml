@@ -3,11 +3,11 @@ name: Release
 on:
   push:
     branches:
-      - "releases/**"
+      - "release/**"
 
 jobs:
   call-workflow:
-    uses: jensborch/workflows/.github/workflows/release-release.yml@main
+    uses: jensborch/workflows/.github/workflows/maven-release.yml@main
     secrets: inherit
     permissions:
       contents: write
