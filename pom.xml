@@ -301,8 +301,9 @@
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar-no-fork</goal>
+                                    <goal>jar</goal>
                                 </goals>
+                                <phase>deploy</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -316,6 +317,7 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <phase>deploy</phase>
                             </execution>
                         </executions>
                     </plugin>
