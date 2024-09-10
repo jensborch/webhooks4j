@@ -6,8 +6,8 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 

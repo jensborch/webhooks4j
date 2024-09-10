@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import com.github.jensborch.webhooks.subscriber.SubscriberEventExposure;
 import com.github.jensborch.webhooks.subscriber.SubscriberWebhookExposure;

@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.greaterThan;
 
 import java.net.URI;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.publisher.PublisherWebhookExposure;

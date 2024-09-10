@@ -1,9 +1,9 @@
 package com.github.jensborch.webhooks;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Produces;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 
 import com.github.jensborch.webhooks.publisher.Publisher;
 import com.github.jensborch.webhooks.subscriber.Subscriber;

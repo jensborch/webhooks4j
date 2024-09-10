@@ -6,8 +6,7 @@ import java.util.Optional;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.github.jensborch.webhooks.WebhookEventStatus;
 import com.github.jensborch.webhooks.WebhookEventStatuses;
@@ -18,6 +17,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.ReplaceOptions;
+import jakarta.annotation.PostConstruct;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;

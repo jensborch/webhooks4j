@@ -2,14 +2,14 @@ package com.github.jensborch.webhooks.exceptionmappers;
 
 import java.util.stream.Collectors;
 
-import javax.annotation.Priority;
-import javax.validation.ConstraintViolationException;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
 import com.github.jensborch.webhooks.WebhookError;
+import jakarta.annotation.Priority;
 
 /**
  * JAX-RS exception mapper for {@link ConstraintViolationException}.

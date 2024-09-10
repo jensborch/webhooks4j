@@ -2,8 +2,8 @@ package com.github.jensborch.webhooks.publisher;
 
 import java.util.UUID;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import com.github.jensborch.webhooks.HashMapWebhookRepository;
 import com.github.jensborch.webhooks.WebhookEventStatus;

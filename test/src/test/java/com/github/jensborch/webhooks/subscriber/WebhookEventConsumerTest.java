@@ -12,7 +12,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.github.jensborch.webhooks.Webhook;
 import com.github.jensborch.webhooks.WebhookEvent;

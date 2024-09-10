@@ -1,7 +1,7 @@
 package com.github.jensborch.webhooks.mongodb;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import com.github.jensborch.webhooks.subscriber.Subscriber;
 import com.mongodb.client.MongoDatabase;
